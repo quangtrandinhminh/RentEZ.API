@@ -150,10 +150,15 @@ app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseCors(myAllowSpecificOrigins);
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "RentEZ.API");
+        options.RoutePrefix = string.Empty;
+        options.DocumentTitle = "RentEZ.API";
+    });
 }
 
 app.UseHttpsRedirection();
