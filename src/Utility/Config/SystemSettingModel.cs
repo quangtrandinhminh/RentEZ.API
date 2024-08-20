@@ -58,4 +58,11 @@ namespace Utility.Config
         public string VnPayTmnCode { get; set; }
         public string VnPayHashSecret { get; set; }
     }
+
+    public class VietQRSetting
+    {
+        public static VietQRSetting Instance { get; set; }
+        public string ClientID { get; set; }
+        public string APIKey { get; set; }
+    }
 }
