@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Utility.Enum;
 
-namespace Repository;
+namespace Repository.Infrastructure;
 
-public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
+public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
 {
     public const int CommandTimeoutInSecond = 20 * 60;
 
@@ -22,22 +22,20 @@ public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
 
     }
 
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
-    public DbSet<UserRoleEntity> UserRoleEntity { get; set; }
-    public DbSet<RoleEntity> Role { get; set; }
-
     private string GetConnectionString()
     {
         IConfiguration config = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", true, true)
             .Build();
-        var strConn = config["ConnectionStrings:DefaultConnection"];
+        //var strConn = config["ConnectionStrings:DefaultConnection"];
+        var strConn = config["PostgresSettings:PostgresConnection"];
         return strConn;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer(GetConnectionString());
+        //=> optionsBuilder.UseSqlServer(GetConnectionString());
+        => optionsBuilder.UseNpgsql(GetConnectionString());
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

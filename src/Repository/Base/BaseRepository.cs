@@ -1,6 +1,8 @@
 ﻿using System.Linq.Expressions;
 using BusinessObject.Entities.Base;
 using Microsoft.EntityFrameworkCore;
+using Repository.Extensions;
+using Repository.Infrastructure;
 namespace Repository.Base
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity, new()
@@ -28,18 +30,15 @@ namespace Repository.Base
             }
         }
 
+
         public IQueryable<T?> GetAll()
         {
-            
-            
             return DbSet.AsQueryable().AsNoTracking();
         }
 
         public IQueryable<T> GetAllWithCondition(Expression<Func<T, bool>> predicate = null,
             params Expression<Func<T, object>>[] includeProperties)
         {
-            
-            
             IQueryable<T> queryable = DbSet.AsNoTracking();
             includeProperties = includeProperties?.Distinct().ToArray();
             if (includeProperties?.Any() ?? false)

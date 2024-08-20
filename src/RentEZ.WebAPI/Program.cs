@@ -1,23 +1,19 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Reflection;
 using Serilog;
 using BusinessObject.Entities.Identity;
 using BusinessObject.Mapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Repository.Base;
 using Repository.Interfaces;
 using Repository.Repositories;
 using Service.Services;
 using Service.Utils;
-using System;
-using Repository;
 using Utility.Config;
 using Service.Interfaces;
 using RentEZ.WebAPI.Middlewares;
+using Repository.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,12 +41,22 @@ builder.Services.AddCors(options =>
 builder.Services.AddSerilog(config => { config.ReadFrom.Configuration(builder.Configuration); });
 
 // Register DbContext
-builder.Services.AddDbContext<AppDbContext>(options =>
+/*builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlServerOptionsAction =>
         {
             sqlServerOptionsAction.MigrationsAssembly(
                 typeof(AppDbContext).GetTypeInfo().Assembly.GetName().Name);
+            sqlServerOptionsAction.MigrationsHistoryTable("Migration");
+        }));*/
+
+// Register DbContext Postgres
+builder.Services.AddDbContext<AppDbContext>(options =>
+       options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"),
+           sqlServerOptionsAction =>
+           {
+            sqlServerOptionsAction.MigrationsAssembly(
+                               typeof(AppDbContext).GetTypeInfo().Assembly.GetName().Name);
             sqlServerOptionsAction.MigrationsHistoryTable("Migration");
         }));
 
@@ -60,8 +66,12 @@ builder.Configuration.GetSection("SystemSetting").Bind(systemSettingModel);
 SystemSettingModel.Instance = systemSettingModel;
 
 var vnPaySetting = new VnPaySetting();
-builder.Configuration.GetSection("VnPaySetting").Bind(vnPaySetting);
+builder.Configuration.GetSection("VnPay").Bind(vnPaySetting);
 VnPaySetting.Instance = vnPaySetting;
+
+var vietQrSetting = new VietQRSetting();
+builder.Configuration.GetSection("VietQR").Bind(vietQrSetting);
+VietQRSetting.Instance = vietQrSetting;
 
 // Add Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
@@ -93,7 +103,7 @@ builder.Services.AddSwaggerGen(o =>
             new List<string>()
         }
     });
-    o.SwaggerDoc("v1", new OpenApiInfo { Title = "PetHealthCareSystem", Version = "v1" });
+    o.SwaggerDoc("v1", new OpenApiInfo { Title = "RentEZ", Version = "v1" });
 });
 
 // Add Authorization
