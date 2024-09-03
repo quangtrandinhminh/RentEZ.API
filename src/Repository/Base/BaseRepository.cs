@@ -131,9 +131,8 @@ namespace Repository.Base
             return addedEntity.Entity;
         }
 
-        public async Task<T> AddAsync(T entity)
+        public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
-            
             await DbSet.AddAsync(entity);
             _context.Entry(entity).State = EntityState.Detached;
             return entity;

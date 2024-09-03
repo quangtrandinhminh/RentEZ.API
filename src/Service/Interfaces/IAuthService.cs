@@ -11,14 +11,14 @@ namespace Service.Interfaces
     public interface IAuthService
     {
         Task<IList<RoleResponseDto>> GetAllRoles();
-        Task Register(RegisterDto dto);
+        Task Register(RegisterDto dto, CancellationToken cancellationToken = default);
         Task RegisterByAdmin(RegisterDto dto, int role);
         Task<LoginResponseDto> Authenticate(LoginDto dto);
         Task<LoginResponseDto> RefreshToken(string token);
-        Task VerifyEmail(VerifyEmailDto dto);
-        Task ForgotPassword(ForgotPasswordDto model);
-        Task ResetPassword(ResetPasswordDto model);
-        Task ChangePassword(ChangePasswordDto dto);
-        Task ReSendEmail(ResendEmailDto model);
+        Task VerifyEmail(VerifyEmailDto dto, CancellationToken cancellationToken = default);
+        Task ForgotPassword(ForgotPasswordDto model, CancellationToken cancellationToken = default);
+        Task ResetPassword(ResetPasswordDto dto, CancellationToken cancellationToken = default);
+        Task ChangePassword(ChangePasswordDto dto, CancellationToken cancellationToken = default);
+        Task ReSendEmail(ResendEmailDto model, CancellationToken cancellationToken = default);
     }
 }

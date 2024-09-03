@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Utility.Enum;
+using Utility.Helpers;
 
 namespace Repository.Infrastructure;
 
@@ -50,6 +51,21 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 .IsRequired();
         });
 
+        // create index
+        modelBuilder.Entity<UserEntity>()
+            .HasIndex(u => u.UserName)
+            .IsUnique();
+
+        modelBuilder.Entity<UserEntity>()
+            .HasIndex(u => u.Email);
+
+        modelBuilder.Entity<UserEntity>()
+            .HasIndex(u => u.PhoneNumber);
+
+        modelBuilder.Entity<UserEntity>()
+            .HasIndex(u => u.CreatedTime);
+
+
         modelBuilder.Entity<RoleEntity>(b =>
         {
             // Each Role can have many entries in the UserRole join table
@@ -65,37 +81,46 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
             UserName = "admin",
             FullName = "Admin User",
             NormalizedUserName = "ADMIN",
-            Email = "admin@email.com",
+            Email = "admin@example.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("12345678"),
             SecurityStamp = Guid.NewGuid().ToString(),
+            Verified = CoreHelper.SystemTimeNow,
         };
         modelBuilder.Entity<UserEntity>().HasData(admin);
 
-        var cus1 = new UserEntity
+        var shopOwner = new UserEntity
         {
             Id = 2,
+            UserName = "shopowner",
+            FullName = "Shop Owner",
+            NormalizedUserName = "SHOPOWNER",
+            Email = "shopowner@example.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("12345678"),
+            SecurityStamp = Guid.NewGuid().ToString(),
+            Verified = CoreHelper.SystemTimeNow,
+        };
+        modelBuilder.Entity<UserEntity>().HasData(shopOwner);
+
+        var cus1 = new UserEntity
+        {
+            Id = 3,
             UserName = "customer1",
             FullName = "Customer 1",
             NormalizedUserName = "CUSTOMER1",
-            Email = ""
+            Email = "customer1@example.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("12345678"),
+            SecurityStamp = Guid.NewGuid().ToString(),
+            Verified = CoreHelper.SystemTimeNow,
         };
         modelBuilder.Entity<UserEntity>().HasData(cus1);
 
-        var roles = new List<RoleEntity>
+        int roleIndex = 1;
+        var roles = Enum.GetValues<UserRole>().Select(role => new RoleEntity
         {
-            new()
-            {
-                Id = 1,
-                Name = UserRole.Admin.ToString(),
-                NormalizedName = UserRole.Admin.ToString().ToUpper()
-            },
-            new()
-            {
-                Id = 4,
-                Name = UserRole.Customer.ToString(),
-                NormalizedName = UserRole.Customer.ToString().ToUpper()
-            },
-        };
+            Id = roleIndex++,
+            Name = role.ToString(),
+            NormalizedName = role.ToString().ToUpper()
+        }).ToArray();
         modelBuilder.Entity<RoleEntity>().HasData(roles);
 
         var adminUserRole = new UserRoleEntity
@@ -105,10 +130,16 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
         };
         modelBuilder.Entity<UserRoleEntity>().HasData(adminUserRole);
 
+        var shopOwnerUserRole = new UserRoleEntity
+        {
+            UserId = shopOwner.Id,
+            RoleId = 2
+        };
+
         var cus1UserRole = new UserRoleEntity
         {
             UserId = cus1.Id,
-            RoleId = 4
+            RoleId = 3
         };
         modelBuilder.Entity<UserRoleEntity>().HasData(cus1UserRole);
 

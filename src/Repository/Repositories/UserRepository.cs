@@ -25,6 +25,8 @@ namespace Repository.Repositories
             _context = context;
         }
 
+        public async Task<int> SaveChangeAsync() => await Context.SaveChangesAsync();
+
         public IQueryable<UserEntity> GetAllWithCondition(Expression<Func<UserEntity, bool>> predicate = null,
             params Expression<Func<UserEntity, object>>[] includeProperties)
         {
@@ -44,11 +46,9 @@ namespace Repository.Repositories
             return predicate == null ? queryable : queryable.Where(predicate);
         }
 
-        public async Task<IdentityResult> CreateAsync(UserEntity user)
+        public override async Task<IdentityResult> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
         {
-            await using var context = new AppDbContext();
-            await context.Users.AddAsync(user);
-            await context.SaveChangesAsync();
+            await Context.Users.AddAsync(user, cancellationToken);
             return IdentityResult.Success;
         }
 

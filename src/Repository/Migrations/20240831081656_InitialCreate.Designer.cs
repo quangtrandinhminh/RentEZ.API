@@ -12,8 +12,8 @@ using Repository.Infrastructure;
 namespace Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240820071812_InitialCreate_Postgres")]
-    partial class InitialCreate_Postgres
+    [Migration("20240831081656_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,7 +108,13 @@ namespace Repository.Migrations
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 2,
+                            Name = "ShopOwner",
+                            NormalizedName = "SHOPOWNER"
+                        },
+                        new
+                        {
+                            Id = 3,
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         });
@@ -131,21 +137,21 @@ namespace Repository.Migrations
                     b.Property<string>("Avatar")
                         .HasColumnType("text");
 
-                    b.Property<DateTimeOffset?>("BirthDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly?>("BirthDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
 
                     b.Property<DateTimeOffset>("CreatedTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("text");
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
 
                     b.Property<DateTimeOffset?>("DeletedTime")
                         .HasColumnType("timestamp with time zone");
@@ -160,8 +166,8 @@ namespace Repository.Migrations
                     b.Property<string>("FullName")
                         .HasColumnType("text");
 
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("text");
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
 
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("timestamp with time zone");
@@ -182,9 +188,6 @@ namespace Repository.Migrations
 
                     b.Property<string>("OTP")
                         .HasColumnType("text");
-
-                    b.Property<DateTimeOffset?>("OTPExpired")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
@@ -207,12 +210,21 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedTime");
+
+                    b.HasIndex("Email");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
+
+                    b.HasIndex("PhoneNumber");
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
 
                     b.ToTable("Users", (string)null);
 
@@ -221,34 +233,55 @@ namespace Repository.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c237b297-1521-4ae8-ae00-e3ae0713a8bf",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 8, 20, 14, 18, 11, 898, DateTimeKind.Unspecified).AddTicks(6316), new TimeSpan(0, 7, 0, 0, 0)),
-                            Email = "admin@email.com",
+                            ConcurrencyStamp = "91fc2b2c-630f-4355-86b2-d85800a5d116",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 369, DateTimeKind.Unspecified).AddTicks(5579), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "admin@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin User",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 8, 20, 14, 18, 11, 898, DateTimeKind.Unspecified).AddTicks(6316), new TimeSpan(0, 7, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 369, DateTimeKind.Unspecified).AddTicks(5579), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$ZstsgNEN0wR.v6.ZaZv2keDWasA/cNr2/DhxInf2bp6mdlQggtmaC",
+                            PasswordHash = "$2a$11$JHVzlZA8IxyjAOrhj7YqVObMbmziPJrKp75HpDugJIXZuUeQPQBDy",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
-                            UserName = "admin"
+                            UserName = "admin",
+                            Verified = new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 485, DateTimeKind.Unspecified).AddTicks(1363), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "76edc745-e52d-4c56-b48e-b11d3e217876",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 8, 20, 14, 18, 12, 22, DateTimeKind.Unspecified).AddTicks(1897), new TimeSpan(0, 7, 0, 0, 0)),
-                            Email = "",
+                            ConcurrencyStamp = "70654d8c-6328-47d5-b53a-37ad1b0ba797",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 485, DateTimeKind.Unspecified).AddTicks(1827), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "shopowner@example.com",
                             EmailConfirmed = false,
-                            FullName = "Customer 1",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 8, 20, 14, 18, 12, 22, DateTimeKind.Unspecified).AddTicks(1897), new TimeSpan(0, 7, 0, 0, 0)),
+                            FullName = "Shop Owner",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 485, DateTimeKind.Unspecified).AddTicks(1827), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
-                            NormalizedUserName = "CUSTOMER1",
+                            NormalizedUserName = "SHOPOWNER",
+                            PasswordHash = "$2a$11$Kbk8JjimCo8NA2jfOYKbfO2MTRWnpDrsK6d4KNZOVPoBlns2gRoge",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
-                            UserName = "customer1"
+                            UserName = "shopowner",
+                            Verified = new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 605, DateTimeKind.Unspecified).AddTicks(5077), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "7935f452-4a32-4aec-8e00-dc06a8c2b716",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 605, DateTimeKind.Unspecified).AddTicks(5513), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "customer1@example.com",
+                            EmailConfirmed = false,
+                            FullName = "Customer 1",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 605, DateTimeKind.Unspecified).AddTicks(5513), new TimeSpan(0, 0, 0, 0, 0)),
+                            LockoutEnabled = false,
+                            NormalizedUserName = "CUSTOMER1",
+                            PasswordHash = "$2a$11$xslOq7Me23tD/O42VVaGyuZzmBWAgyi6U2Ej7Ghjrh/JNgt1BhqN6",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "customer1",
+                            Verified = new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 723, DateTimeKind.Unspecified).AddTicks(7936), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -380,8 +413,8 @@ namespace Repository.Migrations
                         },
                         new
                         {
-                            UserId = 2,
-                            RoleId = 4
+                            UserId = 3,
+                            RoleId = 3
                         });
                 });
 
