@@ -3,12 +3,12 @@ using BusinessObject.Entities.Identity;
 using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Repository.Extensions;
 using Repository.Interfaces;
 using Serilog;
 using Service.Interfaces;
-using System.Text.RegularExpressions;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
@@ -24,54 +24,23 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
     private readonly ILogger _logger = Log.Logger;
     private readonly SignInManager<UserEntity> _signInManager = serviceProvider.GetRequiredService<SignInManager<UserEntity>>();
 
-    public async Task<IList<UserResponseDto>> GetAllUsersByRoleAsync(UserRole role)
+    public async Task<PaginatedList<UserResponseDto>> GetAllUsersAsync(UserRole? role, int pageNumber, int pageSize)
     {
-        switch (role)
+        _logger.Information($"Get all users by role {role.ToString()}");
+        var users = _userRepository.GetAllWithCondition(
+            x => x.IsActive, x => x.UserRoles);
+        if (role != null)
         {
-            case UserRole.Admin:
-                return await GetAdminsAsync();
-            case UserRole.Customer:
-                return await GetCustomersAsync();
-            default:
-                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.ROLE_INVALID, StatusCodes.Status400BadRequest);
-        }
-    }
-
-    private async Task<IList<UserResponseDto>> GetAdminsAsync()
-    {
-        var admins = await _userManager.GetUsersInRoleAsync(UserRole.Admin.ToString());
-
-        if (admins == null || admins.Count == 0)
-        {
-            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsUser.ADMIN_NOT_FOUND, StatusCodes.Status404NotFound);
+            users = users.Where(x => x.UserRoles.Any(y => y.Role.Name == role.ToString()));
         }
 
-        var response = _mapper.Map(admins);
-
-        foreach (var vet in response)
+        if (users.IsNullOrEmpty())
         {
-            vet.Role = UserRole.Admin.ToString();
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsUser.USER_NOT_FOUND, StatusCodes.Status404NotFound);
         }
 
-        return response;
-    }
-
-    public async Task<IList<UserResponseDto>> GetCustomersAsync()
-    {
-        var customers = await _userManager.GetUsersInRoleAsync(UserRole.Customer.ToString());
-
-        if (customers == null || customers.Count == 0)
-        {
-            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsUser.CUSTOMER_NOT_FOUND, StatusCodes.Status404NotFound);
-        }
-
-        var response = _mapper.Map(customers);
-
-        foreach (var vet in response)
-        {
-            vet.Role = UserRole.Customer.ToString();
-        }
-
+        var userResponses = _mapper.Map(users);
+        var response = await PaginatedList<UserResponseDto>.CreateAsync(userResponses, pageNumber, pageSize);
         return response;
     }
 

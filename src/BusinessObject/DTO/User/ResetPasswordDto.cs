@@ -6,7 +6,7 @@ namespace BusinessObject.DTO.User;
 public class ResetPasswordDto
 {
     [Required]
-    public string Token { get; set; }
+    public string OTP { get; set; }
 
     [Required]
     [DataType(DataType.Password)]

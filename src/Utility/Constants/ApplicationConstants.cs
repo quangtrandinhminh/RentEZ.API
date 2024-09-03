@@ -64,7 +64,7 @@ namespace Utility.Constants
         public const string PHONENUMBER_LENGTH = "So dien thoai phai co chinh xac 10 so.";
         public const string ROLES_REQUIRED = "Role khong duoc de trong.";
         public const string USER_NOT_ALLOWED = "Ban khong co quyen truy cap vao muc nay";
-
+        public const string EMAIL_VALIDATION_REQUIRED = "Please enter the OTP code sent to your email to activate your account.";
     }
 
     public class ResponseMessageIdentitySuccess

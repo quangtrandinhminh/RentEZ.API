@@ -13,22 +13,22 @@ public class UserEntity : IdentityUser<int>
 {
     public UserEntity()
     {
-        CreatedTime = LastUpdatedTime = DateTimeOffset.Now;
+        CreatedTime = LastUpdatedTime = CoreHelper.SystemTimeNow;
     }
 
     public string? FullName { get; set; }
     public string? Address { get; set; }
     public string? Avatar { get; set; }
-    public DateTimeOffset? BirthDate { get; set; }
+    public DateOnly? BirthDate { get; set; }
 
     public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
 
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
 
     // Base Property
-    public string? CreatedBy { get; set; }
-    public string? LastUpdatedBy { get; set; }
-    public string? DeletedBy { get; set; }
+    public int? CreatedBy { get; set; }
+    public int? LastUpdatedBy { get; set; }
+    public int? DeletedBy { get; set; }
     public DateTimeOffset CreatedTime { get; set; }
     public DateTimeOffset LastUpdatedTime { get; set; }
     public DateTimeOffset? DeletedTime { get; set; }
@@ -36,9 +36,8 @@ public class UserEntity : IdentityUser<int>
     // Identity Property
     public DateTimeOffset? Verified { get; set; }
     public string? OTP { get; set; }
-    public DateTimeOffset? OTPExpired { get; set; }
-    public bool IsActive => PhoneNumberConfirmed;
-    public override bool PhoneNumberConfirmed => Verified.HasValue;
+    public bool IsActive => EmailConfirmed;
+    public override bool EmailConfirmed => Verified.HasValue;
 
     [NotMapped]
     public override string SecurityStamp { get => base.SecurityStamp; set => base.SecurityStamp = value; }

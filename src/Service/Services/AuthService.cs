@@ -1,30 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Security.Principal;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using BusinessObject.DTO.User;
-using BusinessObject.Entities;
 using BusinessObject.Entities.Identity;
 using BusinessObject.Mapper;
+using BusinessObject.Models;
+using Humanizer;
+using Invedia.Core.StringUtils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Client;
+using Repository.Infrastructure;
 using Repository.Interfaces;
-using Repository.Repositories;
 using Serilog;
 using Service.Interfaces;
 using Service.Utils;
-using Utility.Config;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
@@ -41,15 +32,18 @@ namespace Service.Services
         private readonly ILogger _logger = Log.Logger;
         private readonly SignInManager<UserEntity> _signInManager = serviceProvider.GetRequiredService<SignInManager<UserEntity>>();
         private readonly IRefreshTokenRepository _refreshTokenRepository = serviceProvider.GetRequiredService<IRefreshTokenRepository>();
-
+        private readonly IEmailService _emailService = serviceProvider.GetRequiredService<IEmailService>();
+        private readonly IUnitOfWork _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
 
         // get all roles
         public async Task<IList<RoleResponseDto>> GetAllRoles()
         {
+            _logger.Information("Get all roles");
             var roles = await _roleManager.Roles.ToListAsync();
             return _mapper.Map(roles);
         }
-        public async Task Register(RegisterDto dto)
+
+        public async Task Register(RegisterDto dto, CancellationToken cancellationToken = default)
         {
             _logger.Information("Register new user: {@dto}", dto);
             // get user by name
@@ -86,16 +80,25 @@ namespace Service.Services
                 var account = _mapper.Map(dto);
                 account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
                 account.SecurityStamp = Guid.NewGuid().ToString();
-                await _userRepository.CreateAsync(account);
-                await _userManager.AddToRoleAsync(account, "Customer");
+                account.OTP = GenerateOTP();
+                await _userRepository.CreateAsync(account, cancellationToken);
+
+                await _userRepository.SaveChangeAsync();
+                await _userManager.AddToRoleAsync(account, UserRole.Customer.ToString());
+
+                var mailRequest = new SendMailModel()
+                {
+                    Name = account.NormalizedUserName,
+                    Email = account.Email,
+                    Token = account.OTP,
+                    Type = MailTypeEnum.Verify
+                };
+                _emailService.SendMail(mailRequest);
             }
             catch (Exception e)
             {
                 throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
             }
-
-
-            // send sms to phone number here
         }
 
         // register by admin
@@ -143,7 +146,9 @@ namespace Service.Services
                 var account = _mapper.Map(dto);
                 account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
                 account.SecurityStamp = Guid.NewGuid().ToString();
+                account.Verified = CoreHelper.SystemTimeNow;
                 await _userRepository.CreateAsync(account);
+                await _userRepository.SaveChangeAsync();
                 await _userManager.AddToRoleAsync(account, roleEntity.NormalizedName);
             }
             catch (Exception e)
@@ -158,6 +163,9 @@ namespace Service.Services
             var account = await GetUserByUserName(dto.Username);
             if (account == null || account.DeletedTime != null)
                 throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
+
+            if (!account.IsActive)
+                throw new AppException(ErrorCode.UserInActive, ResponseMessageIdentity.EMAIL_VALIDATION_REQUIRED, StatusCodes.Status401Unauthorized);
 
             // check password
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, account.PasswordHash))
@@ -185,6 +193,7 @@ namespace Service.Services
 
         public async Task<LoginResponseDto> RefreshToken(string token)
         {
+            _logger.Information("Refresh token: {@token}", token);
             var (refreshToken, account) = await GetRefreshToken(token);
             refreshToken.Expires = CoreHelper.SystemTimeNow;
             await _refreshTokenRepository.UpdateAsync(refreshToken);
@@ -194,6 +203,7 @@ namespace Service.Services
             await _refreshTokenRepository.AddAsync(newRefreshToken);
 
             await RemoveOldRefreshTokens(account.RefreshTokens);
+            await _unitOfWork.SaveChangeAsync();
 
             try
             {
@@ -212,61 +222,78 @@ namespace Service.Services
             }
         }
 
-        public async Task VerifyEmail(VerifyEmailDto dto)
+        public async Task VerifyEmail(VerifyEmailDto dto, CancellationToken cancellationToken = default)
         {
-
+            _logger.Information("Verify email: {@dto}", dto);
             var account = await GetUserByUserName(dto.UserName);
 
-            if (account == null || account.OTP != dto.Token)
+            if (account == null || account.OTP != dto.OTP)
                 throw new AppException(ErrorCode.TokenInvalid, ResponseMessageIdentity.TOKEN_INVALID, StatusCodes.Status401Unauthorized);
 
             account.Verified = CoreHelper.SystemTimeNow;
             account.OTP = null;
-            await _userRepository.UpdateAsync(account);
+            await _userRepository.UpdateAsync(account, cancellationToken);
+            await _userRepository.SaveChangeAsync();
         }
 
-        public async Task ForgotPassword(ForgotPasswordDto model)
+        /// <summary>
+        /// Send mail to user to reset password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="AppException"></exception>
+        public async Task ForgotPassword(ForgotPasswordDto model, CancellationToken cancellationToken = default)
         {
+            _logger.Information("Forgot password: {@model}", model);
             var account = await GetUserByUserName(model.UserName);
             if (account == null) throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
 
             // create reset token that expires after 1 day
-            /*account.OTP = StringHelper.Generate(6, false, false, true, false);
-            account.OTPExpired = CoreHelper.SystemTimeNow.AddDays(1);
-            
-            await _userRepository.UpdateAsync(account);
+            account.OTP = GenerateOTP();
+            await _userRepository.UpdateAsync(account, cancellationToken);
 
             var mailRequest = new SendMailModel
             {
                 Name = account.NormalizedUserName,
                 Email = account.Email,
-                Token = account.ResetToken,
+                Token = account.OTP,
                 Type = MailTypeEnum.ResetPassword
             };
-            _emailService.SendMail(mailRequest);*/
+            _emailService.SendMail(mailRequest);
         }
 
-        public async Task ResetPassword(ResetPasswordDto model)
+        /// <summary>
+        /// Reset password for user after verify OTP
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="AppException"></exception>
+        public async Task ResetPassword(ResetPasswordDto dto, CancellationToken cancellationToken = default)
         {
-            var account = await GetUserByUserName(model.UserName);
+            _logger.Information("Reset password: {@dto}", dto);
+            var account = await GetUserByUserName(dto.UserName);
 
             if (account == null) throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
 
-            if (account.OTP != model.Token || account.OTPExpired < CoreHelper.SystemTimeNow)
+            if (account.OTP != dto.OTP)
             {
-                throw new AppException(ErrorCode.TokenInvalid, ResponseMessageIdentity.TOKEN_INVALID_OR_EXPIRED, StatusCodes.Status401Unauthorized);
+                throw new AppException(ErrorCode.TokenInvalid, ResponseMessageIdentity.TOKEN_INVALID, StatusCodes.Status401Unauthorized);
             }
 
-            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
             account.OTP = null;
-            account.OTPExpired = null;
             account.AccessFailedCount = 0;
+            account.LastUpdatedTime = CoreHelper.SystemTimeNow;
+            account.LastUpdatedBy = account.Id;
 
-            await _userRepository.UpdateAsync(account);
+            await _userRepository.UpdateAsync(account, cancellationToken);
         }
 
-        public async Task ChangePassword(ChangePasswordDto dto)
+        public async Task ChangePassword(ChangePasswordDto dto, CancellationToken cancellationToken)
         {
+            _logger.Information("Change password: {@dto}", dto);
             var account = await GetUserByUserName(dto.UserName);
 
             if (account == null || !account.IsActive) throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
@@ -277,26 +304,30 @@ namespace Service.Services
             }
 
             account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-            await _userRepository.UpdateAsync(account);
+            account.LastUpdatedTime = CoreHelper.SystemTimeNow;
+            account.LastUpdatedBy = account.Id;
+
+            await _userRepository.UpdateAsync(account, cancellationToken);
         }
 
-        public async Task ReSendEmail(ResendEmailDto model)
+        public async Task ReSendEmail(ResendEmailDto model, CancellationToken cancellationToken = default)
         {
+            _logger.Information("Resend email: {@model}", model);
             var account = await GetUserByUserName(model.UserName);
             if (account == null) throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status400BadRequest);
             if (account.OTP == null) throw new AppException(ErrorCode.Validated, ResponseMessageIdentity.EMAIL_VALIDATED, StatusCodes.Status400BadRequest);
 
-            /*account.OTP = StringHelper.Generate(6, false, false, true, false);
-            await _userRepository.UpdateAsync(account);
+            account.OTP = GenerateOTP();
+            await _userRepository.UpdateAsync(account, cancellationToken);
 
-            var mailRequest = new SendMailModel
+            var mailRequest = new SendMailModel()
             {
                 Name = account.NormalizedUserName,
                 Email = account.Email,
-                Token = account.VerificationToken,
+                Token = account.OTP,
                 Type = MailTypeEnum.Verify
             };
-            _emailService.SendMail(mailRequest);*/
+            _emailService.SendMail(mailRequest);
         }
 
         private async Task<string> GenerateJwtToken(UserEntity loggedUser, IList<string> roles, int hour)
@@ -385,62 +416,46 @@ namespace Service.Services
             return user;
         }
 
-        private async Task<UserEntity?> GetUserByEmail(string email, CancellationToken cancellationToken = default)
+        private string GenerateOTP()
         {
-            var user = await _userRepository.GetSingleAsync(_ => _.Email == email, x => x.RefreshTokens);
-
-            if (user != null && user.DeletedTime != null)
-            {
-                user = null;
-            }
-
-            return user;
+            var otp = StringHelper.Generate(6, false, false, true, false);
+            return otp;
         }
 
-        public async Task StaffRegistor(RegisterDto dto)
+        // google login
+        /*public async Task<LoginResponseDto> GoogleLogin(GoogleLoginDto request)
         {
-            _logger.Information("Register new user: {@dto}", dto);
-            // get user by name
-            var validateUser = await _userManager.FindByNameAsync(dto.UserName);
-            if (validateUser != null)
+            _logger.Information("Google login: {@request}", request);
+            var account = await _userManager.FindByEmailAsync(request.Email);
+            if (account == null)
             {
-                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_USER, StatusCodes.Status400BadRequest);
+                var user = new UserEntity
+                {
+                    UserName = request.Email,
+                    Email = request.Email,
+                    FullName = request.FullName,
+                    Avatar = request.Avatar,
+                    Verified = CoreHelper.SystemTimeNow,
+                    IsActive = true
+                };
+                await _userManager.CreateAsync(user);
+                await _userManager.AddToRoleAsync(user, UserRole.Customer.ToString());
+                account = user;
             }
 
-            var existingUserWithEmail = await _userManager.FindByEmailAsync(dto.Email);
-            if (existingUserWithEmail != null)
-            {
-                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
-            }
+            var roles = await _userManager.GetRolesAsync(account);
+            var token = await GenerateJwtToken(account, roles, 24);
+            var refreshToken = GenerateRefreshToken(account.Id, 48);
+            await RemoveOldRefreshTokens(account.RefreshTokens);
+            await _refreshTokenRepository.AddAsync(refreshToken);
+            await _unitOfWork.SaveChangeAsync();
 
-            var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == dto.PhoneNumber);
-            if (existingUserWithPhone != null)
-            {
-                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_PHONE, StatusCodes.Status400BadRequest);
-            }
-
-            if (!string.IsNullOrEmpty(dto.PhoneNumber) && !Regex.IsMatch(dto.PhoneNumber, @"^\d{10}$"))
-            {
-                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PHONENUMBER_INVALID, StatusCodes.Status400BadRequest);
-            }
-
-            if (dto.Password != dto.ConfirmPassword)
-            {
-                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
-            }
-
-            try
-            {
-                var account = _mapper.Map(dto);
-                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-                account.SecurityStamp = Guid.NewGuid().ToString();
-                await _userRepository.CreateAsync(account);
-                await _userManager.AddToRoleAsync(account, "Staff");
-            }
-            catch (Exception e)
-            {
-                throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
-            }
-        }
+            var response = _mapper.UserToLoginResponseDto(account);
+            response.Token = token;
+            response.RefreshToken = refreshToken.Token;
+            response.RefreshTokenExpiredTime = refreshToken.Expires;
+            response.Role = roles;
+            return response;
+        }*/
     }
 }

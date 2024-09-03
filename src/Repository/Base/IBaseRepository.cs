@@ -11,7 +11,7 @@ public interface IBaseRepository<T> where T : class, new()
     Task<T?> GetByIdAsync(int id);
     Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties);
     T Add(T? entity);
-    Task<T> AddAsync(T entity);
+    Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
     void AddRange(IEnumerable<T?> entities);
     Task AddRangeAsync(IEnumerable<T?> entities);
     void Update(T entity);

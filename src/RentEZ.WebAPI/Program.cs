@@ -14,6 +14,8 @@ using Utility.Config;
 using Service.Interfaces;
 using RentEZ.WebAPI.Middlewares;
 using Repository.Infrastructure;
+using AngleSharp;
+using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,12 +31,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy(myAllowSpecificOrigins,
     policy =>
     {
-            policy
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowAnyOrigin();
-            //.AllowCredentials();
-        });
+        policy
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin();
+        //.AllowCredentials();
+    });
 });
 
 // Add serilog and get configuration from appsettings.json
@@ -55,15 +57,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
        options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"),
            sqlServerOptionsAction =>
            {
-            sqlServerOptionsAction.MigrationsAssembly(
-                               typeof(AppDbContext).GetTypeInfo().Assembly.GetName().Name);
-            sqlServerOptionsAction.MigrationsHistoryTable("Migration");
-        }));
+               sqlServerOptionsAction.MigrationsAssembly(
+                                  typeof(AppDbContext).GetTypeInfo().Assembly.GetName().Name);
+               sqlServerOptionsAction.MigrationsHistoryTable("Migration");
+           }));
 
 // Add system setting from appsettings.json
 var systemSettingModel = new SystemSettingModel();
 builder.Configuration.GetSection("SystemSetting").Bind(systemSettingModel);
 SystemSettingModel.Instance = systemSettingModel;
+
+var mailSettingModel = new MailSettingModel();
+builder.Configuration.GetSection("MailSetting").Bind(mailSettingModel);
+MailSettingModel.Instance = mailSettingModel;
 
 var vnPaySetting = new VnPaySetting();
 builder.Configuration.GetSection("VnPay").Bind(vnPaySetting);
@@ -77,6 +83,17 @@ VietQRSetting.Instance = vietQrSetting;
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+// memory cache 
+builder.Services.AddMemoryCache();
+
+// rate limiter
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
 
 builder.Services.AddSwaggerGen(o =>
 {
@@ -127,12 +144,19 @@ builder.Services.AddAuthentication(options =>
         options.SaveToken = true;
         options.UseSecurityTokenValidators = true;
         options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
+    })
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
     });
+
 
 // Add Authorization
 builder.Services.AddAuthorization(cfg =>
 {
     cfg.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+    cfg.AddPolicy("RequireShopOwnerRole", policy => policy.RequireRole("ShopOwner"));
     cfg.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
 });
 
@@ -145,6 +169,7 @@ builder.Services.AddEndpointsApiExplorer();
 // Add DI
 builder.Services.AddScoped<MapperlyMapper>();
 // Repository
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -152,10 +177,12 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Service
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 //-----------------------------------------------------------------------------------------------
 var app = builder.Build();
 app.UseMiddleware<ErrorHandlerMiddleware>();
+app.UseIpRateLimiting();
 
 app.UseCors(myAllowSpecificOrigins);
 
