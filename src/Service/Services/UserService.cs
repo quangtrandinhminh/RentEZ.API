@@ -19,10 +19,8 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
 {
     private readonly IUserRepository _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
     private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
-    private readonly RoleManager<RoleEntity> _roleManager = serviceProvider.GetRequiredService<RoleManager<RoleEntity>>();
-    private readonly UserManager<UserEntity> _userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
     private readonly ILogger _logger = Log.Logger;
-    private readonly SignInManager<UserEntity> _signInManager = serviceProvider.GetRequiredService<SignInManager<UserEntity>>();
+
 
     public async Task<PaginatedList<UserResponseDto>> GetAllUsersAsync(UserRole? role, int pageNumber, int pageSize)
     {

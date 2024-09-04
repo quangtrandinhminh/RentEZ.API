@@ -1,11 +1,15 @@
 using BusinessObject.DTO;
 using BusinessObject.DTO.RefreshToken;
 using BusinessObject.DTO.User;
+using BusinessObject.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Extensions;
 using Service.Interfaces;
+using System.Security.Claims;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Helpers;
@@ -132,6 +136,12 @@ namespace RentEZ.WebAPI.Controllers
         {
             await _authService.ReSendEmail(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.RESEND_EMAIL_SUCCESS));
+        }
+
+        [HttpPost("authenticate/google")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginModel request)
+        {
+            return Ok(await _authService.GoogleAuthenticate(request));
         }
     }
 }

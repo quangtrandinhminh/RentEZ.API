@@ -91,6 +91,34 @@
 					"response": []
 				},
 				{
+					"name": "Login Google",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"IdToken\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6ImIyZjgwYzYzNDYwMGVkMTMwNzIxMDFhOGI0MjIwNDQzNDMzZGIyODIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI5OTIwMjUyNTMwMTEtMnN0Y2c1bW9qNGgwNm5ibGIzOWtqcGR2bmYwNGw3Ym0uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI5OTIwMjUyNTMwMTEtMnN0Y2c1bW9qNGgwNm5ibGIzOWtqcGR2bmYwNGw3Ym0uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTAzOTQxNjMxMzY1Njg4NTcxMTEiLCJlbWFpbCI6InRyYW5kaW5obWluaHF1YW5nc3hwQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoicG5ydTREVGtiemlFWTJZU1paWF9nQSIsIm5hbWUiOiJRdWFuZyBUcsOizIBuIMSQacyAbmggTWluaCIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJRmMxT1J0VUdUb0paS0syVUlIcUVuMWppWTZacHF0VklybXI2THJOalUyUEFBeEE9czk2LWMiLCJnaXZlbl9uYW1lIjoiUXVhbmciLCJmYW1pbHlfbmFtZSI6IlRyw6LMgG4gxJBpzIBuaCBNaW5oIiwiaWF0IjoxNzI1NDU5ODIzLCJleHAiOjE3MjU0NjM0MjN9.gbMD6xYIPh89-Nw1EyH3eBkDzGGGDTfyFtI0e5yLT3h3AlAwVHu_R73BK1y8Nc6ABTkLAWHrgXYlAqWFS4b-f_9zIe_F0uP7Ti0KGJparXPdFaGni-UlmQjw4NjdknSlgHdKHGz-kLDN24WE8KgSoLMAqB26tjZxW3SXIQyx9NlvDRLtedsPRoww88_XQ_VXhDxyyBTAN5hgzXsDGnJMiDg-LKuv6XXDfrkaf2kLWDZ8QyKhE2PxcPXX65LN4dfNjtBVltPhL17VnVSQYFdRv_y8X1t_mjIr8mAFLsRFFvfrLmP6ctzjDKj9_fXl40jUmr2SGuMzW8gcoOnQqlgNmw\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/authenticate/google",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"authenticate",
+								"google"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "SendOTP",
 					"request": {
 						"method": "POST",
@@ -124,7 +152,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Token\": \"3NC40720i9hqDn6zm+HteKQ38GYRodGYwX0Wfu6IO8kuegZK7BcRiR6WCpcBnYxPlMX3xtlAQw+1BfnURwhPEA==\"\r\n}",
+							"raw": "{\r\n    \"Token\": \"qJnyDy/74qtpMkmOaMGN4SrRfnzcDl+4Qiu2ZdCJNxMC3IFgkunPlbkHwc1ZVG3y++4X0WCLOoKxVuuz8uqUcA==\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

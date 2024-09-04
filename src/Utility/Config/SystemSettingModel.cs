@@ -65,4 +65,11 @@ namespace Utility.Config
         public string ClientID { get; set; }
         public string APIKey { get; set; }
     }
+
+    public class GoogleSetting
+    {
+        public static GoogleSetting Instance { get; set; }
+        public string ClientID { get; set; }
+        public string ClientSecret { get; set; }
+    }
 }

@@ -79,10 +79,15 @@ var vietQrSetting = new VietQRSetting();
 builder.Configuration.GetSection("VietQR").Bind(vietQrSetting);
 VietQRSetting.Instance = vietQrSetting;
 
-// Add Identity
-builder.Services.AddIdentity<UserEntity, RoleEntity>()
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
+var googleSetting = new GoogleSetting();
+builder.Configuration.GetSection("Authentication:Google").Bind(googleSetting);
+GoogleSetting.Instance = googleSetting;
+
+// Add Identity Core
+builder.Services.AddIdentityCore<UserEntity>()
+    .AddRoles<RoleEntity>()
+    .AddUserStore<UserRepository>()
+    .AddEntityFrameworkStores<AppDbContext>();
 
 // memory cache 
 builder.Services.AddMemoryCache();
@@ -126,6 +131,8 @@ builder.Services.AddSwaggerGen(o =>
 // Add Authorization
 //builder.Services.AddSingleton<IAuthorizationPolicyProvider, ApiPolicyAuthorizationProvider>();
 //builder.Services.AddSingleton<IAuthorizationHandler, ApiPolicyAuthorizationHandler>();
+
+// Add JWT
 builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 {
     options.RequireHttpsMetadata = false;
@@ -133,6 +140,8 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
     options.UseSecurityTokenValidators = true;
     options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
 });
+
+// Add Authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -143,12 +152,15 @@ builder.Services.AddAuthentication(options =>
         options.RequireHttpsMetadata = false;
         options.SaveToken = true;
         options.UseSecurityTokenValidators = true;
-        options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
+        options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();    
     })
     .AddGoogle(options =>
     {
-        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        options.ClientId = googleSetting.ClientID;
+        options.ClientSecret = googleSetting.ClientSecret;
+        options.Scope.Add("email");
+        options.Scope.Add("profile");
+        options.SaveTokens = true;
     });
 
 
@@ -169,6 +181,7 @@ builder.Services.AddEndpointsApiExplorer();
 // Add DI
 builder.Services.AddScoped<MapperlyMapper>();
 // Repository
+builder.Services.AddScoped<AppDbContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
