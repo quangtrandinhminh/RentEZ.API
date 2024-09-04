@@ -30,7 +30,7 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
             .AddJsonFile("appsettings.json", true, true)
             .Build();
         //var strConn = config["ConnectionStrings:DefaultConnection"];
-        var strConn = config["PostgresSettings:PostgresConnection"];
+        var strConn = config["ConnectionStrings:PostgresConnection"];
         return strConn;
     }
 

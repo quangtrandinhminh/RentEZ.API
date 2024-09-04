@@ -46,6 +46,7 @@ namespace Utility.Constants
         public const string TOKEN_INVALID = "token khong xac thuc.";
         public const string TOKEN_EXPIRED = "token khong xac thuc hoac da het han.";
         public const string TOKEN_INVALID_OR_EXPIRED = "token khong xac thuc hoac da het han.";
+        public const string GOOGLE_TOKEN_INVALID = "Invalid Google token.";
         public const string EMAIL_VALIDATED = "Email da duoc xac thuc.";
         public const string PHONE_VALIDATED = "Phone number is validated.";
         public const string ROLE_INVALID = "Roles khong xac thuc.";

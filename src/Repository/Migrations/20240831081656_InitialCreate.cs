@@ -226,6 +226,7 @@ namespace Repository.Migrations
                 values: new object[,]
                 {
                     { 1, 1, "UserRoleEntity" },
+                    { 2, 2, "UserRoleEntity" },
                     { 3, 3, "UserRoleEntity" }
                 });
 

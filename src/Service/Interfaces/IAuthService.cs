@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BusinessObject.DTO.User;
 using BusinessObject.Entities.Identity;
+using BusinessObject.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Service.Interfaces
@@ -20,5 +21,6 @@ namespace Service.Interfaces
         Task ResetPassword(ResetPasswordDto dto, CancellationToken cancellationToken = default);
         Task ChangePassword(ChangePasswordDto dto, CancellationToken cancellationToken = default);
         Task ReSendEmail(ResendEmailDto model, CancellationToken cancellationToken = default);
+        Task<LoginResponseDto> GoogleAuthenticate(GoogleLoginModel model);
     }
 }

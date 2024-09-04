@@ -5,17 +5,22 @@ using BusinessObject.DTO.User;
 using BusinessObject.Entities.Identity;
 using BusinessObject.Mapper;
 using BusinessObject.Models;
+using Google.Apis.Auth;
+using Google.Apis.Auth.OAuth2;
 using Humanizer;
 using Invedia.Core.StringUtils;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Repository.Infrastructure;
 using Repository.Interfaces;
 using Serilog;
 using Service.Interfaces;
 using Service.Utils;
+using Utility.Config;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
@@ -30,7 +35,6 @@ namespace Service.Services
         private readonly RoleManager<RoleEntity> _roleManager = serviceProvider.GetRequiredService<RoleManager<RoleEntity>>();
         private readonly UserManager<UserEntity> _userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
         private readonly ILogger _logger = Log.Logger;
-        private readonly SignInManager<UserEntity> _signInManager = serviceProvider.GetRequiredService<SignInManager<UserEntity>>();
         private readonly IRefreshTokenRepository _refreshTokenRepository = serviceProvider.GetRequiredService<IRefreshTokenRepository>();
         private readonly IEmailService _emailService = serviceProvider.GetRequiredService<IEmailService>();
         private readonly IUnitOfWork _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
@@ -176,8 +180,10 @@ namespace Service.Services
                 var roles = await _userManager.GetRolesAsync(account);
                 var token = await GenerateJwtToken(account, roles, 24);
                 var refreshToken = GenerateRefreshToken(account.Id, 48);
-                await RemoveOldRefreshTokens(account.RefreshTokens);
+                RemoveOldRefreshTokens(account.RefreshTokens);
                 await _refreshTokenRepository.AddAsync(refreshToken);
+                var count = await _unitOfWork.SaveChangeAsync();
+
                 var response = _mapper.UserToLoginResponseDto(account);
                 response.Token = token;
                 response.RefreshToken = refreshToken.Token;
@@ -191,19 +197,61 @@ namespace Service.Services
             }
         }
 
+        public async Task<LoginResponseDto> GoogleAuthenticate(GoogleLoginModel model)
+        {
+            _logger.Information("Google authenticate: {@model}", model);
+            var payload = await ValidateGoogleToken(model.IdToken);
+            if (payload == null)
+            {
+                throw new AppException(ErrorCode.TokenInvalid, ResponseMessageIdentity.GOOGLE_TOKEN_INVALID, StatusCodes.Status401Unauthorized);
+            }
+
+            var account = await GetUserByEmail(payload.Email);
+            if (account == null)
+            {
+                account = new UserEntity
+                {
+                    UserName = payload.Email,
+                    Email = payload.Email,
+                    FullName = payload.Name,
+                    Avatar = payload.Picture,
+                    EmailConfirmed = true,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    Verified = CoreHelper.SystemTimeNow
+                };
+                await _userRepository.CreateAsync(account);
+                await _userRepository.SaveChangeAsync();
+                await _userManager.AddToRoleAsync(account, UserRole.Customer.ToString());
+            }
+
+            var roles = await _userManager.GetRolesAsync(account);
+            var token = await GenerateJwtToken(account, roles, 24);
+            var refreshToken = GenerateRefreshToken(account.Id, 48);
+            RemoveOldRefreshTokens(account.RefreshTokens);
+            await _refreshTokenRepository.AddAsync(refreshToken);
+            await _unitOfWork.SaveChangeAsync();
+
+            var response = _mapper.UserToLoginResponseDto(account);
+            response.Token = token;
+            response.RefreshToken = refreshToken.Token;
+            response.RefreshTokenExpiredTime = refreshToken.Expires;
+            response.Role = roles;
+            return response;
+        }
+
         public async Task<LoginResponseDto> RefreshToken(string token)
         {
             _logger.Information("Refresh token: {@token}", token);
             var (refreshToken, account) = await GetRefreshToken(token);
             refreshToken.Expires = CoreHelper.SystemTimeNow;
-            await _refreshTokenRepository.UpdateAsync(refreshToken);
+            _refreshTokenRepository.Update(refreshToken);
             var newRefreshToken = GenerateRefreshToken(account.Id, 48);
 
             newRefreshToken.UserId = account.Id;
             await _refreshTokenRepository.AddAsync(newRefreshToken);
-
-            await RemoveOldRefreshTokens(account.RefreshTokens);
-            await _unitOfWork.SaveChangeAsync();
+            
+            RemoveOldRefreshTokens(account.RefreshTokens);
+            var count = await _unitOfWork.SaveChangeAsync();
 
             try
             {
@@ -375,13 +423,17 @@ namespace Service.Services
             return refreshToken;
         }
 
-        private async Task RemoveOldRefreshTokens(ICollection<RefreshToken> refreshTokens)
+        /// <summary>
+        /// Remove old refresh token from database which is inactive and expired more than 2 days
+        /// </summary>
+        /// <param name="refreshTokens"></param>
+        private void RemoveOldRefreshTokens(ICollection<RefreshToken> refreshTokens)
         {
             var removeList = refreshTokens.Where(x => !x.IsActive
                                                       && x.CreatedTime.AddDays(2) <= CoreHelper.SystemTimeNow).ToList();
             if (removeList.Any())
             {
-                await _refreshTokenRepository.RemoveRangeAsync(removeList);
+                _refreshTokenRepository.DeleteRange(removeList);
             }
         }
 
@@ -416,46 +468,42 @@ namespace Service.Services
             return user;
         }
 
+        private async Task<UserEntity?> GetUserByEmail(string email, CancellationToken cancellationToken = default)
+        {
+            var user = await _userRepository.GetSingleAsync(_ => _.Email == email, x => x.RefreshTokens);
+
+            if (user != null && user.DeletedTime != null)
+            {
+                user = null;
+            }
+
+            return user;
+        }
+
         private string GenerateOTP()
         {
             var otp = StringHelper.Generate(6, false, false, true, false);
             return otp;
         }
 
-        // google login
-        /*public async Task<LoginResponseDto> GoogleLogin(GoogleLoginDto request)
+        private async Task<GoogleJsonWebSignature.Payload?> ValidateGoogleToken(string idToken)
         {
-            _logger.Information("Google login: {@request}", request);
-            var account = await _userManager.FindByEmailAsync(request.Email);
-            if (account == null)
+            try
             {
-                var user = new UserEntity
+                var settings = new GoogleJsonWebSignature.ValidationSettings()
                 {
-                    UserName = request.Email,
-                    Email = request.Email,
-                    FullName = request.FullName,
-                    Avatar = request.Avatar,
-                    Verified = CoreHelper.SystemTimeNow,
-                    IsActive = true
+                    Audience = new List<string>() { GoogleSetting.Instance.ClientID }
                 };
-                await _userManager.CreateAsync(user);
-                await _userManager.AddToRoleAsync(user, UserRole.Customer.ToString());
-                account = user;
+
+                var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
+                return payload;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "An error occurred while validating Google token");
             }
 
-            var roles = await _userManager.GetRolesAsync(account);
-            var token = await GenerateJwtToken(account, roles, 24);
-            var refreshToken = GenerateRefreshToken(account.Id, 48);
-            await RemoveOldRefreshTokens(account.RefreshTokens);
-            await _refreshTokenRepository.AddAsync(refreshToken);
-            await _unitOfWork.SaveChangeAsync();
-
-            var response = _mapper.UserToLoginResponseDto(account);
-            response.Token = token;
-            response.RefreshToken = refreshToken.Token;
-            response.RefreshTokenExpiredTime = refreshToken.Expires;
-            response.Role = roles;
-            return response;
-        }*/
+            return null;
+        }
     }
 }

@@ -62,7 +62,7 @@ namespace Repository.Infrastructure
                     }
                 }
 
-                if (!(entry.Entity is Entity entity)) continue;
+                if (!(entry.Entity is BaseEntity entity)) continue;
 
                 //TODO
                 //int? loggedInUserId = null;//LoggedInUser.Current?.Id;

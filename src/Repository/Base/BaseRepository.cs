@@ -3,6 +3,8 @@ using BusinessObject.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using Repository.Extensions;
 using Repository.Infrastructure;
+using Utility.Helpers;
+
 namespace Repository.Base
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity, new()
@@ -30,6 +32,12 @@ namespace Repository.Base
             }
         }
 
+        public IQueryable<T> Set() => DbSet.AsNoTracking();
+
+        public virtual void RefreshEntity(T entity)
+        {
+            _context.Entry(entity).Reload();
+        }
 
         public IQueryable<T?> GetAll()
         {
@@ -125,29 +133,23 @@ namespace Repository.Base
 
         public T Add(T entity)
         {
-            
-            var addedEntity = DbSet.Add(entity);
-            _context.Entry(entity).State = EntityState.Detached;
-            return addedEntity.Entity;
+            entity = DbSet.Add(entity).Entity;
+            return entity;
         }
 
         public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await DbSet.AddAsync(entity);
-            _context.Entry(entity).State = EntityState.Detached;
             return entity;
         }
 
         public void AddRange(IEnumerable<T> entities)
         {
-             
             _context.AddRange(entities);
         }
 
         public async Task AddRangeAsync(IEnumerable<T?> entities)
         {
-             
-            
             await DbSet.AddRangeAsync(entities);
             foreach (var entity in entities)
             {
@@ -157,69 +159,46 @@ namespace Repository.Base
 
         public void Update(T entity)
         {
-             
-            var tracker = _context.Attach(entity);
-            tracker.State = EntityState.Modified;
-            _context.Entry(entity).State = EntityState.Detached;
+            TryAttach(entity);
+
+            entity.LastUpdatedTime = ObjHelper.ReplaceNullOrDefault(entity.LastUpdatedTime, DateTimeOffset.UtcNow);
+            _context.Entry(entity).State = EntityState.Modified;
         }
 
-        public async Task UpdateAsync(T entity)
+        public void Delete(T entity)
         {
-             
-            var tracker = _context.Attach(entity);
-            tracker.State = EntityState.Modified;
-            _context.Entry(entity).State = EntityState.Detached;
-        }
-
-        public async Task UpdateRangeAsync(IEnumerable<T?> entities)
-        {
-             
-            
-            DbSet.UpdateRange(entities);
-            foreach (var entity in entities)
+            try
             {
-                _context.Entry(entity).State = EntityState.Detached;
+                TryAttach(entity);
+                DbSet.Remove(entity);
+            }
+            catch (Exception)
+            {
+                RefreshEntity(entity);
+                throw;
             }
         }
 
-        public void Delete(T? entity)
+        public void DeleteRange(ICollection<T> entities)
         {
-             
-            
-            DbSet.Remove(entity);
-        }
+            try
+            {
+                TryAttachRange(entities);
+                DbSet.RemoveRange(entities);
+            }
+            catch
+            {
 
-        public async Task DeleteAsync(T? entity)
-        {
-             
-            
-            DbSet.Remove(entity);
-        }
-
-        public void RemoveRange(IEnumerable<T?> entities)
-        {
-             
-            
-            DbSet.RemoveRange(entities);
-        }
-
-        public async Task RemoveRangeAsync(IEnumerable<T?> entities)
-        {
-             
-            
-            DbSet.RemoveRange(entities);
+            }
         }
 
         public IQueryable<T?> FindByCondition(Expression<Func<T?, bool>> expression)
         {
-             
-            
             return DbSet.Where(expression).AsQueryable().AsNoTracking();
         }
 
         public async Task<IList<T?>> FindByConditionAsync(Expression<Func<T?, bool>> expression)
         {
-            
             return await DbSet.Where(expression).AsQueryable().AsNoTracking().ToListAsync();
         }
 
@@ -229,8 +208,6 @@ namespace Repository.Base
 
         public IQueryable<T> Get(Expression<Func<T, bool>>? predicate = null, params Expression<Func<T, object>>[] includeProperties)
         {
-             
-            
             IQueryable<T> reault = DbSet.AsNoTracking();
             if (predicate != null)
             {
@@ -270,8 +247,6 @@ namespace Repository.Base
         {
             try
             {
-                 
-                
                 foreach (var entity in entities)
                 {
                     if (_context.Entry(entity).State != EntityState.Detached)
