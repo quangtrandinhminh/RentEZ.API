@@ -143,5 +143,14 @@ namespace RentEZ.WebAPI.Controllers
         {
             return Ok(await _authService.GoogleAuthenticate(request));
         }
+
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[Route("shopkeeper-register")]
+        //public async Task<IActionResult> RegisterAsAShopkeeper([FromBody] RegisterDto request)
+        //{
+        //    await _authService.RegisterAsAShopkeeper(request);
+        //    return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
+        //}
     }
 }

@@ -73,3 +73,4 @@ public class RefreshToken : BaseEntity
     public bool IsActive => !IsExpired;
 }
 
+    

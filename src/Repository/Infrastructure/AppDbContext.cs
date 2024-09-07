@@ -1,9 +1,12 @@
 ﻿using BusinessObject;
 using BusinessObject.Entities;
+using BusinessObject.Entities.Category;
 using BusinessObject.Entities.Identity;
+using BusinessObject.Entities.Product;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 using Utility.Enum;
 using Utility.Helpers;
 
@@ -49,6 +52,14 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 .WithOne(e => e.User)
                 .HasForeignKey(ur => ur.UserId)
                 .IsRequired();
+        });
+
+        modelBuilder.Entity<CategoryEntity>(c =>
+        {
+            c.HasMany(p => p.ProductEntities)
+             .WithOne(c => c.CategoryEntity)
+             .HasForeignKey(ci => ci.CategoryId)
+             .IsRequired();
         });
 
         // create index

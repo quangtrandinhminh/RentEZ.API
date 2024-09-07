@@ -9,11 +9,32 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialcreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "CategoryEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CategoryId = table.Column<int>(type: "integer", nullable: true),
+                    CategoryName = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedBy = table.Column<int>(type: "integer", nullable: true),
+                    LastUpdatedBy = table.Column<int>(type: "integer", nullable: true),
+                    DeletedBy = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryEntity", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
@@ -27,6 +48,29 @@ namespace Repository.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Shops",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ShopId = table.Column<int>(type: "integer", nullable: true),
+                    ShopEmail = table.Column<string>(type: "text", nullable: true),
+                    ShopName = table.Column<string>(type: "text", nullable: true),
+                    Address = table.Column<string>(type: "text", nullable: true),
+                    Owner_Avatar = table.Column<string>(type: "text", nullable: true),
+                    CreatedBy = table.Column<int>(type: "integer", nullable: true),
+                    LastUpdatedBy = table.Column<int>(type: "integer", nullable: true),
+                    DeletedBy = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shops", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -64,6 +108,43 @@ namespace Repository.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ProductId = table.Column<int>(type: "integer", nullable: true),
+                    CategoryId = table.Column<int>(type: "integer", nullable: false),
+                    Size = table.Column<double>(type: "double precision", nullable: true),
+                    Price = table.Column<double>(type: "double precision", nullable: true),
+                    RentPrice = table.Column<double>(type: "double precision", nullable: true),
+                    RentedCount = table.Column<int>(type: "integer", nullable: true),
+                    RatingCount = table.Column<int>(type: "integer", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Image = table.Column<string>(type: "text", nullable: true),
+                    Mass = table.Column<double>(type: "double precision", nullable: true),
+                    Long = table.Column<double>(type: "double precision", nullable: true),
+                    Width = table.Column<double>(type: "double precision", nullable: true),
+                    Hieght = table.Column<double>(type: "double precision", nullable: true),
+                    CreatedBy = table.Column<int>(type: "integer", nullable: true),
+                    LastUpdatedBy = table.Column<int>(type: "integer", nullable: true),
+                    DeletedBy = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductEntity_CategoryEntity_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "CategoryEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -215,9 +296,9 @@ namespace Repository.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Address", "Avatar", "BirthDate", "ConcurrencyStamp", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "Email", "EmailConfirmed", "FullName", "LastUpdatedBy", "LastUpdatedTime", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OTP", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "TwoFactorEnabled", "UserName", "Verified" },
                 values: new object[,]
                 {
-                    { 1, 0, null, null, null, "91fc2b2c-630f-4355-86b2-d85800a5d116", null, new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 369, DateTimeKind.Unspecified).AddTicks(5579), new TimeSpan(0, 0, 0, 0, 0)), null, null, "admin@example.com", false, "Admin User", null, new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 369, DateTimeKind.Unspecified).AddTicks(5579), new TimeSpan(0, 0, 0, 0, 0)), false, null, null, "ADMIN", null, "$2a$11$JHVzlZA8IxyjAOrhj7YqVObMbmziPJrKp75HpDugJIXZuUeQPQBDy", null, false, false, "admin", new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 485, DateTimeKind.Unspecified).AddTicks(1363), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 2, 0, null, null, null, "70654d8c-6328-47d5-b53a-37ad1b0ba797", null, new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 485, DateTimeKind.Unspecified).AddTicks(1827), new TimeSpan(0, 0, 0, 0, 0)), null, null, "shopowner@example.com", false, "Shop Owner", null, new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 485, DateTimeKind.Unspecified).AddTicks(1827), new TimeSpan(0, 0, 0, 0, 0)), false, null, null, "SHOPOWNER", null, "$2a$11$Kbk8JjimCo8NA2jfOYKbfO2MTRWnpDrsK6d4KNZOVPoBlns2gRoge", null, false, false, "shopowner", new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 605, DateTimeKind.Unspecified).AddTicks(5077), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 3, 0, null, null, null, "7935f452-4a32-4aec-8e00-dc06a8c2b716", null, new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 605, DateTimeKind.Unspecified).AddTicks(5513), new TimeSpan(0, 0, 0, 0, 0)), null, null, "customer1@example.com", false, "Customer 1", null, new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 605, DateTimeKind.Unspecified).AddTicks(5513), new TimeSpan(0, 0, 0, 0, 0)), false, null, null, "CUSTOMER1", null, "$2a$11$xslOq7Me23tD/O42VVaGyuZzmBWAgyi6U2Ej7Ghjrh/JNgt1BhqN6", null, false, false, "customer1", new DateTimeOffset(new DateTime(2024, 8, 31, 8, 16, 55, 723, DateTimeKind.Unspecified).AddTicks(7936), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { 1, 0, null, null, null, "6c8507f3-ea09-4810-a821-6f18297a3c2c", null, new DateTimeOffset(new DateTime(2024, 9, 7, 11, 58, 43, 574, DateTimeKind.Unspecified).AddTicks(4373), new TimeSpan(0, 0, 0, 0, 0)), null, null, "admin@example.com", false, "Admin User", null, new DateTimeOffset(new DateTime(2024, 9, 7, 11, 58, 43, 574, DateTimeKind.Unspecified).AddTicks(4373), new TimeSpan(0, 0, 0, 0, 0)), false, null, null, "ADMIN", null, "$2a$11$uzbRh9pxj0Hf8VyLlR5LMedCGB/AkjB3ZNC.wuxbFC7wCIuyhG73e", null, false, false, "admin", new DateTimeOffset(new DateTime(2024, 9, 7, 11, 58, 43, 697, DateTimeKind.Unspecified).AddTicks(1442), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2, 0, null, null, null, "051afa1c-9d6b-430b-a496-ee692e411947", null, new DateTimeOffset(new DateTime(2024, 9, 7, 11, 58, 43, 697, DateTimeKind.Unspecified).AddTicks(1765), new TimeSpan(0, 0, 0, 0, 0)), null, null, "shopowner@example.com", false, "Shop Owner", null, new DateTimeOffset(new DateTime(2024, 9, 7, 11, 58, 43, 697, DateTimeKind.Unspecified).AddTicks(1765), new TimeSpan(0, 0, 0, 0, 0)), false, null, null, "SHOPOWNER", null, "$2a$11$FIwyyZ/nOlw6WZCMwsdvV.bgzmYa2kHi5kweRqfMTISr8vEFEufuq", null, false, false, "shopowner", new DateTimeOffset(new DateTime(2024, 9, 7, 11, 58, 43, 820, DateTimeKind.Unspecified).AddTicks(5813), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 3, 0, null, null, null, "5d580eee-6337-4d1c-9216-348b4e1d37f8", null, new DateTimeOffset(new DateTime(2024, 9, 7, 11, 58, 43, 820, DateTimeKind.Unspecified).AddTicks(6160), new TimeSpan(0, 0, 0, 0, 0)), null, null, "customer1@example.com", false, "Customer 1", null, new DateTimeOffset(new DateTime(2024, 9, 7, 11, 58, 43, 820, DateTimeKind.Unspecified).AddTicks(6160), new TimeSpan(0, 0, 0, 0, 0)), false, null, null, "CUSTOMER1", null, "$2a$11$Urys1PM7tTOlE0Y35jgmYemhNLo3vT2ZGvjvDOaE66adoavwPMb8G", null, false, false, "customer1", new DateTimeOffset(new DateTime(2024, 9, 7, 11, 58, 43, 951, DateTimeKind.Unspecified).AddTicks(414), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
 
             migrationBuilder.InsertData(
@@ -226,12 +307,40 @@ namespace Repository.Migrations
                 values: new object[,]
                 {
                     { 1, 1, "UserRoleEntity" },
-                    { 2, 2, "UserRoleEntity" },
                     { 3, 3, "UserRoleEntity" }
                 });
 
             migrationBuilder.CreateIndex(
+                name: "Index_CategoryId",
+                table: "CategoryEntity",
+                column: "CategoryId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "Index_Id",
+                table: "CategoryEntity",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "Index_Id2",
+                table: "ProductEntity",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "Index_ProductId",
+                table: "ProductEntity",
+                column: "ProductId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductEntity_CategoryId",
+                table: "ProductEntity",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "Index_Id1",
                 table: "RefreshTokens",
                 column: "Id",
                 unique: true);
@@ -250,6 +359,12 @@ namespace Repository.Migrations
                 name: "RoleNameIndex",
                 table: "Roles",
                 column: "NormalizedName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "Index_Id3",
+                table: "Shops",
+                column: "Id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -304,10 +419,16 @@ namespace Repository.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ProductEntity");
+
+            migrationBuilder.DropTable(
                 name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "Shops");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
@@ -320,6 +441,9 @@ namespace Repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserTokens");
+
+            migrationBuilder.DropTable(
+                name: "CategoryEntity");
 
             migrationBuilder.DropTable(
                 name: "Roles");
