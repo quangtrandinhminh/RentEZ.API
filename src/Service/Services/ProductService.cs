@@ -1,4 +1,5 @@
-﻿using BusinessObject.Mapper;
+﻿using BusinessObject.Entities.Product;
+using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Repository.Interfaces;
@@ -14,22 +15,24 @@ using Utility.Exceptions;
 
 namespace Service.Services
 {
-    public class ProductService(IServiceProvider serviceProvider) : IProductService
+    public class ProductService : IProductService
     {
-        private readonly IProductRepository _productRepository = serviceProvider.GetRequiredService<IProductRepository>();
-        private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
-        private readonly ILogger _logger = Log.Logger;
+        private readonly IProductRepository _productRepository;
 
-        // Get all products
-        public async Task GetAllProducts()
+        public ProductService(IProductRepository productRepository)
         {
-            _logger.Information("Get all products");
-            var products = _productRepository.GetAll();
-            if (products is null)
-            {
-                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsUser.USER_NOT_FOUND, StatusCodes.Status404NotFound);
-            }
-            //var productResponse = _mapper.Map(products);
+            _productRepository = productRepository;
+        }
+        // get all products
+        public async Task<List<ProductEntity>> GetAllProducts()
+        {
+            return await _productRepository.GetAll();
+        }
+
+        // get product by Id
+        public async Task<ProductEntity> GetProductById(int id)
+        {
+            return await _productRepository.GetById(id);
         }
     }
 }
