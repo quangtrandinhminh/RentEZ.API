@@ -1,5 +1,6 @@
 using BusinessObject.DTO;
 using BusinessObject.DTO.RefreshToken;
+using BusinessObject.DTO.Shopkeeper;
 using BusinessObject.DTO.User;
 using BusinessObject.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -9,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Extensions;
 using Service.Interfaces;
+using Service.Services;
+using System.Data;
 using System.Security.Claims;
 using Utility.Constants;
 using Utility.Enum;
@@ -152,5 +155,22 @@ namespace RentEZ.WebAPI.Controllers
         //    await _authService.RegisterAsAShopkeeper(request);
         //    return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         //}
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-pending-shopkeeper-list")]
+        public async Task<IActionResult> LoadPendingShopkeeperListAsync()
+        {
+            var pendingShopkeepers = await _userService.GetPendingShopkeepersAsync();
+            return Ok(BaseResponseDto.OkResponseDto(pendingShopkeepers));
+        }
+
+        [HttpPost]
+        [Route("shopkeeper-register")]
+        public async Task<IActionResult> RegisterShopkeeper(ShopkeeperRegisterRequestDto request)
+        {
+            await _authService.RegisterAsAShopkeeper(request);
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
+        }
     }
 }

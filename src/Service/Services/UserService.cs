@@ -1,4 +1,5 @@
-﻿using BusinessObject.DTO.User;
+﻿using BusinessObject.DTO.Shopkeeper;
+using BusinessObject.DTO.User;
 using BusinessObject.Entities.Identity;
 using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
@@ -18,6 +19,7 @@ namespace Service.Services;
 public class UserService(IServiceProvider serviceProvider) : IUserService
 {
     private readonly IUserRepository _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
+    private readonly IShopRepository _shopRepository = serviceProvider.GetRequiredService<IShopRepository>();
     private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
     private readonly ILogger _logger = Log.Logger;
 
@@ -62,5 +64,30 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
     public Task DeleteUserAsync(int id)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<List<ShopkeeperRegisterResponseDto>> GetPendingShopkeepersAsync()
+    {
+        _logger.Information("Get all shopkeepers with pending shops");
+
+        try
+        {
+            var pendingUsers = await _userRepository.GetPendingShopkeeperListAsync();
+            if (pendingUsers == null || !pendingUsers.Any())
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, "No pending shopkeepers found", StatusCodes.Status404NotFound);
+            }
+            var pendingShopkeeperDtos = pendingUsers
+                .Select(user => _mapper.MapToShopkeeperRegisterResponseDto(user, user.ManagedShop))
+                .ToList();
+
+            _logger.Information("Successfully GET {count} pending shopkeepers", pendingShopkeeperDtos.Count);
+            return pendingShopkeeperDtos;
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to GET pending shopkeepers");
+            throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
+        }
     }
 }

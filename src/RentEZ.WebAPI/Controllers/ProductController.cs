@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BusinessObject.DTO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using Service.Services;
+using System.Web.Http;
 
 namespace RentEZ.WebAPI.Controllers
 {
@@ -14,6 +17,22 @@ namespace RentEZ.WebAPI.Controllers
             _productService = productService;
         }
 
+        [Microsoft.AspNetCore.Mvc.HttpGet]
+        [AllowAnonymous]
+        [Route("get-product-by-id")]
+        public async Task<IActionResult> GetProductById(int id)
+        {
+            var product = await _productService.GetProductById(id);
+            return Ok(BaseResponseDto.OkResponseDto(product));
+        }
 
+        [Microsoft.AspNetCore.Mvc.HttpGet]
+        [AllowAnonymous]
+        [Route("get-all-products")]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            var products = await _productService.GetAllProducts();
+            return Ok(BaseResponseDto.OkResponseDto(products));
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BusinessObject.DTO.User;
+﻿using BusinessObject.DTO.Shopkeeper;
+using BusinessObject.DTO.User;
 using Repository.Extensions;
 using Utility.Enum;
 
@@ -11,4 +12,5 @@ public interface IUserService
     Task UpdateUserAsync(UserUpdateRequestDto dto);
     Task<UserResponseDto> GetByIdAsync(int id);
     Task DeleteUserAsync(int id);
+    Task<List<ShopkeeperRegisterResponseDto>> GetPendingShopkeepersAsync();
 }

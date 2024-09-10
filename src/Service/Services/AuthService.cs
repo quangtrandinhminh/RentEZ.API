@@ -1,8 +1,10 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using BusinessObject.DTO.Shopkeeper;
 using BusinessObject.DTO.User;
 using BusinessObject.Entities.Identity;
+using BusinessObject.Entities.Shop;
 using BusinessObject.Mapper;
 using BusinessObject.Models;
 using Google.Apis.Auth;
@@ -17,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Repository.Infrastructure;
 using Repository.Interfaces;
+using Repository.Repositories;
 using Serilog;
 using Service.Interfaces;
 using Service.Utils;
@@ -31,6 +34,7 @@ namespace Service.Services
     public class AuthService(IServiceProvider serviceProvider) : IAuthService
     {
         private readonly IUserRepository _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
+        private readonly IShopRepository _shopRepository = serviceProvider.GetRequiredService<IShopRepository>();
         private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
         private readonly RoleManager<RoleEntity> _roleManager = serviceProvider.GetRequiredService<RoleManager<RoleEntity>>();
         private readonly UserManager<UserEntity> _userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
@@ -105,64 +109,62 @@ namespace Service.Services
             }
         }
 
-        //// Shopkeeper register
-        //public async Task RegisterAsAShopkeeper(RegisterDto dto, CancellationToken cancellationToken = default)
-        //{
-        //    _logger.Information("Register new shopkeeper: {@dto}", dto);
-        //    // get user by name
-        //    var validateUser = await _userManager.FindByNameAsync(dto.UserName);
-        //    if (validateUser != null)
-        //    {
-        //        throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_USER, StatusCodes.Status400BadRequest);
-        //    }
+        public async Task RegisterAsAShopkeeper(ShopkeeperRegisterRequestDto dto, CancellationToken cancellationToken = default)
+        {
+            _logger.Information("Registering as shopkeeper: {@dto}", dto);
 
-        //    var existingUserWithEmail = await _userManager.FindByEmailAsync(dto.Email);
-        //    if (existingUserWithEmail != null)
-        //    {
-        //        throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
-        //    }
+            // Validate user exists
+            var user = await _userManager.FindByNameAsync(dto.UserName);
+            if (user == null)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, "User not found", StatusCodes.Status404NotFound);
+            }
 
-        //    var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == dto.PhoneNumber);
-        //    if (existingUserWithPhone != null)
-        //    {
-        //        throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_PHONE, StatusCodes.Status400BadRequest);
-        //    }
+            // Validate shop exists and belongs to the user
+            var shop = await _shopRepository.GetShopByOwnerIdAsync(user.Id);
+            if (shop == null || shop.OwnerId != user.Id)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, "Shop not found or doesn't belong to the user", StatusCodes.Status404NotFound);
+            }
 
-        //    if (!string.IsNullOrEmpty(dto.PhoneNumber) && !Regex.IsMatch(dto.PhoneNumber, @"^\d{10}$"))
-        //    {
-        //        throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PHONENUMBER_INVALID, StatusCodes.Status400BadRequest);
-        //    }
+            try
+            {
+                // Update user information if provided
+                if (!string.IsNullOrEmpty(dto.UserName)) user.UserName = dto.UserName;
+                if (!string.IsNullOrEmpty(dto.Email)) user.Email = dto.Email;
+                if (!string.IsNullOrEmpty(dto.PhoneNumber)) user.PhoneNumber = dto.PhoneNumber;
+                if (!string.IsNullOrEmpty(dto.FullName)) user.FullName = dto.FullName;
+                if (!string.IsNullOrEmpty(dto.Address)) user.Address = dto.Address;
+                if (!string.IsNullOrEmpty(dto.Avatar)) user.Avatar = dto.Avatar;
+                if (dto.BirthDate.HasValue) user.BirthDate = DateOnly.FromDateTime(dto.BirthDate.Value.DateTime);
 
-        //    if (dto.Password != dto.ConfirmPassword)
-        //    {
-        //        throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
-        //    }
+                // Update shop information if provided
+                if (!string.IsNullOrEmpty(dto.ShopEmail)) shop.ShopEmail = dto.ShopEmail;
+                if (!string.IsNullOrEmpty(dto.ShopName)) shop.ShopName = dto.ShopName;
+                if (!string.IsNullOrEmpty(dto.Shop_Phone)) shop.Shop_Phone = dto.Shop_Phone;
+                if (!string.IsNullOrEmpty(dto.Shop_Address)) shop.Shop_Address = dto.Shop_Address;
+                if (!string.IsNullOrEmpty(dto.Shop_Avatar)) shop.Shop_Avatar = dto.Shop_Avatar;
+                // Set shop status to false (waiting for admin approval)
+                shop.Status = false;
+                // Update user role to ShopOwner
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                if (!currentRoles.Contains(UserRole.ShopOwner.ToString()))
+                {
+                    await _userManager.AddToRoleAsync(user, UserRole.ShopOwner.ToString());
+                }
 
-        //    try
-        //    {
-        //        var account = _mapper.Map(dto);
-        //        account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-        //        account.SecurityStamp = Guid.NewGuid().ToString();
-        //        account.OTP = GenerateOTP();
-        //        await _userRepository.CreateAsync(account, cancellationToken);
+                // Save changes
+                await _userManager.UpdateAsync(user);
+                await _shopRepository.SaveChangeAsync();
 
-        //        await _userRepository.SaveChangeAsync();
-        //        await _userManager.AddToRoleAsync(account, UserRole.ShopOwner.ToString());
-
-        //        var mailRequest = new SendMailModel()
-        //        {
-        //            Name = account.NormalizedUserName,
-        //            Email = account.Email,
-        //            Token = account.OTP,
-        //            Type = MailTypeEnum.Verify
-        //        };
-        //        _emailService.SendMail(mailRequest);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
-        //    }
-        //}
+                _logger.Information("Successfully registered as shopkeeper. Waiting for admin approval.");
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Failed to register as shopkeeper");
+                throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
+            }
+        }
 
         // register by admin
         public async Task RegisterByAdmin(RegisterDto dto, int role)

@@ -152,16 +152,16 @@ builder.Services.AddAuthentication(options =>
         options.RequireHttpsMetadata = false;
         options.SaveToken = true;
         options.UseSecurityTokenValidators = true;
-        options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();    
-    })
-    .AddGoogle(options =>
-    {
-        options.ClientId = googleSetting.ClientID;
-        options.ClientSecret = googleSetting.ClientSecret;
-        options.Scope.Add("email");
-        options.Scope.Add("profile");
-        options.SaveTokens = true;
+        options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
     });
+    //.AddGoogle(options =>
+    //{
+    //    options.ClientId = googleSetting.ClientID;
+    //    options.ClientSecret = googleSetting.ClientSecret;
+    //    options.Scope.Add("email");
+    //    options.Scope.Add("profile");
+    //    options.SaveTokens = true;
+    //});
 
 
 // Add Authorization
@@ -186,11 +186,15 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IShopRepository, ShopRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // Service
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IShopService, ShopService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 //-----------------------------------------------------------------------------------------------
 var app = builder.Build();

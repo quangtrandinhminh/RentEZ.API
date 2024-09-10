@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using BusinessObject.DTO.Shopkeeper;
 using BusinessObject.Entities.Identity;
+using BusinessObject.Entities.Shop;
+using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -82,6 +85,39 @@ namespace Repository.Repositories
             }
 
             return reault.Where(x => x.DeletedTime == null);
+        }
+
+        public async Task<UserEntity> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users.FindAsync(userId);
+        }
+
+        public async Task<List<UserEntity>> GetPendingShopkeeperListAsync()
+        {
+            return await  _context.Users
+                .Include(x => x.ManagedShop)
+                .Where(x => x.ManagedShop.Status == false && x.ManagedShop != null)
+                .Select(u => new UserEntity
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    Email = u.Email,
+                    PhoneNumber = u.PhoneNumber,
+                    FullName = u.FullName,
+                    Address = u.Address,
+                    Avatar = u.Avatar,
+                    BirthDate = u.BirthDate,
+                    ManagedShop = new ShopEntity
+                    {
+                        ShopEmail = u.ManagedShop.ShopEmail,
+                        ShopName = u.ManagedShop.ShopName,
+                        Shop_Phone = u.ManagedShop.Shop_Phone,
+                        Shop_Address = u.ManagedShop.Shop_Address,
+                        Shop_Avatar = u.ManagedShop.Shop_Avatar,
+                        Status = false,
+                    }
+                })
+                .ToListAsync();
         }
     }
 }

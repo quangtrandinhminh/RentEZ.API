@@ -1,4 +1,5 @@
-﻿using BusinessObject.Entities.Category;
+﻿using AngleSharp.Dom;
+using BusinessObject.Entities.Category;
 using BusinessObject.Entities.Product;
 using Microsoft.EntityFrameworkCore;
 using Repository.Base;
@@ -27,7 +28,7 @@ namespace Repository.Repositories
                 .AsNoTracking()
                 .Select(x => new ProductEntity
                 {
-                    ProductId = x.ProductId,
+                    ProductName = x.ProductName,
                     Size = x.Size,
                     Price = x.Price,
                     RentPrice = x.RentPrice,
@@ -47,7 +48,6 @@ namespace Repository.Repositories
                     DeletedTime = x.DeletedTime,
                     CategoryEntity = new CategoryEntity
                     {
-                        CategoryId = x.CategoryId,
                         CategoryName = x.CategoryEntity.CategoryName,
                         Description = x.CategoryEntity.Description
                     }
@@ -57,7 +57,7 @@ namespace Repository.Repositories
 
         public async Task<ProductEntity> GetById(int id)
         {
-            return await _context.Products.AsNoTracking().Include(x => x.CategoryEntity).FirstOrDefaultAsync(x => x.ProductId.Equals(id));
+            return await _context.Products.AsNoTracking().Include(x => x.CategoryEntity).FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
     }
 }

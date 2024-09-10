@@ -14,14 +14,13 @@ using Utility.Helpers;
 namespace BusinessObject.Entities.Product
 {
     [Table("ProductEntity")]
-    [Index(nameof(ProductId), IsUnique = true, Name = "Index_ProductId")]
     public class ProductEntity : BaseEntity
     {
         public ProductEntity()
         {
             CreatedTime = LastUpdatedTime = CoreHelper.SystemTimeNow;
         }
-        public int? ProductId { get; set; }
+        public string? ProductName { get; set; }
         public int? CategoryId { get; set; }
         public double? Size { get; set; }
         public double? Price { get; set; }

@@ -1,4 +1,5 @@
-﻿using BusinessObject.Entities.Product;
+﻿using BusinessObject.DTO.Product;
+using BusinessObject.Entities.Product;
 using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,21 +19,25 @@ namespace Service.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly MapperlyMapper _mapper;
 
-        public ProductService(IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository, MapperlyMapper mapper)
         {
             _productRepository = productRepository;
+            _mapper = mapper;
         }
         // get all products
-        public async Task<List<ProductEntity>> GetAllProducts()
+        public async Task<List<ProductResponseDto>> GetAllProducts()
         {
-            return await _productRepository.GetAll();
+            var products = await _productRepository.GetAll();
+            return _mapper.ProductsToProductsResponseDto(products).ToList();
         }
 
         // get product by Id
-        public async Task<ProductEntity> GetProductById(int id)
+        public async Task<ProductResponseDto> GetProductById(int id)
         {
-            return await _productRepository.GetById(id);
+            var product = await _productRepository.GetById(id);
+            return _mapper.ProductToProductResponseDto(product);
         }
     }
 }

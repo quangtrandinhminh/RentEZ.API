@@ -20,6 +20,8 @@ namespace BusinessObject.DTO.Shop
         [Required]
         public string? Address { get; set; }
         [Required]
-        public string? Owner_Avatar { get; set; }
+        public string? Phone { get; set; }
+        [Required]
+        public string? Shop_Avatar { get; set; }
     }
 }

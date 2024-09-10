@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Repository.Infrastructure;
@@ -11,9 +12,11 @@ using Repository.Infrastructure;
 namespace Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240910023256_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -271,55 +274,55 @@ namespace Repository.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d0ff9cff-cbef-48df-824b-91135b5f4828",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 248, DateTimeKind.Unspecified).AddTicks(3657), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "c2769bd3-ec71-431f-aaa6-9b534c86ebf4",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 2, 32, 55, 657, DateTimeKind.Unspecified).AddTicks(8383), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin User",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 248, DateTimeKind.Unspecified).AddTicks(3657), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 2, 32, 55, 657, DateTimeKind.Unspecified).AddTicks(8383), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$DxSfVI4sBoC36uafiDEFQeaRDJXYQ6zvKkBkfQJW2bsBOJN4J5Fje",
+                            PasswordHash = "$2a$11$XJT/5Z26mWtMYKuzj6D0pevHNWjmDVW17xnkg92eeWJLcYpjdiZd2",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "admin",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 372, DateTimeKind.Unspecified).AddTicks(7870), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 9, 10, 2, 32, 55, 780, DateTimeKind.Unspecified).AddTicks(7774), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4bd140db-298c-4ec7-95c2-e7e77e1beb1f",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 372, DateTimeKind.Unspecified).AddTicks(8193), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "df9b83b8-01b6-44a1-b226-6bfcc1c0a3a8",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 2, 32, 55, 780, DateTimeKind.Unspecified).AddTicks(8096), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "shopowner@example.com",
                             EmailConfirmed = false,
                             FullName = "Shop Owner",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 372, DateTimeKind.Unspecified).AddTicks(8193), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 2, 32, 55, 780, DateTimeKind.Unspecified).AddTicks(8096), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "SHOPOWNER",
-                            PasswordHash = "$2a$11$.dKkdbmA8Mg1WNk55Wee5uySA5MrG.H/rzwxAo57zsClrKjIyhMNG",
+                            PasswordHash = "$2a$11$73jLKQtF3tiOE40TvL3P1OxVndQmypRy8abK/Sx2c19dD1Fdo2YH6",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "shopowner",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 501, DateTimeKind.Unspecified).AddTicks(3040), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 9, 10, 2, 32, 55, 909, DateTimeKind.Unspecified).AddTicks(6534), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d54ba48e-ee49-4d01-a5f6-31c39507fe3e",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 501, DateTimeKind.Unspecified).AddTicks(3558), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "9de2eb7e-0fa8-48f5-90fa-55244d007db4",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 2, 32, 55, 909, DateTimeKind.Unspecified).AddTicks(6922), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "customer1@example.com",
                             EmailConfirmed = false,
                             FullName = "Customer 1",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 501, DateTimeKind.Unspecified).AddTicks(3558), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 2, 32, 55, 909, DateTimeKind.Unspecified).AddTicks(6922), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "CUSTOMER1",
-                            PasswordHash = "$2a$11$ROhq4jqVr1vlX2tFyFpYoeJq10Y7a3gmcnvsLepjv2z9SbqKRYFCW",
+                            PasswordHash = "$2a$11$vwd3Knn.ZCXThwr3HHDtcuKF.NJRC2Awu.0Fs6uN4/gL8Mbre/J4W",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "customer1",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 637, DateTimeKind.Unspecified).AddTicks(7661), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 9, 10, 2, 32, 56, 38, DateTimeKind.Unspecified).AddTicks(8658), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -372,6 +375,7 @@ namespace Repository.Migrations
                         .HasColumnType("double precision");
 
                     b.Property<string>("ProductName")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<int?>("RatingCount")
@@ -426,11 +430,11 @@ namespace Repository.Migrations
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("OwnerId")
-                        .IsRequired()
+                    b.Property<int>("OwnerId")
                         .HasColumnType("integer");
 
                     b.Property<string>("ShopEmail")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<string>("ShopName")
@@ -445,9 +449,6 @@ namespace Repository.Migrations
                     b.Property<string>("Shop_Phone")
                         .HasColumnType("text");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("boolean");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId")
@@ -457,7 +458,7 @@ namespace Repository.Migrations
                         .IsUnique()
                         .HasDatabaseName("Index_Id3");
 
-                    b.ToTable("Shops");
+                    b.ToTable("Shops", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

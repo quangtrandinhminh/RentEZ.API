@@ -9,6 +9,7 @@ using Utility.Constants;
 using System.Web.Http;
 using Microsoft.AspNetCore.RateLimiting;
 using BusinessObject.DTO.Shop;
+using BusinessObject.Entities.Shop;
 
 
 namespace RentEZ.WebAPI.Controllers
@@ -32,6 +33,15 @@ namespace RentEZ.WebAPI.Controllers
         {
             await _shopService.CreateShop(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpGet]
+        [AllowAnonymous]
+        [Route("get-all-shops")]
+        public async Task<IActionResult> GetAllShops()
+        {
+            var shops = await _shopService.GetAllShops();
+            return Ok(BaseResponseDto.OkResponseDto(shops));
         }
     }
 }

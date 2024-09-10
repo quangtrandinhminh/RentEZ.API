@@ -3,6 +3,7 @@ using BusinessObject.Entities;
 using BusinessObject.Entities.Category;
 using BusinessObject.Entities.Identity;
 using BusinessObject.Entities.Product;
+using BusinessObject.Entities.Shop;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -54,6 +55,13 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 .IsRequired();
         });
 
+        modelBuilder.Entity<UserEntity>()
+            .HasOne(u => u.ManagedShop) 
+            .WithOne(s => s.Owner)
+            .HasForeignKey<ShopEntity>(s => s.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired();
+
         modelBuilder.Entity<CategoryEntity>(c =>
         {
             c.HasMany(p => p.ProductEntities)
@@ -61,6 +69,10 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
              .HasForeignKey(ci => ci.CategoryId)
              .IsRequired();
         });
+
+        modelBuilder.Entity<ShopEntity>()
+            .Property(s => s.Id)
+            .ValueGeneratedOnAdd();
 
         // create index
         modelBuilder.Entity<UserEntity>()

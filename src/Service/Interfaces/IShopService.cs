@@ -1,4 +1,5 @@
 ﻿using BusinessObject.DTO.Shop;
+using BusinessObject.Entities.Shop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Service.Interfaces
 {
     public interface IShopService
     {
-        Task CreateShop(ShopCreateRequestDto shop);
+        Task CreateShop(ShopCreateRequestDto shopRequest);
+        Task<List<ShopResponseDto>> GetAllShops();
     }
 }

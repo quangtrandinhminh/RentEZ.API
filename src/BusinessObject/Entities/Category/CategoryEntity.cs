@@ -14,10 +14,8 @@ using System.Xml.Linq;
 namespace BusinessObject.Entities.Category
 {
     [Table("CategoryEntity")]
-    [Index(nameof(CategoryId), IsUnique = true, Name = "Index_CategoryId")]
     public class CategoryEntity : BaseEntity
     {
-        public int? CategoryId { get; set; }
         public string? CategoryName { get; set; }
         public string? Description { get; set;}
         public virtual ICollection<ProductEntity> ProductEntities { get; set; } = new List<ProductEntity>();

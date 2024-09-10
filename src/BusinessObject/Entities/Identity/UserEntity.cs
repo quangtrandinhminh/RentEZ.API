@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Claims;
 using BusinessObject.Entities.Base;
+using BusinessObject.Entities.Shop;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Utility.Enum;
@@ -24,6 +25,7 @@ public class UserEntity : IdentityUser<int>
     public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
 
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+    public virtual ShopEntity? ManagedShop { get; set; }
 
     // Base Property
     public int? CreatedBy { get; set; }

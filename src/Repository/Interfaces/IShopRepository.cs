@@ -1,4 +1,6 @@
-﻿using BusinessObject.Entities.Shop;
+﻿using BusinessObject.DTO.Shop;
+using BusinessObject.Entities.Identity;
+using BusinessObject.Entities.Shop;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,9 @@ namespace Repository.Interfaces
     public interface IShopRepository
     {
         Task<int> SaveChangeAsync();
-        Task<IdentityResult> CreateShop(ShopEntity shop, CancellationToken cancellationToken = default);
+        Task<ShopEntity> CreateAsync(ShopEntity shop);
+        Task<ShopEntity> GetShopByIdAsync(int shopId);
+        Task<List<ShopEntity>> GetListAsync();
+        Task<ShopEntity> GetShopByOwnerIdAsync(int ownerId);
     }
 }
