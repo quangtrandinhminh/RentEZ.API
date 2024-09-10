@@ -1,13 +1,8 @@
-﻿using BusinessObject;
-using BusinessObject.Entities;
-using BusinessObject.Entities.Category;
+﻿using BusinessObject.Entities;
 using BusinessObject.Entities.Identity;
-using BusinessObject.Entities.Product;
-using BusinessObject.Entities.Shop;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Diagnostics;
 using Utility.Enum;
 using Utility.Helpers;
 
@@ -58,19 +53,19 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
         modelBuilder.Entity<UserEntity>()
             .HasOne(u => u.ManagedShop) 
             .WithOne(s => s.Owner)
-            .HasForeignKey<ShopEntity>(s => s.OwnerId)
+            .HasForeignKey<Shop>(s => s.OwnerId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired();
 
-        modelBuilder.Entity<CategoryEntity>(c =>
+        modelBuilder.Entity<Category>(c =>
         {
             c.HasMany(p => p.ProductEntities)
-             .WithOne(c => c.CategoryEntity)
+             .WithOne(c => c.Category)
              .HasForeignKey(ci => ci.CategoryId)
              .IsRequired();
         });
 
-        modelBuilder.Entity<ShopEntity>()
+        modelBuilder.Entity<Shop>()
             .Property(s => s.Id)
             .ValueGeneratedOnAdd();
 

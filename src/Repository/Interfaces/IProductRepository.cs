@@ -1,15 +1,10 @@
-﻿using BusinessObject.Entities.Product;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessObject.Entities;
 
 namespace Repository.Interfaces
 {
     public interface IProductRepository
     {
-        Task<List<ProductEntity>> GetAll();
-        Task<ProductEntity> GetById(int id);
+        Task<List<Product>> GetAll();
+        Task<Product> GetById(int id);
     }
 }

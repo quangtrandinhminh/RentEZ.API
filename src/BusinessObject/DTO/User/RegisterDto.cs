@@ -38,5 +38,7 @@ namespace BusinessObject.DTO.User
         [DataType(DataType.Password)]
         [MaxLength(100)]
         public string ConfirmPassword { get; set; }
+
+        public string? Address { get; set; }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using BusinessObject.DTO.Shopkeeper;
 using BusinessObject.DTO.User;
-using BusinessObject.Entities.Identity;
 using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Extensions;

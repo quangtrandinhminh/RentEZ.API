@@ -1,18 +1,7 @@
 ﻿using BusinessObject.DTO.Product;
-using BusinessObject.Entities.Product;
 using BusinessObject.Mapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Repository.Interfaces;
-using Serilog;
 using Service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Utility.Constants;
-using Utility.Exceptions;
 
 namespace Service.Services
 {

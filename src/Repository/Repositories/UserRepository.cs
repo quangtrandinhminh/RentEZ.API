@@ -1,19 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
-using BusinessObject.DTO.Shopkeeper;
+using BusinessObject.Entities;
 using BusinessObject.Entities.Identity;
-using BusinessObject.Entities.Shop;
-using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Repository.Base;
 using Repository.Infrastructure;
 using Repository.Interfaces;
-using Utility.Enum;
 
 namespace Repository.Repositories
 {
@@ -96,7 +88,7 @@ namespace Repository.Repositories
         {
             return await  _context.Users
                 .Include(x => x.ManagedShop)
-                .Where(x => x.ManagedShop.Status == false && x.ManagedShop != null)
+                .Where(x => !x.ManagedShop.IsVerified && x.ManagedShop != null)
                 .Select(u => new UserEntity
                 {
                     Id = u.Id,
@@ -107,14 +99,13 @@ namespace Repository.Repositories
                     Address = u.Address,
                     Avatar = u.Avatar,
                     BirthDate = u.BirthDate,
-                    ManagedShop = new ShopEntity
+                    ManagedShop = new Shop
                     {
                         ShopEmail = u.ManagedShop.ShopEmail,
                         ShopName = u.ManagedShop.ShopName,
-                        Shop_Phone = u.ManagedShop.Shop_Phone,
-                        Shop_Address = u.ManagedShop.Shop_Address,
-                        Shop_Avatar = u.ManagedShop.Shop_Avatar,
-                        Status = false,
+                        ShopPhone = u.ManagedShop.ShopPhone,
+                        ShopAddress = u.ManagedShop.ShopAddress,
+                        ShopAvatar = u.ManagedShop.ShopAvatar,
                     }
                 })
                 .ToListAsync();

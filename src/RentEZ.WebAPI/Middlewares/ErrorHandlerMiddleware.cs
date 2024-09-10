@@ -1,8 +1,6 @@
 ﻿using BusinessObject.DTO;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
-using Serilog;
 using Utility.Constants;
 using Utility.Exceptions;
 using ILogger = Serilog.ILogger;
