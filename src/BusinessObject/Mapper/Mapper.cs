@@ -78,7 +78,7 @@ public partial class MapperlyMapper
             FullName = userResponse.FullName,
             Address = userResponse.Address,
             Avatar = userResponse.Avatar,
-            BirthDate = userResponse.BirthDate,
+            BirthDate = (DateTimeOffset)userResponse.BirthDate,
 
             ShopEmail = shopResponse.ShopEmail,
             ShopName = shopResponse.ShopName,

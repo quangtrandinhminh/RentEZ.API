@@ -12,16 +12,16 @@ namespace BusinessObject.DTO.Shop
     {
         [Required(ErrorMessage = ResponseMessageIdentity.EMAIL_REQUIRED)]
         [EmailAddress(ErrorMessage = "Invalid email format")]
-        public string? ShopEmail { get; set; }
+        public string ShopEmail { get; set; }
         [Required(ErrorMessage = ResponseMessageIdentity.NAME_REQUIRED)]
         [MaxLength(100)]
         [RegularExpression("^[^0-9]+$", ErrorMessage = "Name cannot contain number")]
-        public string? ShopName { get; set; }
+        public string ShopName { get; set; }
         [Required]
-        public string? Address { get; set; }
+        public string Address { get; set; }
         [Required]
-        public string? Phone { get; set; }
+        public string Phone { get; set; }
         [Required]
-        public string? Shop_Avatar { get; set; }
+        public string Shop_Avatar { get; set; }
     }
 }

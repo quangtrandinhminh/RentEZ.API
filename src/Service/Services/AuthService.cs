@@ -136,7 +136,7 @@ namespace Service.Services
                 if (!string.IsNullOrEmpty(dto.FullName)) user.FullName = dto.FullName;
                 if (!string.IsNullOrEmpty(dto.Address)) user.Address = dto.Address;
                 if (!string.IsNullOrEmpty(dto.Avatar)) user.Avatar = dto.Avatar;
-                if (dto.BirthDate.HasValue) user.BirthDate = DateOnly.FromDateTime(dto.BirthDate.Value.DateTime);
+                //if (dto.BirthDate.HasValue) user.BirthDate = DateOnly.FromDateTime(dto.BirthDate.Value.DateTime);
 
                 // Update shop information if provided
                 if (!string.IsNullOrEmpty(dto.ShopEmail)) shop.ShopEmail = dto.ShopEmail;
