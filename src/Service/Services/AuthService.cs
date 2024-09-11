@@ -4,22 +4,16 @@ using System.Text.RegularExpressions;
 using BusinessObject.DTO.Shopkeeper;
 using BusinessObject.DTO.User;
 using BusinessObject.Entities.Identity;
-using BusinessObject.Entities.Shop;
 using BusinessObject.Mapper;
 using BusinessObject.Models;
 using Google.Apis.Auth;
-using Google.Apis.Auth.OAuth2;
-using Humanizer;
 using Invedia.Core.StringUtils;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using Repository.Infrastructure;
 using Repository.Interfaces;
-using Repository.Repositories;
 using Serilog;
 using Service.Interfaces;
 using Service.Utils;
@@ -113,6 +107,12 @@ namespace Service.Services
         {
             _logger.Information("Registering as shopkeeper: {@dto}", dto);
 
+            // check if user >18 years old
+            if (dto.BirthDate.AddYears(18) > CoreHelper.SystemTimeNow.Date)
+            {
+                throw new AppException(ResponseCodeConstants.INVALID_INPUT, "User must be at least 18 years old", StatusCodes.Status400BadRequest);
+            }
+
             // Validate user exists
             var user = await _userManager.FindByNameAsync(dto.UserName);
             if (user == null)
@@ -121,7 +121,7 @@ namespace Service.Services
             }
 
             // Validate shop exists and belongs to the user
-            var shop = await _shopRepository.GetShopByOwnerIdAsync(user.Id);
+            var shop = await _shopRepository.GetSingleAsync(s => s.OwnerId == user.Id, false, s => s.Owner);
             if (shop == null || shop.OwnerId != user.Id)
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, "Shop not found or doesn't belong to the user", StatusCodes.Status404NotFound);
@@ -129,23 +129,6 @@ namespace Service.Services
 
             try
             {
-                // Update user information if provided
-                if (!string.IsNullOrEmpty(dto.UserName)) user.UserName = dto.UserName;
-                if (!string.IsNullOrEmpty(dto.Email)) user.Email = dto.Email;
-                if (!string.IsNullOrEmpty(dto.PhoneNumber)) user.PhoneNumber = dto.PhoneNumber;
-                if (!string.IsNullOrEmpty(dto.FullName)) user.FullName = dto.FullName;
-                if (!string.IsNullOrEmpty(dto.Address)) user.Address = dto.Address;
-                if (!string.IsNullOrEmpty(dto.Avatar)) user.Avatar = dto.Avatar;
-                //if (dto.BirthDate.HasValue) user.BirthDate = DateOnly.FromDateTime(dto.BirthDate.Value.DateTime);
-
-                // Update shop information if provided
-                if (!string.IsNullOrEmpty(dto.ShopEmail)) shop.ShopEmail = dto.ShopEmail;
-                if (!string.IsNullOrEmpty(dto.ShopName)) shop.ShopName = dto.ShopName;
-                if (!string.IsNullOrEmpty(dto.Shop_Phone)) shop.Shop_Phone = dto.Shop_Phone;
-                if (!string.IsNullOrEmpty(dto.Shop_Address)) shop.Shop_Address = dto.Shop_Address;
-                if (!string.IsNullOrEmpty(dto.Shop_Avatar)) shop.Shop_Avatar = dto.Shop_Avatar;
-                // Set shop status to false (waiting for admin approval)
-                shop.Status = false;
                 // Update user role to ShopOwner
                 var currentRoles = await _userManager.GetRolesAsync(user);
                 if (!currentRoles.Contains(UserRole.ShopOwner.ToString()))
@@ -155,7 +138,6 @@ namespace Service.Services
 
                 // Save changes
                 await _userManager.UpdateAsync(user);
-                await _shopRepository.SaveChangeAsync();
 
                 _logger.Information("Successfully registered as shopkeeper. Waiting for admin approval.");
             }

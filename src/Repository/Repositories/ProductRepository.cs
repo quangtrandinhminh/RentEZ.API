@@ -1,19 +1,12 @@
-﻿using AngleSharp.Dom;
-using BusinessObject.Entities.Category;
-using BusinessObject.Entities.Product;
+﻿using BusinessObject.Entities;
 using Microsoft.EntityFrameworkCore;
 using Repository.Base;
 using Repository.Infrastructure;
 using Repository.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repository.Repositories
 {
-    public class ProductRepository : BaseRepository<ProductEntity> ,IProductRepository
+    public class ProductRepository : BaseRepository<Product> ,IProductRepository
     {
         private readonly AppDbContext _context = new();
 
@@ -22,11 +15,11 @@ namespace Repository.Repositories
             _context = context;
         }
 
-        public async Task<List<ProductEntity>> GetAll()
+        public async Task<List<Product>> GetAll()
         {
             return await _context.Products
                 .AsNoTracking()
-                .Select(x => new ProductEntity
+                .Select(x => new Product
                 {
                     ProductName = x.ProductName,
                     Size = x.Size,
@@ -39,25 +32,25 @@ namespace Repository.Repositories
                     Mass = x.Mass,
                     Long = x.Long,
                     Width = x.Width,
-                    Hieght = x.Hieght,
+                    Height = x.Height,
                     CreatedBy = x.CreatedBy,
                     CreatedTime = x.CreatedTime,
                     LastUpdatedBy = x.LastUpdatedBy,
                     LastUpdatedTime = x.LastUpdatedTime,
                     DeletedBy = x.DeletedBy,
                     DeletedTime = x.DeletedTime,
-                    CategoryEntity = new CategoryEntity
+                    Category = new Category
                     {
-                        CategoryName = x.CategoryEntity.CategoryName,
-                        Description = x.CategoryEntity.Description
+                        CategoryName = x.Category.CategoryName,
+                        Description = x.Category.Description
                     }
                 })
                 .ToListAsync();
         }
 
-        public async Task<ProductEntity> GetById(int id)
+        public async Task<Product> GetById(int id)
         {
-            return await _context.Products.AsNoTracking().Include(x => x.CategoryEntity).FirstOrDefaultAsync(x => x.Id.Equals(id));
+            return await _context.Products.AsNoTracking().Include(x => x.Category).FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
     }
 }

@@ -1,8 +1,6 @@
 using BusinessObject.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using System.Linq.Expressions;
-using Repository.Base;
-using BusinessObject.DTO.Shopkeeper;
 
 namespace Repository.Interfaces
 {

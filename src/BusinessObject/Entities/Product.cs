@@ -1,5 +1,4 @@
 ﻿using BusinessObject.Entities.Base;
-using BusinessObject.Entities.Category;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,15 +10,10 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Utility.Helpers;
 
-namespace BusinessObject.Entities.Product
+namespace BusinessObject.Entities
 {
-    [Table("ProductEntity")]
-    public class ProductEntity : BaseEntity
+    public class Product : BaseEntity
     {
-        public ProductEntity()
-        {
-            CreatedTime = LastUpdatedTime = CoreHelper.SystemTimeNow;
-        }
         public string? ProductName { get; set; }
         public int? CategoryId { get; set; }
         public double? Size { get; set; }
@@ -32,15 +26,7 @@ namespace BusinessObject.Entities.Product
         public double? Mass { get; set; }
         public double? Long { get; set; }
         public double? Width { get; set; }
-        public double? Hieght { get; set; }
-        public virtual CategoryEntity CategoryEntity { get; set; }
-
-        // Base Property
-        public int? CreatedBy { get; set; }
-        public int? LastUpdatedBy { get; set; }
-        public int? DeletedBy { get; set; }
-        public DateTimeOffset CreatedTime { get; set; }
-        public DateTimeOffset LastUpdatedTime { get; set; }
-        public DateTimeOffset? DeletedTime { get; set; }
+        public double? Height { get; set; }
+        public virtual Category Category { get; set; }
     }
 }

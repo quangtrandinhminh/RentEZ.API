@@ -3,19 +3,12 @@ using BusinessObject.DTO.RefreshToken;
 using BusinessObject.DTO.Shopkeeper;
 using BusinessObject.DTO.User;
 using BusinessObject.Models;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.OpenApi.Extensions;
 using Service.Interfaces;
-using Service.Services;
-using System.Data;
-using System.Security.Claims;
 using Utility.Constants;
 using Utility.Enum;
-using Utility.Helpers;
 
 namespace RentEZ.WebAPI.Controllers
 {

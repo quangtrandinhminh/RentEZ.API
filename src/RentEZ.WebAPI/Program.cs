@@ -3,7 +3,6 @@ using System.Reflection;
 using Serilog;
 using BusinessObject.Entities.Identity;
 using BusinessObject.Mapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Repository.Interfaces;
@@ -14,7 +13,6 @@ using Utility.Config;
 using Service.Interfaces;
 using RentEZ.WebAPI.Middlewares;
 using Repository.Infrastructure;
-using AngleSharp;
 using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);

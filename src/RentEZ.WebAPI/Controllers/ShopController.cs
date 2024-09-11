@@ -1,15 +1,10 @@
-﻿using BusinessObject.DTO.User;
-using BusinessObject.DTO;
-using Microsoft.AspNetCore.Http;
+﻿using BusinessObject.DTO;
 using Microsoft.AspNetCore.Mvc;
-using BusinessObject.Models;
 using Service.Interfaces;
-using Service.Services;
 using Utility.Constants;
 using System.Web.Http;
 using Microsoft.AspNetCore.RateLimiting;
 using BusinessObject.DTO.Shop;
-using BusinessObject.Entities.Shop;
 
 
 namespace RentEZ.WebAPI.Controllers

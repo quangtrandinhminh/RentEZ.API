@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BusinessObject.DTO.Shopkeeper;
 using BusinessObject.DTO.User;
-using BusinessObject.Entities.Identity;
 using BusinessObject.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace Service.Interfaces
 {
