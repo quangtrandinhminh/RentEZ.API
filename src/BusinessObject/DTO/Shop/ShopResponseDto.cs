@@ -10,8 +10,8 @@ namespace BusinessObject.DTO.Shop
     {
         public string ShopEmail { get; set; }
         public string ShopName { get; set; }
-        public string Shop_Phone { get; set; }
-        public string Shop_Address { get; set; }
-        public string Shop_Avatar { get; set; }
+        public string ShopPhone { get; set; }
+        public string ShopAddress { get; set; }
+        public string ShopAvatar { get; set; }
     }
 }

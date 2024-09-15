@@ -3,9 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Utility.Constants;
 using System.Web.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using BusinessObject.DTO.Shop;
-
+using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
+using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
+using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
+using AllowAnonymousAttribute = Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute;
 
 namespace RentEZ.WebAPI.Controllers
 {
@@ -21,13 +25,22 @@ namespace RentEZ.WebAPI.Controllers
             _shopService = shopService;
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpPost]
-        [AllowAnonymous]
+        [HttpPost]
+        [Authorize(Roles = "ShopOwner")]
         [Route("create-new-shop")]
         public async Task<IActionResult> CreateNewShop([Microsoft.AspNetCore.Mvc.FromBody] ShopCreateRequestDto request)
         {
             await _shopService.CreateShop(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("get-all-pending-shops")]
+        public async Task<IActionResult> GetAllPendingShops()
+        {
+            var shops = await _shopService.GetPendingShopList();
+            return Ok(BaseResponseDto.OkResponseDto(shops));
         }
 
         [Microsoft.AspNetCore.Mvc.HttpGet]
@@ -37,6 +50,15 @@ namespace RentEZ.WebAPI.Controllers
         {
             var shops = await _shopService.GetAllShops();
             return Ok(BaseResponseDto.OkResponseDto(shops));
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpPut]
+        [Authorize(Roles = "Admin")]
+        [Route("shop-approval")]
+        public async Task<IActionResult> ShopApproval(int id)
+        {
+            await _shopService.ShopToApprove(id);
+            return Ok(BaseResponseDto.OkResponseDto("Shop approved successfully"));
         }
     }
 }

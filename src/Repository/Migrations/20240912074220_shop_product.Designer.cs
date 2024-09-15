@@ -12,8 +12,8 @@ using Repository.Infrastructure;
 namespace Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240910173900_Fixing")]
-    partial class Fixing
+    [Migration("20240912074220_shop_product")]
+    partial class shop_product
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Repository.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BusinessObject.Entities.Category.CategoryEntity", b =>
+            modelBuilder.Entity("BusinessObject.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -62,7 +62,7 @@ namespace Repository.Migrations
                     b.HasIndex(new[] { "Id" }, "Index_Id")
                         .IsUnique();
 
-                    b.ToTable("CategoryEntity");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.Identity.RefreshToken", b =>
@@ -274,59 +274,59 @@ namespace Repository.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d0ff9cff-cbef-48df-824b-91135b5f4828",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 248, DateTimeKind.Unspecified).AddTicks(3657), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "9980867f-00da-4394-8703-36e2fe390cc9",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 12, 7, 42, 19, 354, DateTimeKind.Unspecified).AddTicks(5858), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin User",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 248, DateTimeKind.Unspecified).AddTicks(3657), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 12, 7, 42, 19, 354, DateTimeKind.Unspecified).AddTicks(5858), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$DxSfVI4sBoC36uafiDEFQeaRDJXYQ6zvKkBkfQJW2bsBOJN4J5Fje",
+                            PasswordHash = "$2a$11$VBQXbiG4MdrABUsX0182puNPw4qGyxyuFgVLEmoPGIe/zxesLDKAu",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "admin",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 372, DateTimeKind.Unspecified).AddTicks(7870), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 9, 12, 7, 42, 19, 481, DateTimeKind.Unspecified).AddTicks(3371), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4bd140db-298c-4ec7-95c2-e7e77e1beb1f",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 372, DateTimeKind.Unspecified).AddTicks(8193), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "20ec4a33-f984-40e8-8d18-669e7f510e2d",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 12, 7, 42, 19, 484, DateTimeKind.Unspecified).AddTicks(2753), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "shopowner@example.com",
                             EmailConfirmed = false,
                             FullName = "Shop Owner",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 372, DateTimeKind.Unspecified).AddTicks(8193), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 12, 7, 42, 19, 484, DateTimeKind.Unspecified).AddTicks(2753), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "SHOPOWNER",
-                            PasswordHash = "$2a$11$.dKkdbmA8Mg1WNk55Wee5uySA5MrG.H/rzwxAo57zsClrKjIyhMNG",
+                            PasswordHash = "$2a$11$/Gko6X.mTb8r92zqxr7lteq9Bv8JLIroaNqjxYZyV0ahZjzND.IsG",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "shopowner",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 501, DateTimeKind.Unspecified).AddTicks(3040), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 9, 12, 7, 42, 19, 613, DateTimeKind.Unspecified).AddTicks(2965), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d54ba48e-ee49-4d01-a5f6-31c39507fe3e",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 501, DateTimeKind.Unspecified).AddTicks(3558), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "dede443d-7d17-4158-a3e8-7c9ccd4b3888",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 12, 7, 42, 19, 613, DateTimeKind.Unspecified).AddTicks(3536), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "customer1@example.com",
                             EmailConfirmed = false,
                             FullName = "Customer 1",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 501, DateTimeKind.Unspecified).AddTicks(3558), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 12, 7, 42, 19, 613, DateTimeKind.Unspecified).AddTicks(3536), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "CUSTOMER1",
-                            PasswordHash = "$2a$11$ROhq4jqVr1vlX2tFyFpYoeJq10Y7a3gmcnvsLepjv2z9SbqKRYFCW",
+                            PasswordHash = "$2a$11$u10qpO0YGPqfJG/fx2kZgOgpFnTSdWlZIvFodT/8CkqbDh5euOFpW",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "customer1",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 10, 17, 38, 59, 637, DateTimeKind.Unspecified).AddTicks(7661), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 9, 12, 7, 42, 19, 745, DateTimeKind.Unspecified).AddTicks(395), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Product.ProductEntity", b =>
+            modelBuilder.Entity("BusinessObject.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -353,7 +353,7 @@ namespace Repository.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<double?>("Hieght")
+                    b.Property<double?>("Height")
                         .HasColumnType("double precision");
 
                     b.Property<string>("Image")
@@ -400,10 +400,10 @@ namespace Repository.Migrations
                         .IsUnique()
                         .HasDatabaseName("Index_Id2");
 
-                    b.ToTable("ProductEntity");
+                    b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Shop.ShopEntity", b =>
+            modelBuilder.Entity("BusinessObject.Entities.Shop", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -433,23 +433,23 @@ namespace Repository.Migrations
                         .IsRequired()
                         .HasColumnType("integer");
 
+                    b.Property<string>("ShopAddress")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShopAvatar")
+                        .HasColumnType("text");
+
                     b.Property<string>("ShopEmail")
                         .HasColumnType("text");
 
                     b.Property<string>("ShopName")
                         .HasColumnType("text");
 
-                    b.Property<string>("Shop_Address")
+                    b.Property<string>("ShopPhone")
                         .HasColumnType("text");
 
-                    b.Property<string>("Shop_Avatar")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Shop_Phone")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("boolean");
+                    b.Property<DateTimeOffset?>("Verified")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -607,22 +607,22 @@ namespace Repository.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Product.ProductEntity", b =>
+            modelBuilder.Entity("BusinessObject.Entities.Product", b =>
                 {
-                    b.HasOne("BusinessObject.Entities.Category.CategoryEntity", "CategoryEntity")
+                    b.HasOne("BusinessObject.Entities.Category", "Category")
                         .WithMany("ProductEntities")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CategoryEntity");
+                    b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Shop.ShopEntity", b =>
+            modelBuilder.Entity("BusinessObject.Entities.Shop", b =>
                 {
                     b.HasOne("BusinessObject.Entities.Identity.UserEntity", "Owner")
                         .WithOne("ManagedShop")
-                        .HasForeignKey("BusinessObject.Entities.Shop.ShopEntity", "OwnerId")
+                        .HasForeignKey("BusinessObject.Entities.Shop", "OwnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -684,7 +684,7 @@ namespace Repository.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Category.CategoryEntity", b =>
+            modelBuilder.Entity("BusinessObject.Entities.Category", b =>
                 {
                     b.Navigation("ProductEntities");
                 });

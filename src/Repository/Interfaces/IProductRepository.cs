@@ -1,10 +1,9 @@
 ﻿using BusinessObject.Entities;
+using Repository.Base;
 
 namespace Repository.Interfaces
 {
-    public interface IProductRepository
+    public interface IProductRepository : IBaseRepository<Product>
     {
-        Task<List<Product>> GetAll();
-        Task<Product> GetById(int id);
     }
 }

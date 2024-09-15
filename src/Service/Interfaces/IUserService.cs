@@ -12,5 +12,4 @@ public interface IUserService
     Task UpdateUserAsync(UserUpdateRequestDto dto);
     Task<UserResponseDto> GetByIdAsync(int id);
     Task DeleteUserAsync(int id);
-    Task<List<ShopkeeperRegisterResponseDto>> GetPendingShopkeepersAsync();
 }

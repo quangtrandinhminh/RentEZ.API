@@ -17,13 +17,5 @@ namespace BusinessObject.DTO.Shopkeeper
         public string? Address { get; set; }
         public string? Avatar { get; set; }
         public DateTimeOffset? BirthDate { get; set; }
-
-        // shop
-        public string? ShopEmail { get; set; }
-        public string? ShopName { get; set; }
-        public string? Shop_Phone { get; set; }
-        public string? Shop_Address { get; set; }
-        public string? Shop_Avatar { get; set; }
-        public bool Status { get; set; }
     }
 }

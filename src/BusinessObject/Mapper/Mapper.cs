@@ -40,50 +40,8 @@ public partial class MapperlyMapper
 
 
     // shopkeeper register
-    public partial UserResponseDto MapToUserResponseDto(UserEntity userEntity);
+    public partial ShopkeeperRequestDto MapToShopkeeperResponseDto(UserEntity userEntity);
     public partial ShopResponseDto MapToShopResponseDto(Shop shop);
-    public ShopkeeperRegisterResponseDto MapToShopkeeperRegisterResponseDto(UserEntity userEntity, Shop shop)
-    {
-        var userResponse = MapToUserResponseDto(userEntity);
-        var shopResponse = MapToShopResponseDto(shop);
-        return new ShopkeeperRegisterResponseDto
-        {
-            Id = userResponse.Id,
-            UserName = userResponse.UserName,
-            Email = userResponse.Email,
-            PhoneNumber = userResponse.PhoneNumber,
-            FullName = userResponse.FullName,
-            Address = userResponse.Address,
-            Avatar = userResponse.Avatar,
-            BirthDate = userResponse.BirthDate,
-
-            ShopEmail = shopResponse.ShopEmail,
-            ShopName = shopResponse.ShopName,
-            Shop_Address = shopResponse.Shop_Address,
-            Shop_Avatar = shopResponse.Shop_Avatar,
-            Shop_Phone = shopResponse.Shop_Phone
-        };
-    }
-    public ShopkeeperRegisterRequestDto MapToShopkeeperRegisterRequestDto(UserEntity userEntity, Shop shop)
-    {
-        var userResponse = MapToUserResponseDto(userEntity);
-        var shopResponse = MapToShopResponseDto(shop);
-        return new ShopkeeperRegisterRequestDto
-        {
-            UserName = userResponse.UserName,
-            Email = userResponse.Email,
-            PhoneNumber = userResponse.PhoneNumber,
-            FullName = userResponse.FullName,
-            Address = userResponse.Address,
-            
-
-            ShopEmail = shopResponse.ShopEmail,
-            ShopName = shopResponse.ShopName,
-            Shop_Address = shopResponse.Shop_Address,
-            Shop_Avatar = shopResponse.Shop_Avatar,
-            Shop_Phone = shopResponse.Shop_Phone
-        };
-    }
 
     // product
     public partial ProductResponseDto ProductToProductResponseDto(Product entity);

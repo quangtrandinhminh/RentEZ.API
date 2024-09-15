@@ -10,6 +10,7 @@ namespace BusinessObject.DTO.Shop
 {
     public class ShopCreateRequestDto
     {
+
         [Required(ErrorMessage = ResponseMessageIdentity.EMAIL_REQUIRED)]
         [EmailAddress(ErrorMessage = "Invalid email format")]
         public string ShopEmail { get; set; }
@@ -18,10 +19,12 @@ namespace BusinessObject.DTO.Shop
         [RegularExpression("^[^0-9]+$", ErrorMessage = "Name cannot contain number")]
         public string ShopName { get; set; }
         [Required]
-        public string Address { get; set; }
+        public string ShopAddress { get; set; }
         [Required]
-        public string Phone { get; set; }
+        public string ShopPhone { get; set; }
         [Required]
-        public string Shop_Avatar { get; set; }
+        public string ShopAvatar { get; set; }
+        [Required]
+        public int OwnerId{ get; set; }
     }
 }

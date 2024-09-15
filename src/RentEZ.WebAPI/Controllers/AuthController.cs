@@ -140,27 +140,9 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(await _authService.GoogleAuthenticate(request));
         }
 
-        //[HttpPost]
-        //[AllowAnonymous]
-        //[Route("shopkeeper-register")]
-        //public async Task<IActionResult> RegisterAsAShopkeeper([FromBody] RegisterDto request)
-        //{
-        //    await _authService.RegisterAsAShopkeeper(request);
-        //    return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
-        //}
-
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("get-pending-shopkeeper-list")]
-        public async Task<IActionResult> LoadPendingShopkeeperListAsync()
-        {
-            var pendingShopkeepers = await _userService.GetPendingShopkeepersAsync();
-            return Ok(BaseResponseDto.OkResponseDto(pendingShopkeepers));
-        }
-
         [HttpPost]
         [Route("shopkeeper-register")]
-        public async Task<IActionResult> RegisterShopkeeper(ShopkeeperRegisterRequestDto request)
+        public async Task<IActionResult> RegisterShopkeeper([FromBody] RegisterDto request)
         {
             await _authService.RegisterAsAShopkeeper(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));

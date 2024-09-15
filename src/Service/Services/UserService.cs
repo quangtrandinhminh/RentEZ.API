@@ -63,29 +63,4 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
     {
         throw new NotImplementedException();
     }
-
-    public async Task<List<ShopkeeperRegisterResponseDto>> GetPendingShopkeepersAsync()
-    {
-        _logger.Information("Get all shopkeepers with pending shops");
-
-        try
-        {
-            var pendingUsers = await _userRepository.GetPendingShopkeeperListAsync();
-            if (pendingUsers == null || !pendingUsers.Any())
-            {
-                throw new AppException(ResponseCodeConstants.NOT_FOUND, "No pending shopkeepers found", StatusCodes.Status404NotFound);
-            }
-            var pendingShopkeeperDtos = pendingUsers
-                .Select(user => _mapper.MapToShopkeeperRegisterResponseDto(user, user.ManagedShop))
-                .ToList();
-
-            _logger.Information("Successfully GET {count} pending shopkeepers", pendingShopkeeperDtos.Count);
-            return pendingShopkeeperDtos;
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e, "Failed to GET pending shopkeepers");
-            throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
-        }
-    }
 }

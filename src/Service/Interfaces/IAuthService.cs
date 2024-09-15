@@ -17,6 +17,6 @@ namespace Service.Interfaces
         Task ChangePassword(ChangePasswordDto dto, CancellationToken cancellationToken = default);
         Task ReSendEmail(ResendEmailDto model, CancellationToken cancellationToken = default);
         Task<LoginResponseDto> GoogleAuthenticate(GoogleLoginModel model);
-        Task RegisterAsAShopkeeper(ShopkeeperRegisterRequestDto dto, CancellationToken cancellationToken = default);
+        Task RegisterAsAShopkeeper(RegisterDto dto, CancellationToken cancellationToken = default);
     }
 }

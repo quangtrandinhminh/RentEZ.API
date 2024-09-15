@@ -83,32 +83,5 @@ namespace Repository.Repositories
         {
             return await _context.Users.FindAsync(userId);
         }
-
-        public async Task<List<UserEntity>> GetPendingShopkeeperListAsync()
-        {
-            return await  _context.Users
-                .Include(x => x.ManagedShop)
-                .Where(x => !x.ManagedShop.IsVerified && x.ManagedShop != null)
-                .Select(u => new UserEntity
-                {
-                    Id = u.Id,
-                    UserName = u.UserName,
-                    Email = u.Email,
-                    PhoneNumber = u.PhoneNumber,
-                    FullName = u.FullName,
-                    Address = u.Address,
-                    Avatar = u.Avatar,
-                    BirthDate = u.BirthDate,
-                    ManagedShop = new Shop
-                    {
-                        ShopEmail = u.ManagedShop.ShopEmail,
-                        ShopName = u.ManagedShop.ShopName,
-                        ShopPhone = u.ManagedShop.ShopPhone,
-                        ShopAddress = u.ManagedShop.ShopAddress,
-                        ShopAvatar = u.ManagedShop.ShopAvatar,
-                    }
-                })
-                .ToListAsync();
-        }
     }
 }
