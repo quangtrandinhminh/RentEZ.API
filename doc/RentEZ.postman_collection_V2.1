@@ -1,0 +1,591 @@
+{
+	"info": {
+		"_postman_id": "cab1a2cc-2df0-4159-ad96-9bd2d65b75c6",
+		"name": "RentEZ",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34275700"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "VerifyPhone",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"phoneNumber\": \"+84901472180\",\r\n  \"verifyToken\": \"528859\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/verify-phone",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"verify-phone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"quangtdm\",\r\n    \"fullname\": \"Tran Dinh Minh Quang\",\r\n    \"email\": \"quangtdmse171391@fpt.edu.vn\",\r\n    \"Password\": \"12345678\",\r\n    \"ConfirmPassword\": \"12345678\",\r\n    \"phonenumber\": \"0949458323\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/authenticate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"authenticate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Google",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"IdToken\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6ImIyZjgwYzYzNDYwMGVkMTMwNzIxMDFhOGI0MjIwNDQzNDMzZGIyODIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI5OTIwMjUyNTMwMTEtMnN0Y2c1bW9qNGgwNm5ibGIzOWtqcGR2bmYwNGw3Ym0uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI5OTIwMjUyNTMwMTEtMnN0Y2c1bW9qNGgwNm5ibGIzOWtqcGR2bmYwNGw3Ym0uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTAzOTQxNjMxMzY1Njg4NTcxMTEiLCJlbWFpbCI6InRyYW5kaW5obWluaHF1YW5nc3hwQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoicG5ydTREVGtiemlFWTJZU1paWF9nQSIsIm5hbWUiOiJRdWFuZyBUcsOizIBuIMSQacyAbmggTWluaCIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJRmMxT1J0VUdUb0paS0syVUlIcUVuMWppWTZacHF0VklybXI2THJOalUyUEFBeEE9czk2LWMiLCJnaXZlbl9uYW1lIjoiUXVhbmciLCJmYW1pbHlfbmFtZSI6IlRyw6LMgG4gxJBpzIBuaCBNaW5oIiwiaWF0IjoxNzI1NDU5ODIzLCJleHAiOjE3MjU0NjM0MjN9.gbMD6xYIPh89-Nw1EyH3eBkDzGGGDTfyFtI0e5yLT3h3AlAwVHu_R73BK1y8Nc6ABTkLAWHrgXYlAqWFS4b-f_9zIe_F0uP7Ti0KGJparXPdFaGni-UlmQjw4NjdknSlgHdKHGz-kLDN24WE8KgSoLMAqB26tjZxW3SXIQyx9NlvDRLtedsPRoww88_XQ_VXhDxyyBTAN5hgzXsDGnJMiDg-LKuv6XXDfrkaf2kLWDZ8QyKhE2PxcPXX65LN4dfNjtBVltPhL17VnVSQYFdRv_y8X1t_mjIr8mAFLsRFFvfrLmP6ctzjDKj9_fXl40jUmr2SGuMzW8gcoOnQqlgNmw\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/authenticate/google",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"authenticate",
+								"google"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SendOTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PhoneNumber\": \"+84901472180\",\r\n    \"Length\": 6,\r\n    \"Minute\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/send-otp-to-phone",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"send-otp-to-phone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RefreshToken",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Token\": \"qJnyDy/74qtpMkmOaMGN4SrRfnzcDl+4Qiu2ZdCJNxMC3IFgkunPlbkHwc1ZVG3y++4X0WCLOoKxVuuz8uqUcA==\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OTP\": \"435337\",\r\n    \"UserName\": \"quangtdm\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/Auth/email/verify",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Auth",
+								"email",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Resend Email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserName\" : \"quangtdm\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/email/resend",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"email",
+								"resend"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register user with all role by admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminAccessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"staff1\",\r\n    \"fullname\": \"Nguyen Van A\",\r\n    \"email\": \"staff1@staff.com\",\r\n    \"Password\": \"12345\",\r\n    \"ConfirmPassword\": \"12345\",\r\n    \"phonenumber\": \"0949458324\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/admin/register?role=2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"register"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all roles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminAccessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/admin/roles/all",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"roles",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Shopkeeper Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"nguyen nhat minh\",\r\n  \"fullName\": \"Nguyen Nhat Minh\",\r\n  \"email\": \"NguyenNhatMinh@email.com\",\r\n  \"phoneNumber\": \"0896548741\",\r\n  \"password\": \"Minh1234\",\r\n  \"confirmPassword\": \"Minh1234\",\r\n  \"address\": \"ABC street\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/Auth/shopkeeper-register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Auth",
+								"shopkeeper-register"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": []
+		},
+		{
+			"name": "Shop",
+			"item": [
+				{
+					"name": "Get all pending shops",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIxIiwiVXNlck5hbWUiOiJhZG1pbiIsInVuaXF1ZV9uYW1lIjoiQWRtaW4gVXNlciIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6IiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvZXhwaXJlZCI6IjkvMTYvMjAyNCIsIm5iZiI6MTcyNjQwMzc4MywiZXhwIjoxNzI2NDkwMTgzLCJpYXQiOjE3MjY0MDM3ODN9.x6-Qq0egm8tMGTHOAq0QEuFrdcRuaGlYCDKIbzdPLoA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Shop/get-all-pending-shops",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Shop",
+								"get-all-pending-shops"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All shops",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Shop/get-all-shops",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Shop",
+								"get-all-shops"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Shop Approval",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Shop/shop-approval?id=5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Shop",
+								"shop-approval"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Shop",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiU2hvcE93bmVyIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc2lkIjoiMiIsIlVzZXJOYW1lIjoic2hvcG93bmVyIiwidW5pcXVlX25hbWUiOiJTaG9wIE93bmVyIiwiZW1haWwiOiJzaG9wb3duZXJAZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6IiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvZXhwaXJlZCI6IjkvMTYvMjAyNCIsIm5iZiI6MTcyNjQwMzg1MSwiZXhwIjoxNzI2NDkwMjUxLCJpYXQiOjE3MjY0MDM4NTF9.fF5hn0ma7a6swxMmZbe0ZSrLxKRmqK4yCyw2T48AXBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"shopEmail\": \"gaming@email.com\",\r\n  \"shopName\": \"Gaming all time\",\r\n  \"shopAddress\": \"abc street\",\r\n  \"shopPhone\": \"0895632412\",\r\n  \"shopAvatar\": \"abc\",\r\n  \"ownerId\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/Shop/create-new-shop",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Shop",
+								"create-new-shop"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Get product by Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/Product/get-product-by-id?id=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Product",
+								"get-product-by-id"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Product/get-all-products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Product",
+								"get-all-products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:7085/api",
+			"type": "string"
+		},
+		{
+			"key": "customerAccessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminAccessToken",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIxIiwiVXNlck5hbWUiOiJhZG1pbiIsInVuaXF1ZV9uYW1lIjoiQWRtaW4gVXNlciIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6IiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvZXhwaXJlZCI6IjAxLzA5LzIwMjQiLCJuYmYiOjE3MjUwOTIyNzksImV4cCI6MTcyNTE3ODY3OSwiaWF0IjoxNzI1MDkyMjc5fQ.ubl4X_0hxzu60v9STgZWzM7Cxk3R_sTGbxpEDjWLLBY",
+			"type": "string"
+		},
+		{
+			"key": "shopkeeperAccessToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

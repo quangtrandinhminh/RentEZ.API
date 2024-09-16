@@ -1,5 +1,4 @@
-﻿using BusinessObject;
-using BusinessObject.Entities;
+﻿using BusinessObject.Entities;
 using BusinessObject.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +49,25 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 .HasForeignKey(ur => ur.UserId)
                 .IsRequired();
         });
+
+        modelBuilder.Entity<UserEntity>()
+            .HasOne(u => u.ManagedShop) 
+            .WithOne(s => s.Owner)
+            .HasForeignKey<Shop>(s => s.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired();
+
+        modelBuilder.Entity<Category>(c =>
+        {
+            c.HasMany(p => p.ProductEntities)
+             .WithOne(c => c.Category)
+             .HasForeignKey(ci => ci.CategoryId)
+             .IsRequired();
+        });
+
+        modelBuilder.Entity<Shop>()
+            .Property(s => s.Id)
+            .ValueGeneratedOnAdd();
 
         // create index
         modelBuilder.Entity<UserEntity>()

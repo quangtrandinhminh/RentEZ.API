@@ -24,6 +24,7 @@ public class UserEntity : IdentityUser<int>
     public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
 
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+    public virtual Shop? ManagedShop { get; set; }
 
     // Base Property
     public int? CreatedBy { get; set; }
@@ -73,3 +74,4 @@ public class RefreshToken : BaseEntity
     public bool IsActive => !IsExpired;
 }
 
+    

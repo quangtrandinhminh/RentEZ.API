@@ -1,16 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
+using BusinessObject.Entities;
 using BusinessObject.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Repository.Base;
 using Repository.Infrastructure;
 using Repository.Interfaces;
-using Utility.Enum;
 
 namespace Repository.Repositories
 {
@@ -82,6 +77,11 @@ namespace Repository.Repositories
             }
 
             return reault.Where(x => x.DeletedTime == null);
+        }
+
+        public async Task<UserEntity> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users.FindAsync(userId);
         }
     }
 }

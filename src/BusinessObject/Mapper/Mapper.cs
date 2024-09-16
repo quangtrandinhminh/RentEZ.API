@@ -1,4 +1,7 @@
-﻿using BusinessObject.DTO.User;
+﻿using BusinessObject.DTO.Product;
+using BusinessObject.DTO.Shop;
+using BusinessObject.DTO.Shopkeeper;
+using BusinessObject.DTO.User;
 using BusinessObject.Entities;
 using BusinessObject.Entities.Identity;
 using Microsoft.EntityFrameworkCore.Query;
@@ -30,9 +33,29 @@ public partial class MapperlyMapper
     public partial IQueryable<UserResponseDto> Map(IQueryable<UserEntity> entity);
     public partial void Map(RegisterDto request, UserEntity entity);
 
+    // shop
+    public partial void ShopToCreateShop(ShopCreateRequestDto request, Shop entity);
+    public partial Shop MapShopToCreateShop(ShopCreateRequestDto request);
+    public partial IList<ShopResponseDto> ShopToShopResponseDto(IList<Shop> entity);
+
+
+    // shopkeeper register
+    public partial ShopkeeperRequestDto MapToShopkeeperResponseDto(UserEntity userEntity);
+    public partial ShopResponseDto MapToShopResponseDto(Shop shop);
+
+    // product
+    public partial ProductResponseDto ProductToProductResponseDto(Product entity);
+    public partial IList<ProductResponseDto> ProductsToProductsResponseDto(IList<Product> entity);
+
     // datetimeoffset to dateonly
     public DateOnly Map(DateTimeOffset dateTimeOffset)
     {
         return DateOnly.FromDateTime(dateTimeOffset.DateTime);
+    }
+
+    // datetime to dateonly
+    public DateOnly Map(DateTime dateTime)
+    {
+        return DateOnly.FromDateTime(dateTime);
     }
 }

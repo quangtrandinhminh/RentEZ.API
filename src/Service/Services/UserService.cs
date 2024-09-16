@@ -1,8 +1,7 @@
-﻿using BusinessObject.DTO.User;
-using BusinessObject.Entities.Identity;
+﻿using BusinessObject.DTO.Shopkeeper;
+using BusinessObject.DTO.User;
 using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Extensions;
@@ -18,6 +17,7 @@ namespace Service.Services;
 public class UserService(IServiceProvider serviceProvider) : IUserService
 {
     private readonly IUserRepository _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
+    private readonly IShopRepository _shopRepository = serviceProvider.GetRequiredService<IShopRepository>();
     private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
     private readonly ILogger _logger = Log.Logger;
 

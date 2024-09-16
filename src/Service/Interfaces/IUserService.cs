@@ -1,4 +1,5 @@
-﻿using BusinessObject.DTO.User;
+﻿using BusinessObject.DTO.Shopkeeper;
+using BusinessObject.DTO.User;
 using Repository.Extensions;
 using Utility.Enum;
 

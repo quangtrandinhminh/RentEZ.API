@@ -95,4 +95,26 @@ namespace Utility.Constants
         public const string ADMIN_NOT_FOUND = "Không tìm thấy quản trị viên";
         public const string CUSTOMER_NOT_FOUND = "Không tìm thấy khách hàng";
     }
+        
+    public class ResponseMessageConstrantsShop
+    {
+        public const string IS_INACTIVE_OWNER = "Tài khoản của người dùng chưa được xác thực.";
+        public const string EXISTED_EMAIL = "Email cua hang da ton tai.";
+        public const string OWNER_NOTFOUND = "Tài khoản chủ cửa hàng không tìm thấy.";
+        public const string EXISTED_NAME = "Ten cua da ton tai.";
+        public const string EXISTED_ADDRESS = "Dia chi cua hang da ton tai.";
+        public const string EXISTED_AVATAR = "Avatar da ton tai.";
+        public const string NO_INISACTIVE_SHOP_FOUND = "Tất cả cửa hàng đã được duyệt.";
+        public const string ALREADY_APROVED = "Cửa hàng đã được duyệt.";
+        public const string EXISTED_PHONE = "So dien thoai cua hang da ton tai.";
+        public const string ALREADY_OWNED_ANOTHER_SHOP = "Đã sở hữu một cửa hàng khác.";
+        public const string PHONE_VALIDATED = "Phone number is validated.";
+        public const string NOTFOUND = "Cửa hàng không tồn tại.";
+    }
+
+    public class ResponseMessageConstrantsProduct
+    {
+        public const string EXISTED_PRODUCTNAME = "Ten san pham da ton tai.";
+        public const string NOTFOUND = "San pham khong ton tai.";
+    }
 }

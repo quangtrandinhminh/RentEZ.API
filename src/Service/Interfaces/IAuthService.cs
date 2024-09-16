@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BusinessObject.DTO.Shopkeeper;
 using BusinessObject.DTO.User;
-using BusinessObject.Entities.Identity;
 using BusinessObject.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace Service.Interfaces
 {
@@ -22,5 +17,6 @@ namespace Service.Interfaces
         Task ChangePassword(ChangePasswordDto dto, CancellationToken cancellationToken = default);
         Task ReSendEmail(ResendEmailDto model, CancellationToken cancellationToken = default);
         Task<LoginResponseDto> GoogleAuthenticate(GoogleLoginModel model);
+        Task RegisterAsAShopkeeper(RegisterDto dto, CancellationToken cancellationToken = default);
     }
 }

@@ -1,18 +1,14 @@
 using BusinessObject.DTO;
 using BusinessObject.DTO.RefreshToken;
+using BusinessObject.DTO.Shopkeeper;
 using BusinessObject.DTO.User;
 using BusinessObject.Models;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.OpenApi.Extensions;
 using Service.Interfaces;
-using System.Security.Claims;
 using Utility.Constants;
 using Utility.Enum;
-using Utility.Helpers;
 
 namespace RentEZ.WebAPI.Controllers
 {
@@ -142,6 +138,14 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginModel request)
         {
             return Ok(await _authService.GoogleAuthenticate(request));
+        }
+
+        [HttpPost]
+        [Route("shopkeeper-register")]
+        public async Task<IActionResult> RegisterShopkeeper([FromBody] RegisterDto request)
+        {
+            await _authService.RegisterAsAShopkeeper(request);
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         }
     }
 }
