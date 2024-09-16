@@ -1,11 +1,9 @@
-﻿using BusinessObject.DTO;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Utility.Constants;
-using System.Web.Http;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
-using BusinessObject.DTO.Shop;
+using Service.Models;
+using Service.Models.Shop;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
@@ -28,7 +26,7 @@ namespace RentEZ.WebAPI.Controllers
         [HttpPost]
         [Authorize(Roles = "ShopOwner")]
         [Route("create-new-shop")]
-        public async Task<IActionResult> CreateNewShop([Microsoft.AspNetCore.Mvc.FromBody] ShopCreateRequestDto request)
+        public async Task<IActionResult> CreateNewShop([Microsoft.AspNetCore.Mvc.FromBody] ShopCreateRequest request)
         {
             await _shopService.CreateShop(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));

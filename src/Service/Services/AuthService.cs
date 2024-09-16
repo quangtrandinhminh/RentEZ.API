@@ -1,11 +1,6 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using BusinessObject.DTO.Shopkeeper;
-using BusinessObject.DTO.User;
-using BusinessObject.Entities.Identity;
-using BusinessObject.Mapper;
-using BusinessObject.Models;
 using Google.Apis.Auth;
 using Invedia.Core.StringUtils;
 using Microsoft.AspNetCore.Http;
@@ -14,14 +9,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Repository.Infrastructure;
 using Repository.Interfaces;
+using Repository.Models.Identity;
 using Serilog;
 using Service.Interfaces;
+using Service.Models;
+using Service.Models.User;
 using Service.Utils;
 using Utility.Config;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
 using Utility.Helpers;
+using MapperlyMapper = Service.Mapper.MapperlyMapper;
 
 namespace Service.Services
 {

@@ -1,12 +1,10 @@
-using BusinessObject.DTO;
-using BusinessObject.DTO.RefreshToken;
-using BusinessObject.DTO.Shopkeeper;
-using BusinessObject.DTO.User;
-using BusinessObject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Service.Interfaces;
+using Service.Models;
+using Service.Models.RefreshToken;
+using Service.Models.User;
 using Utility.Constants;
 using Utility.Enum;
 
@@ -81,7 +79,7 @@ namespace RentEZ.WebAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public async Task<ActionResult> RefreshToken(RefreshTokenDto request)
+        public async Task<ActionResult> RefreshToken(RefreshToken request)
         {
             var refreshToken = request.Token ?? Request.Cookies["refreshToken"];
             var response = await _authService.RefreshToken(refreshToken);

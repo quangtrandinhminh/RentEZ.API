@@ -1,11 +1,10 @@
 using System.Linq.Expressions;
-using BusinessObject.Entities;
-using BusinessObject.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Repository.Infrastructure;
 using Repository.Interfaces;
+using Repository.Models.Identity;
 
 namespace Repository.Repositories
 {

@@ -1,4 +1,4 @@
-﻿using BusinessObject.Models;
+﻿using Service.Models;
 
 namespace Service.Interfaces
 {

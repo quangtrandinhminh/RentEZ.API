@@ -1,5 +1,5 @@
-using BusinessObject.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
+using Repository.Models.Identity;
 using System.Linq.Expressions;
 
 namespace Repository.Interfaces

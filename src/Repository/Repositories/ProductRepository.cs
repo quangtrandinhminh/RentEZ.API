@@ -1,8 +1,7 @@
-﻿using BusinessObject.Entities;
-using Microsoft.EntityFrameworkCore;
-using Repository.Base;
+﻿using Repository.Base;
 using Repository.Infrastructure;
 using Repository.Interfaces;
+using Repository.Models;
 
 namespace Repository.Repositories
 {

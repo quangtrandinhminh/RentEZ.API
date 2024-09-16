@@ -1,6 +1,6 @@
-﻿using BusinessObject.DTO;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using Service.Models;
 using Utility.Constants;
 using Utility.Exceptions;
 using ILogger = Serilog.ILogger;

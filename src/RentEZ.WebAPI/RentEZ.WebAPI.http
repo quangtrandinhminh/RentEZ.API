@@ -1,6 +1,0 @@
-@RentEZ.WebAPI_HostAddress = http://localhost:5277
-
-GET {{RentEZ.WebAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

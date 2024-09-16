@@ -1,13 +1,12 @@
-﻿using BusinessObject.DTO.Shopkeeper;
-using BusinessObject.DTO.User;
-using BusinessObject.Mapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Extensions;
 using Repository.Interfaces;
 using Serilog;
 using Service.Interfaces;
+using Service.Mapper;
+using Service.Models.User;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
