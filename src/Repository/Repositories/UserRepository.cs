@@ -10,9 +10,7 @@ namespace Repository.Repositories
 {
     public class UserRepository : UserStore<UserEntity, RoleEntity, AppDbContext, int>, IUserRepository
     {
-        private readonly AppDbContext _context = new();
-        private UserManager<UserEntity> _userManager;
-        private SignInManager<UserEntity> _signinManager;
+        private readonly AppDbContext _context;
 
         public UserRepository(AppDbContext context) : base(context)
         {
@@ -24,8 +22,7 @@ namespace Repository.Repositories
         public IQueryable<UserEntity> GetAllWithCondition(Expression<Func<UserEntity, bool>> predicate = null,
             params Expression<Func<UserEntity, object>>[] includeProperties)
         {
-            var context = new AppDbContext();
-            var dbSet = context.Set<UserEntity>();
+            var dbSet = _context.Set<UserEntity>();
             IQueryable<UserEntity> queryable = dbSet.AsNoTracking();
             includeProperties = includeProperties?.Distinct().ToArray();
             if (includeProperties?.Any() ?? false)
@@ -42,7 +39,7 @@ namespace Repository.Repositories
 
         public override async Task<IdentityResult> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
         {
-            await Context.Users.AddAsync(user, cancellationToken);
+            await _context.Users.AddAsync(user, cancellationToken);
             return IdentityResult.Success;
         }
 
@@ -78,7 +75,7 @@ namespace Repository.Repositories
             return reault.Where(x => x.DeletedTime == null);
         }
 
-        public async Task<UserEntity> GetUserByIdAsync(int userId)
+        public async Task<UserEntity?> GetUserByIdAsync(int userId)
         {
             return await _context.Users.FindAsync(userId);
         }

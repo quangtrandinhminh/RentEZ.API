@@ -238,7 +238,7 @@ namespace Service.Services
                 await _refreshTokenRepository.AddAsync(refreshToken);
                 var count = await _unitOfWork.SaveChangeAsync();
 
-                var response = _mapper.UserToLoginResponseDto(account);
+                var response = _mapper.Map(account);
                 response.Token = token;
                 response.RefreshToken = refreshToken.Token;
                 response.RefreshTokenExpiredTime = refreshToken.Expires;
@@ -285,7 +285,7 @@ namespace Service.Services
             await _refreshTokenRepository.AddAsync(refreshToken);
             await _unitOfWork.SaveChangeAsync();
 
-            var response = _mapper.UserToLoginResponseDto(account);
+            var response = _mapper.Map(account);
             response.Token = token;
             response.RefreshToken = refreshToken.Token;
             response.RefreshTokenExpiredTime = refreshToken.Expires;
@@ -311,7 +311,7 @@ namespace Service.Services
             {
                 var roles = await _userManager.GetRolesAsync(account);
                 var jwtToken = await GenerateJwtToken(account, roles, 24);
-                var response = _mapper.UserToLoginResponseDto(account);
+                var response = _mapper.Map(account);
                 response.Token = jwtToken;
                 response.RefreshToken = newRefreshToken.Token;
                 response.RefreshTokenExpiredTime = refreshToken.Expires;

@@ -26,8 +26,8 @@ public partial class MapperlyMapper
     // user
     public partial IList<RoleResponseDto> Map(IList<RoleEntity> entity);
     public partial UserEntity Map(RegisterDto request);
-    public partial LoginResponseDto UserToLoginResponseDto(UserEntity entity);
-    public partial UserResponseDto UserToUserResponseDto(UserEntity entity);
+    public partial LoginResponseDto Map(UserEntity entity);
+
     public partial IList<UserResponseDto> Map(IList<UserEntity> entity);
     public partial IQueryable<UserResponseDto> Map(IQueryable<UserEntity> entity);
     public partial void Map(RegisterDto request, UserEntity entity);
@@ -56,5 +56,11 @@ public partial class MapperlyMapper
     public DateOnly Map(DateTime dateTime)
     {
         return DateOnly.FromDateTime(dateTime);
+    }
+
+    // role
+    public IList<string?> RoleToRoleName(IEnumerable<UserRoleEntity> entity)
+    {
+        return entity.Select(x => x.Role.NormalizedName).ToList();
     }
 }
