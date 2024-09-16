@@ -1,11 +1,11 @@
 ﻿using Service.Interfaces;
 using System.Net;
 using System.Net.Mail;
-using BusinessObject.Models;
 using Utility.Config;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
+using Service.Models;
 
 namespace Service.Services
 {

@@ -1,7 +1,7 @@
-﻿using BusinessObject.DTO;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using System.Web.Http;
+using Service.Models;
 
 namespace RentEZ.WebAPI.Controllers
 {

@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
-using BusinessObject.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using Repository.Infrastructure;
+using Repository.Models.Base;
 using Utility.Helpers;
 
 namespace Repository.Base

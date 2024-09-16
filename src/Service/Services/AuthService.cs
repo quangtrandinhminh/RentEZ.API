@@ -1,11 +1,6 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using BusinessObject.DTO.Shopkeeper;
-using BusinessObject.DTO.User;
-using BusinessObject.Entities.Identity;
-using BusinessObject.Mapper;
-using BusinessObject.Models;
 using Google.Apis.Auth;
 using Invedia.Core.StringUtils;
 using Microsoft.AspNetCore.Http;
@@ -14,14 +9,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Repository.Infrastructure;
 using Repository.Interfaces;
+using Repository.Models.Identity;
 using Serilog;
 using Service.Interfaces;
+using Service.Models;
+using Service.Models.User;
 using Service.Utils;
 using Utility.Config;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
 using Utility.Helpers;
+using MapperlyMapper = Service.Mapper.MapperlyMapper;
 
 namespace Service.Services
 {
@@ -239,7 +238,7 @@ namespace Service.Services
                 await _refreshTokenRepository.AddAsync(refreshToken);
                 var count = await _unitOfWork.SaveChangeAsync();
 
-                var response = _mapper.UserToLoginResponseDto(account);
+                var response = _mapper.Map(account);
                 response.Token = token;
                 response.RefreshToken = refreshToken.Token;
                 response.RefreshTokenExpiredTime = refreshToken.Expires;
@@ -286,7 +285,7 @@ namespace Service.Services
             await _refreshTokenRepository.AddAsync(refreshToken);
             await _unitOfWork.SaveChangeAsync();
 
-            var response = _mapper.UserToLoginResponseDto(account);
+            var response = _mapper.Map(account);
             response.Token = token;
             response.RefreshToken = refreshToken.Token;
             response.RefreshTokenExpiredTime = refreshToken.Expires;
@@ -312,7 +311,7 @@ namespace Service.Services
             {
                 var roles = await _userManager.GetRolesAsync(account);
                 var jwtToken = await GenerateJwtToken(account, roles, 24);
-                var response = _mapper.UserToLoginResponseDto(account);
+                var response = _mapper.Map(account);
                 response.Token = jwtToken;
                 response.RefreshToken = newRefreshToken.Token;
                 response.RefreshTokenExpiredTime = refreshToken.Expires;

@@ -1,14 +1,14 @@
-﻿using BusinessObject.DTO.Product;
-using BusinessObject.Mapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Infrastructure;
 using Repository.Interfaces;
 using Service.Interfaces;
+using Service.Models.Product;
 using Utility.Constants;
 using Utility.Exceptions;
+using MapperlyMapper = Service.Mapper.MapperlyMapper;
 
 namespace Service.Services
 {
@@ -27,7 +27,7 @@ namespace Service.Services
             _unitOfWork = unitOfWork;
         }
         // get all products
-        public async Task<List<ProductResponseDto>> GetAllProducts()
+        public async Task<List<ProductResponse>> GetAllProducts()
         {
             _logger.Information($"Get all products");
             var products = await _productRepository.GetAllWithCondition().ToListAsync();
@@ -39,7 +39,7 @@ namespace Service.Services
         }
 
         // get product by Id
-        public async Task<ProductResponseDto> GetProductById(int id)
+        public async Task<ProductResponse> GetProductById(int id)
         {
             _logger.Information($"Get product by Id");
             var product = _productRepository.GetById(id);

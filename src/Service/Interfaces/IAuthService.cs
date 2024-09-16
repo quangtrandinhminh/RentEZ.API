@@ -1,6 +1,5 @@
-using BusinessObject.DTO.Shopkeeper;
-using BusinessObject.DTO.User;
-using BusinessObject.Models;
+using Service.Models;
+using Service.Models.User;
 
 namespace Service.Interfaces
 {

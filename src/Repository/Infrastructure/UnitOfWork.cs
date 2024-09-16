@@ -1,6 +1,6 @@
-﻿using BusinessObject.Entities.Base;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Repository.Models.Base;
 using Utility.Helpers;
 
 namespace Repository.Infrastructure
