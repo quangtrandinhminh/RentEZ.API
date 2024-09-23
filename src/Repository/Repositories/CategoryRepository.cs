@@ -1,7 +1,7 @@
-﻿using BusinessObject.Entities;
-using Repository.Base;
+﻿using Repository.Base;
 using Repository.Infrastructure;
 using Repository.Interfaces;
+using Repository.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

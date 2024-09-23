@@ -1,6 +1,4 @@
-﻿using BusinessObject.Entities;
-using BusinessObject.Mapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Serilog;
 using Repository.Infrastructure;
 using Repository.Interfaces;
@@ -15,7 +13,9 @@ using Utility.Constants;
 using Utility.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using BusinessObject.DTO.Category;
+using Repository.Models;
+using Service.Mapper;
+using Service.Models.Category;
 
 namespace Service.Services
 {
@@ -36,7 +36,7 @@ namespace Service.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<CategoryResponseDto>> GetAllCategoriesAsync()
+        public async Task<List<CategoryResponse>> GetAllCategoriesAsync()
         {
             _logger.Information($"Get all categories");
             var categories = await _categoryRepository.GetAllWithCondition().ToListAsync();
@@ -47,7 +47,7 @@ namespace Service.Services
             return _mapper.CategoriesToCategoriesResponseDto(categories).ToList();
         }
 
-        public async Task<CategoryResponseDto> GetCategoryById(int id)
+        public async Task<CategoryResponse> GetCategoryById(int id)
         {
             _logger.Information($"Get category by id {id}");
             var category = await _categoryRepository.GetByIdAsync(id);
@@ -58,7 +58,7 @@ namespace Service.Services
             return _mapper.CategoryToCategoryResponseDto(category);
         }
 
-        public async Task CreateCategoryAsync(CategoryRequestDto request, CancellationToken cancellationToken = default)
+        public async Task CreateCategoryAsync(CategoryCreateRequest request, CancellationToken cancellationToken = default)
         {
             _logger.Information($"Create new category");
             var category = await _categoryRepository.GetSingleAsync(x => x.CategoryName == request.CategoryName);
@@ -92,7 +92,7 @@ namespace Service.Services
             }
         }
 
-        public async Task UpdateCategoryAsync(CategoryRequestDto request, int id)
+        public async Task UpdateCategoryAsync(CategoryCreateRequest request, int id)
         {
             _logger.Information($"Update category with id {id}");
             var existingCategory = await _categoryRepository.GetSingleAsync(x => x.Id == id);

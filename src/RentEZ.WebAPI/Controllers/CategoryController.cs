@@ -1,9 +1,9 @@
 ﻿using BusinessObject.DTO;
-using BusinessObject.DTO.Category;
-using BusinessObject.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using Service.Models;
+using Service.Models.Category;
 using System.ComponentModel.DataAnnotations;
 using Utility.Constants;
 
@@ -37,7 +37,7 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpPost]
         [Route("create-new-category")]
-        public async Task<IActionResult> CreateCategory([FromBody]CategoryRequestDto request)
+        public async Task<IActionResult> CreateCategory([FromBody]CategoryCreateRequest request)
         {
             await _categoryService.CreateCategoryAsync(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
@@ -45,7 +45,7 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpPut]
         [Route("update-category")]
-        public async Task<IActionResult> UpdateCategory([FromBody]CategoryRequestDto request, [Required] int id)
+        public async Task<IActionResult> UpdateCategory([FromBody]CategoryCreateRequest request, [Required] int id)
         {
             await _categoryService.UpdateCategoryAsync(request, id);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));

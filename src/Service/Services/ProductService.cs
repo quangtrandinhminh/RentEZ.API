@@ -8,9 +8,9 @@ using Service.Interfaces;
 using Service.Models.Product;
 using Utility.Constants;
 using Utility.Exceptions;
-using BusinessObject.DTO.Shop;
-using BusinessObject.Entities;
-using Repository.Repositories;
+using Service.Mapper;
+using BusinessObject.DTO.Product;
+using Repository.Models;
 
 namespace Service.Services
 {
@@ -31,7 +31,7 @@ namespace Service.Services
             _categoryRepository = categoryRepository;
         }
         // get all products
-        public async Task<List<ProductResponseDto>> GetAllProducts(int? categoryId = null)
+        public async Task<List<ProductResponse>> GetAllProducts(int? categoryId = null)
         {
             _logger.Information($"Get all products");
             if (categoryId.HasValue)
@@ -56,7 +56,7 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
             }
 
-            var productDtos = new List<ProductResponseDto>();
+            var productDtos = new List<ProductResponse>();
             foreach (var product in products)
             {
                 var dto = _mapper.ProductToProductResponseDto(product);
