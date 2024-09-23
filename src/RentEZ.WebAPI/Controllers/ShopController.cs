@@ -10,6 +10,7 @@ using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
 using AllowAnonymousAttribute = Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute;
+using System.ComponentModel.DataAnnotations;
 
 namespace RentEZ.WebAPI.Controllers
 {
@@ -55,7 +56,7 @@ namespace RentEZ.WebAPI.Controllers
         [Microsoft.AspNetCore.Mvc.HttpPut]
         [Authorize(Roles = "Admin")]
         [Route("shop-approval")]
-        public async Task<IActionResult> ShopApproval(int id)
+        public async Task<IActionResult> ShopApproval([Required]int id)
         {
             await _shopService.ShopToApprove(id);
             return Ok(BaseResponseDto.OkResponseDto("Shop approved successfully"));

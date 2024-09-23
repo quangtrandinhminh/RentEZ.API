@@ -20,6 +20,6 @@ namespace BusinessObject.DTO.Product
         public double? Mass { get; set; }
         public double? Long { get; set; }
         public double? Width { get; set; }
-        public double? Hieght { get; set; }
+        public double? Height { get; set; }
     }
 }

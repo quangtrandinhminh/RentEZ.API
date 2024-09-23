@@ -1,4 +1,5 @@
-﻿using BusinessObject.DTO.Product;
+﻿using BusinessObject.DTO.Category;
+using BusinessObject.DTO.Product;
 using BusinessObject.DTO.Shop;
 using BusinessObject.DTO.Shopkeeper;
 using BusinessObject.DTO.User;
@@ -35,17 +36,22 @@ public partial class MapperlyMapper
 
     // shop
     public partial void ShopToCreateShop(ShopCreateRequestDto request, Shop entity);
-    public partial Shop MapShopToCreateShop(ShopCreateRequestDto request);
     public partial IList<ShopResponseDto> ShopToShopResponseDto(IList<Shop> entity);
 
+    // product
+    public partial void ProductToCreateProduct(ProductCreateRequestDto request, Product entity);
+    public partial IList<ProductResponseDto> ProductsToProductsResponseDto(IList<Product> entity);
+    public partial ProductResponseDto ProductToProductResponseDto(Product entity);
+
+    // category
+    public partial void CategoryToCreateCategory(CategoryRequestDto request, Category entity);
+    public partial IList<CategoryResponseDto> CategoriesToCategoriesResponseDto(IList<Category> entity);
+    public partial CategoryResponseDto CategoryToCategoryResponseDto(Category entity);
 
     // shopkeeper register
     public partial ShopkeeperRequestDto MapToShopkeeperResponseDto(UserEntity userEntity);
     public partial ShopResponseDto MapToShopResponseDto(Shop shop);
 
-    // product
-    public partial ProductResponseDto ProductToProductResponseDto(Product entity);
-    public partial IList<ProductResponseDto> ProductsToProductsResponseDto(IList<Product> entity);
 
     // datetimeoffset to dateonly
     public DateOnly Map(DateTimeOffset dateTimeOffset)
