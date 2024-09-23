@@ -1,7 +1,7 @@
-﻿using BusinessObject.Entities.Identity;
-using Repository.Base;
+﻿using Repository.Base;
 using Repository.Infrastructure;
 using Repository.Interfaces;
+using Repository.Models.Identity;
 
 namespace Repository.Repositories;
 

@@ -1,13 +1,12 @@
-﻿using BusinessObject.DTO.Shopkeeper;
-using BusinessObject.DTO.User;
-using BusinessObject.Mapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Extensions;
 using Repository.Interfaces;
 using Serilog;
 using Service.Interfaces;
+using Service.Mapper;
+using Service.Models.User;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
@@ -26,7 +25,7 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
     {
         _logger.Information($"Get all users by role {role.ToString()}");
         var users = _userRepository.GetAllWithCondition(
-            x => x.IsActive, x => x.UserRoles);
+            x => x.DeletedTime == null, x => x.UserRoles);
         if (role != null)
         {
             users = users.Where(x => x.UserRoles.Any(y => y.Role.Name == role.ToString()));
@@ -56,7 +55,7 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
     {
         var user = await _userRepository.GetSingleAsync(e => e.Id == id);
 
-        return _mapper.UserToUserResponseDto(user);
+        return _mapper.Map(user);
     }
 
     public Task DeleteUserAsync(int id)

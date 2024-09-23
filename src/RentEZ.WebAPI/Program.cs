@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Reflection;
 using Serilog;
-using BusinessObject.Entities.Identity;
-using BusinessObject.Mapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Repository.Interfaces;
@@ -14,6 +12,8 @@ using Service.Interfaces;
 using RentEZ.WebAPI.Middlewares;
 using Repository.Infrastructure;
 using AspNetCoreRateLimit;
+using MapperlyMapper = Service.Mapper.MapperlyMapper;
+using Repository.Models.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 

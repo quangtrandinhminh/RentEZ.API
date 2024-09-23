@@ -1,21 +1,15 @@
-﻿using BusinessObject.DTO.Shop;
-using BusinessObject.Mapper;
-using Repository.Interfaces;
+﻿using Repository.Interfaces;
 using Serilog;
 using Service.Interfaces;
-using BusinessObject.Entities;
 using Microsoft.EntityFrameworkCore;
 using Repository.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Utility.Constants;
 using Utility.Exceptions;
-using System.Data;
 using Microsoft.IdentityModel.Tokens;
-using Humanizer;
-using System.Text.RegularExpressions;
-using BusinessObject.DTO.Product;
-using Repository.Repositories;
-using System.Web.Http;
+using Repository.Models;
+using Service.Models.Shop;
+using MapperlyMapper = Service.Mapper.MapperlyMapper;
 
 namespace Service.Services
 {
@@ -37,7 +31,7 @@ namespace Service.Services
         }
 
         // create new shop
-        public async Task CreateShop(ShopCreateRequestDto shopRequest, CancellationToken cancellationToken = default)
+        public async Task CreateShop(ShopCreateRequest shopRequest, CancellationToken cancellationToken = default)
         {
             _logger.Information("Creating new shop");
             var existedShopEmail = await _shopRepository.GetSingleAsync(x => x.ShopEmail == shopRequest.ShopEmail);
@@ -106,7 +100,7 @@ namespace Service.Services
         }
 
         // get all shops
-        public async Task<List<ShopResponseDto>> GetPendingShopList()
+        public async Task<List<ShopResponse>> GetPendingShopList()
         {
             _logger.Information($"Get all pending shops");
             var shops = await _shopRepository.GetAllWithCondition()
@@ -123,7 +117,7 @@ namespace Service.Services
         }
 
         // get all products
-        public async Task<List<ShopResponseDto>> GetAllShops()
+        public async Task<List<ShopResponse>> GetAllShops()
         {
             _logger.Information($"Get all shops");
             var shops = await _shopRepository.GetAllWithCondition().Include(s => s.Owner).ToListAsync();

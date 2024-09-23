@@ -1,12 +1,11 @@
-﻿using BusinessObject.DTO.Product;
-using BusinessObject.Mapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Infrastructure;
 using Repository.Interfaces;
 using Service.Interfaces;
+using Service.Models.Product;
 using Utility.Constants;
 using Utility.Exceptions;
 using BusinessObject.DTO.Shop;
@@ -69,7 +68,7 @@ namespace Service.Services
         }
 
         // get product by Id
-        public async Task<ProductResponseDto> GetProductById(int id)
+        public async Task<ProductResponse> GetProductById(int id)
         {
             _logger.Information($"Get product by Id");
             var product = _productRepository.GetById(id);

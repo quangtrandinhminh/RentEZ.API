@@ -1,4 +1,4 @@
-﻿using BusinessObject.DTO.Product;
+﻿using Service.Models.Product;
 
 namespace Service.Interfaces
 {

@@ -1,6 +1,6 @@
-﻿using BusinessObject.Entities;
-using BusinessObject.Entities.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Repository.Models;
+using Repository.Models.Identity;
 
 namespace Repository.Infrastructure;
 

@@ -1,6 +1,5 @@
-﻿using BusinessObject.DTO.Shopkeeper;
-using BusinessObject.DTO.User;
-using Repository.Extensions;
+﻿using Repository.Extensions;
+using Service.Models.User;
 using Utility.Enum;
 
 namespace Service.Interfaces;

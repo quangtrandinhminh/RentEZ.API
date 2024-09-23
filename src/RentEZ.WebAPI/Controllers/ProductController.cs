@@ -1,3 +1,4 @@
+﻿using Microsoft.AspNetCore.Mvc;
 ﻿using BusinessObject.DTO;
 using BusinessObject.DTO.Product;
 using BusinessObject.DTO.Shop;
@@ -6,6 +7,7 @@ using Service.Interfaces;
 using Service.Services;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Http;
+using Service.Models;
 using Utility.Constants;
 using FromBodyAttribute = Microsoft.AspNetCore.Mvc.FromBodyAttribute;
 using HttpDeleteAttribute = Microsoft.AspNetCore.Mvc.HttpDeleteAttribute;

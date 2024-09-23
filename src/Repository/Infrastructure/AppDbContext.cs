@@ -1,8 +1,8 @@
-﻿using BusinessObject.Entities;
-using BusinessObject.Entities.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Repository.Models;
+using Repository.Models.Identity;
 using Utility.Enum;
 using Utility.Helpers;
 
