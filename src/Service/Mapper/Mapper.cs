@@ -1,6 +1,5 @@
 ﻿using Repository.Models;
 using Repository.Models.Identity;
-using BusinessObject.DTO.Product;
 using Microsoft.EntityFrameworkCore.Query;
 using Riok.Mapperly.Abstractions;
 using Service.Models.Product;
@@ -28,12 +27,12 @@ public partial class MapperlyMapper
 
     // user
     public partial IList<RoleResponseDto> Map(IList<RoleEntity> entity);
-    public partial UserEntity Map(RegisterDto request);
+    public partial UserEntity Map(RegisterRequest request);
     public partial LoginResponseDto Map(UserEntity entity);
 
     public partial IList<UserResponseDto> Map(IList<UserEntity> entity);
     public partial IQueryable<UserResponseDto> Map(IQueryable<UserEntity> entity);
-    public partial void Map(RegisterDto request, UserEntity entity);
+    public partial void Map(RegisterRequest request, UserEntity entity);
 
     // shop
     public partial void ShopToCreateShop(ShopCreateRequest request, Shop entity);

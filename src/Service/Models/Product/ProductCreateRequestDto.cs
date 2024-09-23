@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace BusinessObject.DTO.Product
+namespace Service.Models.Product
 {
     public class ProductCreateRequestDto
     {
@@ -15,6 +10,10 @@ namespace BusinessObject.DTO.Product
         public string ProductName { get; set; }
         [Required]
         public int CategoryId { get; set; }
+
+        // [Required]
+        // public int ShopId { get; set; }
+
         [Required]
         [RegularExpression(@"^[+]?[0]*[1-9]\d*(\.\d+)?$", ErrorMessage = "Only natural numbers or real numbers greater than 0 are allowed")]
         public double Size { get; set; }

@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-﻿using BusinessObject.DTO;
-using BusinessObject.DTO.Product;
-using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
-using Service.Services;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Http;
 using Service.Models;
+using Service.Models.Product;
 using Utility.Constants;
 using FromBodyAttribute = Microsoft.AspNetCore.Mvc.FromBodyAttribute;
 using HttpDeleteAttribute = Microsoft.AspNetCore.Mvc.HttpDeleteAttribute;
@@ -16,7 +13,7 @@ using HttpPutAttribute = Microsoft.AspNetCore.Mvc.HttpPutAttribute;
 
 namespace RentEZ.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/products")]
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -26,10 +23,9 @@ namespace RentEZ.WebAPI.Controllers
             _productService = productService;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [AllowAnonymous]
-        [Route("get-product-by-id")]
-        public async Task<IActionResult> GetProductById([Required]int id)
+        public async Task<IActionResult> GetProductById(int id)
         {
             var product = await _productService.GetProductById(id);
             return Ok(BaseResponseDto.OkResponseDto(product));
@@ -37,7 +33,6 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-all-products")]
         public async Task<IActionResult> GetAllProducts([FromQuery] int? categoryId = null)
         {
             var products = await _productService.GetAllProducts(categoryId);
@@ -46,26 +41,23 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpPost]
         //[Authorize(Roles = "ShopOwner")]
-        [Route("create-new-product")]
         public async Task<IActionResult> CreateNewProduct([FromBody] ProductCreateRequestDto request)
         {
             await _productService.CreateProduct(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         //[Authorize(Roles = "ShopOwner")]
-        [Route("update-product")]
-        public async Task<IActionResult> UpdateProduct([FromBody] ProductCreateRequestDto request, [Required]int id)
+        public async Task<IActionResult> UpdateProduct([FromBody] ProductCreateRequestDto request, [FromRoute] int id)
         {
             await _productService.UpdateProductAsync(request, id);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         //[Authorize(Roles = "ShopOwner")]
-        [Route("delete-product")]
-        public async Task<IActionResult> DeleteShop([Required]int id)
+        public async Task<IActionResult> DeleteShop([FromRoute] int id)
         {
             await _productService.DeleteProductAsync(id);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));

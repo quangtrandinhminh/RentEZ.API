@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RentEZ.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/shops")]
     [ApiController]
     [EnableRateLimiting("EndpointRateLimitPolicy")]
     public class ShopController : ControllerBase
@@ -26,8 +26,7 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpPost]
         [Authorize(Roles = "ShopOwner")]
-        [Route("create-new-shop")]
-        public async Task<IActionResult> CreateNewShop([Microsoft.AspNetCore.Mvc.FromBody] ShopCreateRequest request)
+        public async Task<IActionResult> CreateNewShop([FromBody] ShopCreateRequest request)
         {
             await _shopService.CreateShop(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
@@ -35,25 +34,24 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        [Route("get-all-pending-shops")]
+        [Route("admin/pending")]
         public async Task<IActionResult> GetAllPendingShops()
         {
             var shops = await _shopService.GetPendingShopList();
             return Ok(BaseResponseDto.OkResponseDto(shops));
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpGet]
+        [HttpGet]
         [AllowAnonymous]
-        [Route("get-all-shops")]
         public async Task<IActionResult> GetAllShops()
         {
             var shops = await _shopService.GetAllShops();
             return Ok(BaseResponseDto.OkResponseDto(shops));
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpPut]
+        [HttpPut]
         [Authorize(Roles = "Admin")]
-        [Route("shop-approval")]
+        [Route("admin/approval")]
         public async Task<IActionResult> ShopApproval([Required]int id)
         {
             await _shopService.ShopToApprove(id);

@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Repository.Extensions;
 using Repository.Infrastructure;
 using Repository.Models.Base;
 using Utility.Helpers;
@@ -43,6 +44,44 @@ namespace Repository.Base
             return DbSet.AsQueryable().AsNoTracking();
         }
 
+        // get all with paging, return paginated queryable and all page count
+        public async Task<PaginatedList<TResult>> GetAllPaginatedQueryable<TResult>(
+            int page,
+            int pageSize,
+            Expression<Func<T, bool>> fillterPredicate = null, // Filter Predicate
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, // Sorting function
+            params Expression<Func<T, object>>[] includeProperties) // Include related entities
+        {
+            // Start with a base query from the DbSet
+            IQueryable<T> queryable = _dbSet.AsNoTracking();
+
+            // Handle includes (expands)
+            includeProperties = includeProperties?.Distinct().ToArray();
+            if (includeProperties?.Any() ?? false)
+            {
+                foreach (var navigationPropertyPath in includeProperties)
+                {
+                    queryable = queryable.Include(navigationPropertyPath);
+                }
+            }
+
+            // Apply the filter fillterPredicate
+            if (fillterPredicate != null)
+            {
+                queryable = queryable.Where(fillterPredicate);
+            }
+
+            // Apply sorting
+            if (orderBy != null)
+            {
+                queryable = orderBy(queryable); // Apply ordering through the provided delegate
+            }
+
+            var paginatedList = await PaginatedList<T>.CreateAsync(queryable, page, pageSize);
+            return paginatedList as PaginatedList<TResult>;
+        }
+
+
         public IQueryable<T> GetAllWithCondition(Expression<Func<T, bool>> predicate = null,
             params Expression<Func<T, object>>[] includeProperties)
         {
@@ -68,7 +107,7 @@ namespace Repository.Base
         public IQueryable<T> Get(Expression<Func<T, bool>> predicate = null
             , bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties)
         {
-            
+
             IQueryable<T> source = DbSet.AsNoTracking();
             if (predicate != null)
             {
@@ -90,15 +129,15 @@ namespace Repository.Base
 
         public T? GetById(int id)
         {
-             
-            
+
+
             return DbSet.Find(id);
         }
 
         public async Task<T?> GetByIdAsync(int id)
         {
-             
-            
+
+
             return await DbSet.FindAsync(id);
         }
 
@@ -112,7 +151,7 @@ namespace Repository.Base
         public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate,
             bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties)
         {
-            
+
             var query = DbSet.AsQueryable();
 
             if (!isIncludeDeleted)
@@ -230,8 +269,8 @@ namespace Repository.Base
         {
             try
             {
-                 
-                
+
+
                 if (_context.Entry(entity).State == EntityState.Detached)
                 {
                     DbSet.Attach(entity);
@@ -262,8 +301,8 @@ namespace Repository.Base
 
         public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate)
         {
-             
-            
+
+
             return await DbSet.FirstOrDefaultAsync(predicate);
         }
 

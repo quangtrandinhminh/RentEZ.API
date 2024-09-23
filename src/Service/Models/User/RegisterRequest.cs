@@ -3,7 +3,7 @@ using Utility.Constants;
 
 namespace Service.Models.User
 {
-    public class RegisterDto
+    public class RegisterRequest
     {
         [Required(ErrorMessage = ResponseMessageIdentity.USERNAME_REQUIRED)]
         [MaxLength(100)]

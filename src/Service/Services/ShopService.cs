@@ -4,6 +4,7 @@ using Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Repository.Infrastructure;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Utility.Constants;
 using Utility.Exceptions;
 using Microsoft.IdentityModel.Tokens;
@@ -13,22 +14,13 @@ using MapperlyMapper = Service.Mapper.MapperlyMapper;
 
 namespace Service.Services
 {
-    public class ShopService : IShopService
+    public class ShopService(IServiceProvider serviceProvider) : IShopService
     {
-        private readonly IShopRepository _shopRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly MapperlyMapper _mapper;
-        private readonly ILogger _logger;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public ShopService(IShopRepository shopRepository, MapperlyMapper mapper, ILogger logger, IUnitOfWork unitOfWork, IUserRepository userRepository)
-        {
-            _shopRepository = shopRepository;
-            _mapper = mapper;
-            _logger = logger;
-            _unitOfWork = unitOfWork;
-            _userRepository = userRepository;
-        }
+        private readonly IShopRepository _shopRepository = serviceProvider.GetRequiredService<IShopRepository>();
+        private readonly IUserRepository _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
+        private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
+        private readonly ILogger _logger = serviceProvider.GetRequiredService<ILogger>();
+        private readonly IUnitOfWork _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
 
         // create new shop
         public async Task CreateShop(ShopCreateRequest shopRequest, CancellationToken cancellationToken = default)

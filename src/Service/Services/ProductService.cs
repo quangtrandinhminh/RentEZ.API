@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Infrastructure;
@@ -9,27 +10,19 @@ using Service.Models.Product;
 using Utility.Constants;
 using Utility.Exceptions;
 using Service.Mapper;
-using BusinessObject.DTO.Product;
 using Repository.Models;
 
 namespace Service.Services
 {
-    public class ProductService : IProductService
+    public class ProductService(IServiceProvider serviceProvider) : IProductService
     {
-        private readonly IProductRepository _productRepository;
-        private readonly MapperlyMapper _mapper;
-        private readonly ILogger _logger;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly IProductRepository _productRepository = serviceProvider.GetRequiredService<IProductRepository>();
+        private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
+        private readonly ILogger _logger = serviceProvider.GetRequiredService<ILogger>();
+        private readonly IUnitOfWork _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
+        private readonly ICategoryRepository _categoryRepository = serviceProvider.GetRequiredService<ICategoryRepository>();
+        private readonly IShopRepository _shopRepository = serviceProvider.GetRequiredService<IShopRepository>();
 
-        public ProductService(IProductRepository productRepository, MapperlyMapper mapper, ILogger logger, IUnitOfWork unitOfWork, ICategoryRepository categoryRepository)
-        {
-            _productRepository = productRepository;
-            _mapper = mapper;
-            _logger = logger;
-            _unitOfWork = unitOfWork;
-            _categoryRepository = categoryRepository;
-        }
         // get all products
         public async Task<List<ProductResponse>> GetAllProducts(int? categoryId = null)
         {
