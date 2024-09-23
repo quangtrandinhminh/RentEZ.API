@@ -11,7 +11,7 @@ using Utility.Enum;
 namespace RentEZ.WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [EnableRateLimiting("EndpointRateLimitPolicy")]
     public class AuthController : ControllerBase
     {
@@ -27,7 +27,7 @@ namespace RentEZ.WebAPI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             await _authService.Register(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
@@ -35,7 +35,7 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        [Route("admin/roles/all")]
+        [Route("admin/roles")]
         public async Task<IActionResult> GetAllRoles()
         {
             var roles = await _authService.GetAllRoles();
@@ -44,7 +44,7 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        [Route("admin/users/all")]
+        [Route("admin/users")]
         public async Task<IActionResult> GetAllUsers([FromQuery] UserRole? role, [FromQuery] int pageNumber = 1, int pageSize = 10)
         {
             var users = await _userService.GetAllUsersAsync(role, pageNumber, pageSize);
@@ -54,7 +54,7 @@ namespace RentEZ.WebAPI.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("admin/register")]
-        public async Task<IActionResult> RegisterByAdmin([FromBody] RegisterDto request, int role)
+        public async Task<IActionResult> RegisterByAdmin([FromBody] RegisterRequest request, int role)
         {
             await _authService.RegisterByAdmin(request, role);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
@@ -62,20 +62,11 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("authenticate")]
+        [Route("authentication")]
         public async Task<IActionResult> Login(LoginDto request)
         {
             return Ok(await _authService.Authenticate(request));
         }
-
-        // google login
-        /*[HttpPost]
-        [AllowAnonymous]
-        [Route("google-login")]
-        public async Task<IActionResult> GoogleLogin(GoogleLoginDto request)
-        {
-            return Ok(await _authService.GoogleLogin(request));
-        }*/
 
         [AllowAnonymous]
         [HttpPost("refresh-token")]
@@ -97,7 +88,7 @@ namespace RentEZ.WebAPI.Controllers
             Response.Cookies.Append("refreshToken", token, cookieOptions);
         }
 
-        [HttpPost("email/verify")]
+        [HttpPost("email/verification")]
         public async Task<IActionResult> VerifyEmail(VerifyEmailDto request)
         {
             await _authService.VerifyEmail(request);
@@ -132,15 +123,15 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.RESEND_EMAIL_SUCCESS));
         }
 
-        [HttpPost("authenticate/google")]
+        [HttpPost("authentication/google")]
         public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginModel request)
         {
             return Ok(await _authService.GoogleAuthenticate(request));
         }
 
         [HttpPost]
-        [Route("shopkeeper-register")]
-        public async Task<IActionResult> RegisterShopkeeper([FromBody] RegisterDto request)
+        [Route("register/shopkeeper")]
+        public async Task<IActionResult> RegisterShopkeeper([FromBody] RegisterRequest request)
         {
             await _authService.RegisterAsAShopkeeper(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));

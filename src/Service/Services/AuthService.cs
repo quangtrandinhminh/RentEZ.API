@@ -44,42 +44,42 @@ namespace Service.Services
             return _mapper.Map(roles);
         }
 
-        public async Task Register(RegisterDto dto, CancellationToken cancellationToken = default)
+        public async Task Register(RegisterRequest request, CancellationToken cancellationToken = default)
         {
-            _logger.Information("Register new user: {@dto}", dto);
+            _logger.Information("Register new user: {@request}", request);
             // get user by name
-            var validateUser = await _userManager.FindByNameAsync(dto.UserName);
+            var validateUser = await _userManager.FindByNameAsync(request.UserName);
             if (validateUser != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_USER, StatusCodes.Status400BadRequest);
             }
 
-            var existingUserWithEmail = await _userManager.FindByEmailAsync(dto.Email);
+            var existingUserWithEmail = await _userManager.FindByEmailAsync(request.Email);
             if (existingUserWithEmail != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
             }
 
-            var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == dto.PhoneNumber);
+            var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == request.PhoneNumber);
             if (existingUserWithPhone != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_PHONE, StatusCodes.Status400BadRequest);
             }
 
-            if (!string.IsNullOrEmpty(dto.PhoneNumber) && !Regex.IsMatch(dto.PhoneNumber, @"^\d{10}$"))
+            if (!string.IsNullOrEmpty(request.PhoneNumber) && !Regex.IsMatch(request.PhoneNumber, @"^\d{10}$"))
             {
                 throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PHONENUMBER_INVALID, StatusCodes.Status400BadRequest);
             }
 
-            if (dto.Password != dto.ConfirmPassword)
+            if (request.Password != request.ConfirmPassword)
             {
                 throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
             }
 
             try
             {
-                var account = _mapper.Map(dto);
-                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+                var account = _mapper.Map(request);
+                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
                 account.SecurityStamp = Guid.NewGuid().ToString();
                 account.OTP = GenerateOTP();
                 await _userRepository.CreateAsync(account, cancellationToken);
@@ -102,41 +102,41 @@ namespace Service.Services
             }
         }
 
-        public async Task RegisterAsAShopkeeper(RegisterDto dto, CancellationToken cancellationToken = default)
+        public async Task RegisterAsAShopkeeper(RegisterRequest request, CancellationToken cancellationToken = default)
         {
-            _logger.Information("Register new shop owner: {@dto}", dto);
+            _logger.Information("Register new shop owner: {@request}", request);
             // get user by name
-            var validateUser = await _userManager.FindByNameAsync(dto.UserName);
+            var validateUser = await _userManager.FindByNameAsync(request.UserName);
             if (validateUser != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_USER, StatusCodes.Status400BadRequest);
             }
 
-            var existingUserWithEmail = await _userManager.FindByEmailAsync(dto.Email);
+            var existingUserWithEmail = await _userManager.FindByEmailAsync(request.Email);
             if (existingUserWithEmail != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
             }
 
-            var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == dto.PhoneNumber);
+            var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == request.PhoneNumber);
             if (existingUserWithPhone != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_PHONE, StatusCodes.Status400BadRequest);
             }
 
-            if (!string.IsNullOrEmpty(dto.PhoneNumber) && !Regex.IsMatch(dto.PhoneNumber, @"^\d{10}$"))
+            if (!string.IsNullOrEmpty(request.PhoneNumber) && !Regex.IsMatch(request.PhoneNumber, @"^\d{10}$"))
             {
                 throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PHONENUMBER_INVALID, StatusCodes.Status400BadRequest);
             }
 
-            if (dto.Password != dto.ConfirmPassword)
+            if (request.Password != request.ConfirmPassword)
             {
                 throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
             }
             try
             {
-                var account = _mapper.Map(dto);
-                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+                var account = _mapper.Map(request);
+                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
                 account.SecurityStamp = Guid.NewGuid().ToString();
                 account.OTP = GenerateOTP();
                 await _userRepository.CreateAsync(account, cancellationToken);
@@ -160,9 +160,9 @@ namespace Service.Services
         }
         
         // register by admin
-        public async Task RegisterByAdmin(RegisterDto dto, int role)
+        public async Task RegisterByAdmin(RegisterRequest request, int role)
         {
-            _logger.Information("Register new user by admin: {@dto}", dto);
+            _logger.Information("Register new user by admin: {@request}", request);
             // check role is valid in system
             var roleEntity = await _roleManager.FindByIdAsync(role.ToString());
             if (roleEntity == null)
@@ -171,38 +171,38 @@ namespace Service.Services
             }
 
             // get user by name
-            var validateUser = await _userManager.FindByNameAsync(dto.UserName);
+            var validateUser = await _userManager.FindByNameAsync(request.UserName);
             if (validateUser != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_USER, StatusCodes.Status400BadRequest);
             }
 
-            var existingUserWithEmail = await _userManager.FindByEmailAsync(dto.Email);
+            var existingUserWithEmail = await _userManager.FindByEmailAsync(request.Email);
             if (existingUserWithEmail != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
             }
 
-            var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == dto.PhoneNumber);
+            var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == request.PhoneNumber);
             if (existingUserWithPhone != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_PHONE, StatusCodes.Status400BadRequest);
             }
 
-            if (!string.IsNullOrEmpty(dto.PhoneNumber) && !Regex.IsMatch(dto.PhoneNumber, @"^\d{10}$"))
+            if (!string.IsNullOrEmpty(request.PhoneNumber) && !Regex.IsMatch(request.PhoneNumber, @"^\d{10}$"))
             {
                 throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PHONENUMBER_INVALID, StatusCodes.Status400BadRequest);
             }
 
-            if (dto.Password != dto.ConfirmPassword)
+            if (request.Password != request.ConfirmPassword)
             {
                 throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
             }
 
             try
             {
-                var account = _mapper.Map(dto);
-                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+                var account = _mapper.Map(request);
+                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
                 account.SecurityStamp = Guid.NewGuid().ToString();
                 account.Verified = CoreHelper.SystemTimeNow;
                 await _userRepository.CreateAsync(account);

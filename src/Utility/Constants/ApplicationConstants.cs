@@ -22,6 +22,7 @@ namespace Utility.Constants
         public const string UNAUTHORIZED = "Unauthorized!";
         public const string FORBIDDEN = "Forbidden!";
         public const string EXPIRED = "Expired!";
+        public const string NOTHINGCHANGED = "Nothing changed!";
     }
     public class ResponseMessageConstantsCommon
     {
@@ -114,7 +115,19 @@ namespace Utility.Constants
 
     public class ResponseMessageConstrantsProduct
     {
+        public const string NUll = "Có trường hợp bị null.";
         public const string EXISTED_PRODUCTNAME = "Ten san pham da ton tai.";
         public const string NOTFOUND = "San pham khong ton tai.";
+        public const string EXISTED_IMAGE = "Hình ảnh của sản phẩm đã được sử dụng.";
+        public const string NONEXISTENT_CATEGORY = "Loại sản phẩm không tồn tại.";
+        public const string NOTHING_CHANGED = "Không có gì được thay đổi sau lần chỉnh sửa này.";
+    }
+
+    public class ResponseMessageConstrantsCategory
+    {
+        public const string NOTHING_CHANGED = "Không có gì được thay đổi sau lần chỉnh sửa này.";
+        public const string EXISTED_CATEGORYNAME = "Loại sản phẩm này đã tồn tại.";
+        public const string NOTFOUND = "Không tìm thấy loại sản phẩm.";
+        public const string EXISTED_DESCRIPTION = "Mô tả bị trùng với một loại sản phẩm khác.";
     }
 }

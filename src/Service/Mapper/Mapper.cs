@@ -1,10 +1,12 @@
 ﻿using Repository.Models;
 using Repository.Models.Identity;
+using Microsoft.EntityFrameworkCore.Query;
 using Riok.Mapperly.Abstractions;
 using Service.Models.Product;
 using Service.Models.Shop;
 using Service.Models.Shopkeeper;
 using Service.Models.User;
+using Service.Models.Category;
 
 namespace Service.Mapper;
 
@@ -25,26 +27,31 @@ public partial class MapperlyMapper
 
     // user
     public partial IList<RoleResponseDto> Map(IList<RoleEntity> entity);
-    public partial UserEntity Map(RegisterDto request);
+    public partial UserEntity Map(RegisterRequest request);
     public partial LoginResponseDto Map(UserEntity entity);
 
     public partial IList<UserResponseDto> Map(IList<UserEntity> entity);
     public partial IQueryable<UserResponseDto> Map(IQueryable<UserEntity> entity);
-    public partial void Map(RegisterDto request, UserEntity entity);
+    public partial void Map(RegisterRequest request, UserEntity entity);
 
     // shop
     public partial void ShopToCreateShop(ShopCreateRequest request, Shop entity);
     public partial Shop MapShopToCreateShop(ShopCreateRequest request);
     public partial IList<ShopResponse> ShopToShopResponseDto(IList<Shop> entity);
 
+    // product
+    public partial void ProductToCreateProduct(ProductCreateRequestDto request, Product entity);
+    public partial IList<ProductResponse> ProductsToProductsResponseDto(IList<Product> entity);
+    public partial ProductResponse ProductToProductResponseDto(Product entity);
+
+    // category
+    public partial void CategoryToCreateCategory(CategoryCreateRequest request, Category entity);
+    public partial IList<CategoryResponse> CategoriesToCategoriesResponseDto(IList<Category> entity);
+    public partial CategoryResponse CategoryToCategoryResponseDto(Category entity);
 
     // shopkeeper register
     public partial ShopkeeperRequest MapToShopkeeperResponseDto(UserEntity userEntity);
     public partial ShopResponse MapToShopResponseDto(Shop shop);
-
-    // product
-    public partial ProductResponse ProductToProductResponseDto(Product entity);
-    public partial IList<ProductResponse> ProductsToProductsResponseDto(IList<Product> entity);
 
     // datetimeoffset to dateonly
     public DateOnly Map(DateTimeOffset dateTimeOffset)

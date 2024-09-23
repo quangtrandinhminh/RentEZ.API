@@ -51,14 +51,7 @@ builder.Services.AddSerilog(config => { config.ReadFrom.Configuration(builder.Co
         }));*/
 
 // Register DbContext Postgres
-builder.Services.AddDbContext<AppDbContext>(options =>
-       options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"),
-           sqlServerOptionsAction =>
-           {
-               sqlServerOptionsAction.MigrationsAssembly(
-                                  typeof(AppDbContext).GetTypeInfo().Assembly.GetName().Name);
-               sqlServerOptionsAction.MigrationsHistoryTable("Migration");
-           }));
+builder.Services.AddDbContext<AppDbContext>();
 
 // Add system setting from appsettings.json
 var systemSettingModel = new SystemSettingModel();
@@ -186,6 +179,7 @@ builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IShopRepository, ShopRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 // Service
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -193,9 +187,18 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IShopService, ShopService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 //-----------------------------------------------------------------------------------------------
 var app = builder.Build();
+// Apply migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    // Apply any pending migrations
+    dbContext.Database.Migrate();
+}
+
 app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseIpRateLimiting();
 

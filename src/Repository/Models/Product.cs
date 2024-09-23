@@ -1,4 +1,5 @@
-﻿using Repository.Models.Base;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Repository.Models.Base;
 
 namespace Repository.Models
 {
@@ -6,6 +7,7 @@ namespace Repository.Models
     {
         public string? ProductName { get; set; }
         public int? CategoryId { get; set; }
+        public int? ShopId { get; set; }
         public double? Size { get; set; }
         public double? Price { get; set; }
         public double? RentPrice { get; set; }
@@ -17,6 +19,11 @@ namespace Repository.Models
         public double? Long { get; set; }
         public double? Width { get; set; }
         public double? Height { get; set; }
+
+        [ForeignKey(nameof(CategoryId))]
         public virtual Category Category { get; set; }
+
+        [ForeignKey(nameof(ShopId))]
+        public virtual Shop Shop { get; set; }
     }
 }
