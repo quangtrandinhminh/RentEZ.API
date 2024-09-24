@@ -24,28 +24,28 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(categories));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("get/{id}")]
         public async Task<IActionResult> GetCategory([FromRoute]int id)
         {
             var category = await _categoryService.GetCategoryById(id);
             return Ok(BaseResponseDto.OkResponseDto(category));
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateCategory([FromBody]CategoryCreateRequest request)
         {
             await _categoryService.CreateCategoryAsync(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("udpate/{id}")]
         public async Task<IActionResult> UpdateCategory([FromBody]CategoryCreateRequest request, [FromRoute] int id)
         {
             await _categoryService.UpdateCategoryAsync(request, id);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteCategory([FromRoute]int id)
         {
             await _categoryService.DeleteCategoryAsync(id);
