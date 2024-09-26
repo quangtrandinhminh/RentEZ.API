@@ -21,7 +21,7 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
     private readonly ILogger _logger = Log.Logger;
 
 
-    public async Task<PaginatedList<UserResponseDto>> GetAllUsersAsync(UserRole? role, int pageNumber, int pageSize)
+    public async Task<PaginatedList<UserResponseDto>> GetAllUsersAsync(UserRoleEnum? role, int pageNumber, int pageSize)
     {
         _logger.Information($"Get all users by role {role.ToString()}");
         var users = _userRepository.GetAllWithCondition(

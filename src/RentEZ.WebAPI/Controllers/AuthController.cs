@@ -45,7 +45,7 @@ namespace RentEZ.WebAPI.Controllers
         [HttpGet]
         [Authorize(Roles = "Admin")]
         [Route("admin/users")]
-        public async Task<IActionResult> GetAllUsers([FromQuery] UserRole? role, [FromQuery] int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllUsers([FromQuery] UserRoleEnum? role, [FromQuery] int pageNumber = 1, int pageSize = 10)
         {
             var users = await _userService.GetAllUsersAsync(role, pageNumber, pageSize);
             return Ok(BaseResponseDto.OkResponseDto(users));
