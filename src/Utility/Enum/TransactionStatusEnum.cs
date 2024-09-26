@@ -1,6 +1,6 @@
 ﻿namespace Utility.Enum;
 
-public enum TransactionStatus
+public enum TransactionStatusEnum
 {
     Pending = 1,
     Paid,

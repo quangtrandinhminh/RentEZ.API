@@ -1,6 +1,6 @@
 ﻿namespace Utility.Enum;
 
-public enum DayOfWeek
+public enum DayOfWeekEnum
 {
     Sunday = 1,
     Monday,

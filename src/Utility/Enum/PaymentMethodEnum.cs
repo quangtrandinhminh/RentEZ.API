@@ -1,6 +1,6 @@
 ﻿namespace Utility.Enum;
 
-public enum PaymentMethod
+public enum PaymentMethodEnum
 {
     Cash = 1,
     PayOS

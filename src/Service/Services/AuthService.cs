@@ -85,7 +85,7 @@ namespace Service.Services
                 await _userRepository.CreateAsync(account, cancellationToken);
 
                 await _userRepository.SaveChangeAsync();
-                await _userManager.AddToRoleAsync(account, UserRole.Customer.ToString());
+                await _userManager.AddToRoleAsync(account, UserRoleEnum.Customer.ToString());
 
                 var mailRequest = new SendMailModel()
                 {
@@ -142,7 +142,7 @@ namespace Service.Services
                 await _userRepository.CreateAsync(account, cancellationToken);
 
                 await _userRepository.SaveChangeAsync();
-                await _userManager.AddToRoleAsync(account, UserRole.ShopOwner.ToString());
+                await _userManager.AddToRoleAsync(account, UserRoleEnum.ShopOwner.ToString());
 
                 var mailRequest = new SendMailModel()
                 {
@@ -275,7 +275,7 @@ namespace Service.Services
                 };
                 await _userRepository.CreateAsync(account);
                 await _userRepository.SaveChangeAsync();
-                await _userManager.AddToRoleAsync(account, UserRole.Customer.ToString());
+                await _userManager.AddToRoleAsync(account, UserRoleEnum.Customer.ToString());
             }
 
             var roles = await _userManager.GetRolesAsync(account);
