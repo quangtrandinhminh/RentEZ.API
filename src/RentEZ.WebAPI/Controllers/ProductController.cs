@@ -40,7 +40,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpPost("create")]
-        //[Authorize(Roles = "ShopOwner")]
+        [Authorize(Roles = "ShopOwner")]
         public async Task<IActionResult> CreateNewProduct([FromBody] ProductCreateRequestDto request)
         {
             await _productService.CreateProduct(request);
@@ -48,7 +48,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpPut("update/{id}")]
-        //[Authorize(Roles = "ShopOwner")]
+        [Authorize(Roles = "ShopOwner")]
         public async Task<IActionResult> UpdateProduct([FromBody] ProductCreateRequestDto request, [FromRoute] int id)
         {
             await _productService.UpdateProductAsync(request, id);
@@ -56,7 +56,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        //[Authorize(Roles = "ShopOwner")]
+        [Authorize(Roles = "ShopOwner")]
         public async Task<IActionResult> DeleteShop([FromRoute] int id)
         {
             await _productService.DeleteProductAsync(id);

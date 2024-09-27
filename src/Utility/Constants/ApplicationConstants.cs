@@ -116,6 +116,8 @@ namespace Utility.Constants
     public class ResponseMessageConstrantsProduct
     {
         public const string NUll = "Có trường hợp bị null.";
+        public const string UNAUTHORIZED = "Người dùng này chưa được phép để tạo sản phẩm.";
+        public const string SHOP_NOTFOUND = "Cửa hàng chưa tồn tại.";
         public const string EXISTED_PRODUCTNAME = "Ten san pham da ton tai.";
         public const string NOTFOUND = "San pham khong ton tai.";
         public const string EXISTED_IMAGE = "Hình ảnh của sản phẩm đã được sử dụng.";
