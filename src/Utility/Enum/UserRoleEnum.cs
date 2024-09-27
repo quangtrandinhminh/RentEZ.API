@@ -1,6 +1,6 @@
 ﻿namespace Utility.Enum
 {
-    public enum UserRole
+    public enum UserRoleEnum
     {
         Admin = 1,
         ShopOwner,
