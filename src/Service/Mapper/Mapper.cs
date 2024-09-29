@@ -26,12 +26,12 @@ public partial class MapperlyMapper
     // }
 
     // user
-    public partial IList<RoleResponseDto> Map(IList<RoleEntity> entity);
+    public partial IList<RoleResponse> Map(IList<RoleEntity> entity);
     public partial UserEntity Map(RegisterRequest request);
-    public partial LoginResponseDto Map(UserEntity entity);
+    public partial LoginResponse Map(UserEntity entity);
 
-    public partial IList<UserResponseDto> Map(IList<UserEntity> entity);
-    public partial IQueryable<UserResponseDto> Map(IQueryable<UserEntity> entity);
+    public partial IList<UserResponse> Map(IList<UserEntity> entity);
+    public partial IQueryable<UserResponse> Map(IQueryable<UserEntity> entity);
     public partial void Map(RegisterRequest request, UserEntity entity);
 
     // shop

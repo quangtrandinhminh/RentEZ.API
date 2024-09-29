@@ -1,6 +1,6 @@
 ﻿namespace Service.Models.User;
 
-public class VerifyEmailDto
+public class VerifyEmailRequest
 {
     public string OTP { get; set; }
     public string UserName { get; set; }

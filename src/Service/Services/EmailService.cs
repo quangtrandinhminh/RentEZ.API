@@ -27,6 +27,9 @@ namespace Service.Services
                 case MailTypeEnum.ResetPassword:
                     CreateResetPassMail(model);
                     break;
+                case MailTypeEnum.Order:
+                    CreateOrderMail(model);
+                    break;
                 default:
                     break;
             }
@@ -90,6 +93,44 @@ namespace Service.Services
                 smtp.EnableSsl = EMAIL_IsSSL;
                 var network = new NetworkCredential(EMAIL_SENDER, EMAIL_SENDER_PASSWORD);
                 smtp.Credentials = network;
+                smtp.Send(mailmsg);
+            }
+            catch (Exception ex)
+            {
+                throw new AppException(ErrorCode.Unknown, ex.Message);
+            }
+
+        }
+
+        // Create ordered mail
+        private void CreateOrderMail(SendMailModel model)
+        {
+            try
+            {
+                var mailmsg = new MailMessage
+                {
+                    IsBodyHtml = false,
+                    From = new MailAddress(MailSettingModel.Instance.FromAddress,
+                        MailSettingModel.Instance.FromDisplayName),
+                    Subject = "Đơn hàng mới từ RentEZ"
+                };
+                mailmsg.To.Add(model.Email);
+
+                mailmsg.Body = $"Đơn hàng của bạn đã được đặt thành công. " +
+                               $"\nMã đơn hàng:" +
+                               $"\nVui lòng kiểm tra thông tin đơn hàng tại ứng dụng RentEZ.";
+
+                SmtpClient smtp = new SmtpClient();
+
+                smtp.Host = EMAIL_SENDER_HOST;
+
+                smtp.Port = EMAIL_SENDER_PORT;
+
+                smtp.EnableSsl = EMAIL_IsSSL;
+
+                var network = new NetworkCredential(EMAIL_SENDER, EMAIL_SENDER_PASSWORD);
+                smtp.Credentials = network;
+
                 smtp.Send(mailmsg);
             }
             catch (Exception ex)

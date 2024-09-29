@@ -2,7 +2,7 @@
 
 namespace Service.Models.User;
 
-public class LoginDto
+public class LoginRequest
 {
     [Required]
     public string Username { get; set; }
