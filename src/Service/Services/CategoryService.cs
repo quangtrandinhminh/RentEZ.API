@@ -123,6 +123,7 @@ namespace Service.Services
                 existingCategory.Description = request.Description;
                 existingCategory.LastUpdatedTime = DateTimeOffset.UtcNow;
 
+
                 _mapper.CategoryToCreateCategory(request, existingCategory);
                 _categoryRepository.Update(existingCategory);
                 await _unitOfWork.SaveChangeAsync();

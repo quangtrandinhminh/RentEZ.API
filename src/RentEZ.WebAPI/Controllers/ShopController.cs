@@ -9,6 +9,7 @@ using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
 using AllowAnonymousAttribute = Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace RentEZ.WebAPI.Controllers
 {

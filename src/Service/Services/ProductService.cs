@@ -81,25 +81,22 @@ namespace Service.Services
         public async Task CreateProduct(ProductCreateRequestDto productRequest, CancellationToken cancellationToken = default)
         {
             _logger.Information("Creating new product");
-
-            var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
+            var currentOwnerIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid);
+            if (currentOwnerIdClaim == null)
             {
                 throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsProduct.UNAUTHORIZED, StatusCodes.Status401Unauthorized);
             }
-
+            var loggedInOwnerId = int.Parse(currentOwnerIdClaim.Value);
+            var existShop = await _shopRepository.GetSingleAsync(s => s.OwnerId == loggedInOwnerId);
+            if (existShop == null)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.SHOP_NOTFOUND, StatusCodes.Status404NotFound);
+            }
             var existProductName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName);
             if (existProductName != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_PRODUCTNAME, StatusCodes.Status400BadRequest);
             }
-
-            var existShop = await _shopRepository.GetSingleAsync(s => s.OwnerId == int.Parse(userId));
-            if (existShop == null)
-            {
-                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.SHOP_NOTFOUND, StatusCodes.Status400BadRequest);
-            }
-
             var existProductImage = await _productRepository.GetSingleAsync(x => x.Image == productRequest.Image);
             if (existProductImage != null)
             {
@@ -109,7 +106,13 @@ namespace Service.Services
             var existCategory = await _categoryRepository.GetSingleAsync(x => x.Id == productRequest.CategoryId);
             if (existCategory == null)
             {
-                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.NONEXISTENT_CATEGORY, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NONEXISTENT_CATEGORY, StatusCodes.Status404NotFound);
+            }
+            
+            var validAllowRentBeforeDays = await _productRepository.GetSingleAsync(x => x.AllowRentBeforeDays == productRequest.AllowRentBeforeDays);
+            if (validAllowRentBeforeDays != null && validAllowRentBeforeDays.AllowRentBeforeDays >= 2 && validAllowRentBeforeDays.AllowRentBeforeDays <= 5)
+            {
+                throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.INVALID_ALLOWRENTBEFOREDAYS, StatusCodes.Status400BadRequest);
             }
 
             try
@@ -123,6 +126,9 @@ namespace Service.Services
                     CreatedTime = DateTimeOffset.UtcNow,
                     ShopId = existShop.Id,
                     Price = productRequest.Price,
+                    Quantity = productRequest.Quantity,
+                    AllowRentBeforeDays = productRequest.AllowRentBeforeDays,
+                    Construction = productRequest.Construction,
                     RentPrice = productRequest.RentPrice,
                     Description = productRequest.Description,
                     Image = productRequest.Image,
@@ -130,6 +136,7 @@ namespace Service.Services
                     Long = productRequest.Long,
                     Width = productRequest.Width,
                     Height = productRequest.Height,
+                    CreatedBy = loggedInOwnerId
                 };
                 _mapper.ProductToCreateProduct(productRequest, newProduct);
 
@@ -148,7 +155,6 @@ namespace Service.Services
         public async Task UpdateProductAsync(ProductCreateRequestDto productRequest, int id)
         {
             _logger.Information("Update product");
-
 
             var existingProduct = await _productRepository.GetSingleAsync(x => x.Id == id);
             if (existingProduct == null)
