@@ -51,7 +51,15 @@ builder.Services.AddSerilog(config => { config.ReadFrom.Configuration(builder.Co
         }));*/
 
 // Register DbContext Postgres
-builder.Services.AddDbContext<AppDbContext>();
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddJsonFile("appsettingsConfig.json", optional: true, reloadOnChange: true);
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
+    options.UseNpgsql(connectionString);
+});
 
 // Add system setting from appsettings.json
 var systemSettingModel = new SystemSettingModel();
@@ -163,6 +171,7 @@ builder.Services.AddAuthorization(cfg =>
     cfg.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
 });
 
+//Add HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 
 //Add controllers
@@ -188,6 +197,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IShopService, ShopService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddHttpContextAccessor();
 
 //-----------------------------------------------------------------------------------------------
 var app = builder.Build();

@@ -9,6 +9,7 @@ using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
 using AllowAnonymousAttribute = Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace RentEZ.WebAPI.Controllers
 {
@@ -24,7 +25,7 @@ namespace RentEZ.WebAPI.Controllers
             _shopService = shopService;
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         [Authorize(Roles = "ShopOwner")]
         public async Task<IActionResult> CreateNewShop([FromBody] ShopCreateRequest request)
         {
@@ -32,9 +33,8 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
-        [HttpGet]
+        [HttpGet("admin/pending")]
         [Authorize(Roles = "Admin")]
-        [Route("admin/pending")]
         public async Task<IActionResult> GetAllPendingShops()
         {
             var shops = await _shopService.GetPendingShopList();
@@ -49,9 +49,8 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(shops));
         }
 
-        [HttpPut]
+        [HttpPut("admin/approval")]   
         [Authorize(Roles = "Admin")]
-        [Route("admin/approval")]
         public async Task<IActionResult> ShopApproval([Required]int id)
         {
             await _shopService.ShopToApprove(id);
