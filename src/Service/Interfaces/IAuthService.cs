@@ -1,24 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BusinessObject.DTO.User;
-using BusinessObject.Entities.Identity;
-using Microsoft.AspNetCore.Identity;
+using Service.Models;
+using Service.Models.User;
 
 namespace Service.Interfaces
 {
     public interface IAuthService
     {
         Task<IList<RoleResponseDto>> GetAllRoles();
-        Task Register(RegisterDto dto);
-        Task RegisterByAdmin(RegisterDto dto, int role);
+        Task Register(RegisterRequest request, CancellationToken cancellationToken = default);
+        Task RegisterByAdmin(RegisterRequest request, int role);
         Task<LoginResponseDto> Authenticate(LoginDto dto);
         Task<LoginResponseDto> RefreshToken(string token);
-        Task VerifyEmail(VerifyEmailDto dto);
-        Task ForgotPassword(ForgotPasswordDto model);
-        Task ResetPassword(ResetPasswordDto model);
-        Task ChangePassword(ChangePasswordDto dto);
-        Task ReSendEmail(ResendEmailDto model);
+        Task VerifyEmail(VerifyEmailDto dto, CancellationToken cancellationToken = default);
+        Task ForgotPassword(ForgotPasswordDto model, CancellationToken cancellationToken = default);
+        Task ResetPassword(ResetPasswordDto dto, CancellationToken cancellationToken = default);
+        Task ChangePassword(ChangePasswordDto dto, CancellationToken cancellationToken = default);
+        Task ReSendEmail(ResendEmailDto model, CancellationToken cancellationToken = default);
+        Task<LoginResponseDto> GoogleAuthenticate(GoogleLoginModel model);
+        Task RegisterAsAShopkeeper(RegisterRequest request, CancellationToken cancellationToken = default);
     }
 }

@@ -22,6 +22,7 @@ namespace Utility.Constants
         public const string UNAUTHORIZED = "Unauthorized!";
         public const string FORBIDDEN = "Forbidden!";
         public const string EXPIRED = "Expired!";
+        public const string NOTHINGCHANGED = "Nothing changed!";
     }
     public class ResponseMessageConstantsCommon
     {
@@ -46,6 +47,7 @@ namespace Utility.Constants
         public const string TOKEN_INVALID = "token khong xac thuc.";
         public const string TOKEN_EXPIRED = "token khong xac thuc hoac da het han.";
         public const string TOKEN_INVALID_OR_EXPIRED = "token khong xac thuc hoac da het han.";
+        public const string GOOGLE_TOKEN_INVALID = "Invalid Google token.";
         public const string EMAIL_VALIDATED = "Email da duoc xac thuc.";
         public const string PHONE_VALIDATED = "Phone number is validated.";
         public const string ROLE_INVALID = "Roles khong xac thuc.";
@@ -64,7 +66,7 @@ namespace Utility.Constants
         public const string PHONENUMBER_LENGTH = "So dien thoai phai co chinh xac 10 so.";
         public const string ROLES_REQUIRED = "Role khong duoc de trong.";
         public const string USER_NOT_ALLOWED = "Ban khong co quyen truy cap vao muc nay";
-
+        public const string EMAIL_VALIDATION_REQUIRED = "Please enter the OTP code sent to your email to activate your account.";
     }
 
     public class ResponseMessageIdentitySuccess
@@ -93,5 +95,44 @@ namespace Utility.Constants
         public const string DELETE_USER_SUCCESS = "Xóa người dùng thành công";
         public const string ADMIN_NOT_FOUND = "Không tìm thấy quản trị viên";
         public const string CUSTOMER_NOT_FOUND = "Không tìm thấy khách hàng";
+    }
+        
+    public class ResponseMessageConstrantsShop
+    {
+        public const string IS_INACTIVE_OWNER = "Tài khoản của người dùng chưa được xác thực.";
+        public const string UNAUTHORIZED = "Người dùng chưa được cấp quyền để thực hiện hành động này.";
+        public const string INVALID_OWNER = "Bạn không thể đăng ký cửa hàng cho người khác.";
+        public const string EXISTED_EMAIL = "Email của cửa hàng đã tồn tại.";
+        public const string OWNER_NOTFOUND = "Tài khoản chủ cửa hàng không tìm thấy.";
+        public const string EXISTED_NAME = "Ten cua da ton tai.";
+        public const string EXISTED_ADDRESS = "Dia chi cua hang da ton tai.";
+        public const string EXISTED_AVATAR = "Avatar da ton tai.";
+        public const string NO_INISACTIVE_SHOP_FOUND = "Tất cả cửa hàng đã được duyệt.";
+        public const string ALREADY_APROVED = "Cửa hàng đã được duyệt.";
+        public const string EXISTED_PHONE = "So dien thoai cua hang da ton tai.";
+        public const string ALREADY_OWNED_ANOTHER_SHOP = "Đã sở hữu một cửa hàng khác.";
+        public const string PHONE_VALIDATED = "Phone number is validated.";
+        public const string NOTFOUND = "Cửa hàng không tồn tại.";
+    }
+
+    public class ResponseMessageConstrantsProduct
+    {
+        public const string NUll = "Có trường hợp bị null.";
+        public const string INVALID_ALLOWRENTBEFOREDAYS = "Ngày cho thuê phải từ 2 đến 5 ngày.";
+        public const string UNAUTHORIZED = "Người dùng này chưa được phép để tạo sản phẩm.";
+        public const string SHOP_NOTFOUND = "Cửa hàng chưa tồn tại.";
+        public const string EXISTED_PRODUCTNAME = "Ten san pham da ton tai.";
+        public const string NOTFOUND = "San pham khong ton tai.";
+        public const string EXISTED_IMAGE = "Hình ảnh của sản phẩm đã được sử dụng.";
+        public const string NONEXISTENT_CATEGORY = "Loại sản phẩm không tồn tại.";
+        public const string NOTHING_CHANGED = "Không có gì được thay đổi sau lần chỉnh sửa này.";
+    }
+
+    public class ResponseMessageConstrantsCategory
+    {
+        public const string NOTHING_CHANGED = "Không có gì được thay đổi sau lần chỉnh sửa này.";
+        public const string EXISTED_CATEGORYNAME = "Loại sản phẩm này đã tồn tại.";
+        public const string NOTFOUND = "Không tìm thấy loại sản phẩm.";
+        public const string EXISTED_DESCRIPTION = "Mô tả bị trùng với một loại sản phẩm khác.";
     }
 }

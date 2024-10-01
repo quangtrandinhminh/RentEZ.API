@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Repository;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Repository.Infrastructure;
 
 #nullable disable
 
@@ -18,255 +18,26 @@ namespace Repository.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.4")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BusinessObject.Entities.Identity.RefreshToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("Expires")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int?>("LastUpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex(new[] { "Id" }, "Index_Id")
-                        .IsUnique();
-
-                    b.ToTable("RefreshTokens");
-                });
-
-            modelBuilder.Entity("BusinessObject.Entities.Identity.RoleEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("Roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Customer",
-                            NormalizedName = "CUSTOMER"
-                        });
-                });
-
-            modelBuilder.Entity("BusinessObject.Entities.Identity.UserEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Avatar")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("BirthDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("OTP")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("OTPExpired")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<DateTimeOffset?>("Verified")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("Users", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "1aed3357-4986-40a6-a4f7-0164e861df9d",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 8, 20, 1, 37, 5, 701, DateTimeKind.Unspecified).AddTicks(4472), new TimeSpan(0, 7, 0, 0, 0)),
-                            Email = "admin@email.com",
-                            EmailConfirmed = false,
-                            FullName = "Admin User",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 8, 20, 1, 37, 5, 701, DateTimeKind.Unspecified).AddTicks(4472), new TimeSpan(0, 7, 0, 0, 0)),
-                            LockoutEnabled = false,
-                            NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$1dletOlBc039BU/NyZiBu.tuOFPFBiGu9U9Sxw/yybmuHGDwh.pbe",
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "4ad39167-fcce-49b9-9b2b-6b9dee6d1bd5",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 8, 20, 1, 37, 5, 827, DateTimeKind.Unspecified).AddTicks(3654), new TimeSpan(0, 7, 0, 0, 0)),
-                            Email = "",
-                            EmailConfirmed = false,
-                            FullName = "Customer 1",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 8, 20, 1, 37, 5, 827, DateTimeKind.Unspecified).AddTicks(3654), new TimeSpan(0, 7, 0, 0, 0)),
-                            LockoutEnabled = false,
-                            NormalizedUserName = "CUSTOMER1",
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "customer1"
-                        });
-                });
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -279,18 +50,18 @@ namespace Repository.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -302,16 +73,16 @@ namespace Repository.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -323,15 +94,15 @@ namespace Repository.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
+                        .HasColumnType("character varying(21)");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -345,29 +116,611 @@ namespace Repository.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Identity.UserRoleEntity", b =>
+            modelBuilder.Entity("Repository.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Id" }, "Index_Id")
+                        .IsUnique();
+
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CategoryName = "Handbag",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5085), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Túi xách",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5085), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CategoryName = "SetOfClothes",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5272), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Bộ quần áo",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5272), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CategoryName = "Dress",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5275), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Váy",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5275), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CategoryName = "Shoes",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5293), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giày dép",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5293), new TimeSpan(0, 0, 0, 0, 0))
+                        });
+                });
+
+            modelBuilder.Entity("Repository.Models.Identity.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex(new[] { "Id" }, "Index_Id")
+                        .IsUnique()
+                        .HasDatabaseName("Index_Id1");
+
+                    b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Repository.Models.Identity.RoleEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "ShopOwner",
+                            NormalizedName = "SHOPOWNER"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Customer",
+                            NormalizedName = "CUSTOMER"
+                        });
+                });
+
+            modelBuilder.Entity("Repository.Models.Identity.UserEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("BirthDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("OTP")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<DateTimeOffset?>("Verified")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedTime");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.HasIndex("PhoneNumber");
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
+
+                    b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccessFailedCount = 0,
+                            Avatar = "https://via.placeholder.com/150",
+                            ConcurrencyStamp = "a269205b-0dda-4c9b-8f49-392aa3f24c24",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 53, 948, DateTimeKind.Unspecified).AddTicks(124), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "admin@example.com",
+                            EmailConfirmed = false,
+                            FullName = "Admin User",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 53, 948, DateTimeKind.Unspecified).AddTicks(124), new TimeSpan(0, 0, 0, 0, 0)),
+                            LockoutEnabled = false,
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "$2a$11$n1moVGWEO9Q2tzZOL9.u7.8zTCjcp4ZEi7HE0fjzAAeZ991zoKEA2",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "admin",
+                            Verified = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 88, DateTimeKind.Unspecified).AddTicks(8923), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccessFailedCount = 0,
+                            Avatar = "https://via.placeholder.com/150",
+                            ConcurrencyStamp = "0117b8b8-6081-45b7-80b1-447b81a07158",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 88, DateTimeKind.Unspecified).AddTicks(9134), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "shopowner@example.com",
+                            EmailConfirmed = false,
+                            FullName = "Shop Owner",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 88, DateTimeKind.Unspecified).AddTicks(9134), new TimeSpan(0, 0, 0, 0, 0)),
+                            LockoutEnabled = false,
+                            NormalizedUserName = "SHOPOWNER",
+                            PasswordHash = "$2a$11$.Tk4G2pAWPlAfF0WiPf8x.uENkVB2Bq0EbLz77f3jF4U7lqwnNHpm",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "shopowner",
+                            Verified = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 246, DateTimeKind.Unspecified).AddTicks(8649), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccessFailedCount = 0,
+                            Avatar = "https://via.placeholder.com/150",
+                            ConcurrencyStamp = "70adea64-af28-4ea5-ba69-928ee34cfe60",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 246, DateTimeKind.Unspecified).AddTicks(8678), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "customer1@example.com",
+                            EmailConfirmed = false,
+                            FullName = "Customer 1",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 246, DateTimeKind.Unspecified).AddTicks(8678), new TimeSpan(0, 0, 0, 0, 0)),
+                            LockoutEnabled = false,
+                            NormalizedUserName = "CUSTOMER1",
+                            PasswordHash = "$2a$11$9voQBExtwliG7bLh8HqZS./ca.P3BuScOdhpUIAKfngiprDwlC3ge",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "customer1",
+                            Verified = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(4317), new TimeSpan(0, 0, 0, 0, 0))
+                        });
+                });
+
+            modelBuilder.Entity("Repository.Models.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AllowRentBeforeDays")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CategoryId")
+                        .IsRequired()
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Construction")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("Height")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double?>("Long")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Mass")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("RatingCount")
+                        .HasColumnType("integer");
+
+                    b.Property<double?>("RentPrice")
+                        .HasColumnType("double precision");
+
+                    b.Property<int?>("RentedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ShopId")
+                        .HasColumnType("integer");
+
+                    b.Property<double?>("Size")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Width")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ShopId");
+
+                    b.HasIndex(new[] { "Id" }, "Index_Id")
+                        .IsUnique()
+                        .HasDatabaseName("Index_Id2");
+
+                    b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CategoryId = 1,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5340), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Túi xách đẹp",
+                            Height = 15.0,
+                            Image = "https://via.placeholder.com/150",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5340), new TimeSpan(0, 0, 0, 0, 0)),
+                            Long = 10.0,
+                            Mass = 1.0,
+                            Price = 100000.0,
+                            ProductName = "Túi xách 1",
+                            RatingCount = 0,
+                            RentPrice = 50000.0,
+                            RentedCount = 0,
+                            ShopId = 1,
+                            Size = 10.0,
+                            Width = 5.0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CategoryId = 1,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5353), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Túi xách đẹp",
+                            Height = 15.0,
+                            Image = "https://via.placeholder.com/150",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5353), new TimeSpan(0, 0, 0, 0, 0)),
+                            Long = 10.0,
+                            Mass = 1.0,
+                            Price = 100000.0,
+                            ProductName = "Túi xách 2",
+                            RatingCount = 0,
+                            RentPrice = 50000.0,
+                            RentedCount = 0,
+                            ShopId = 1,
+                            Size = 10.0,
+                            Width = 5.0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CategoryId = 2,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5363), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Bộ quần áo đẹp",
+                            Height = 15.0,
+                            Image = "https://via.placeholder.com/150",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5363), new TimeSpan(0, 0, 0, 0, 0)),
+                            Long = 10.0,
+                            Mass = 1.0,
+                            Price = 100000.0,
+                            ProductName = "Bộ quần áo 1",
+                            RatingCount = 0,
+                            RentPrice = 50000.0,
+                            RentedCount = 0,
+                            ShopId = 1,
+                            Size = 10.0,
+                            Width = 5.0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CategoryId = 2,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5370), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Bộ quần áo đẹp",
+                            Image = "https://via.placeholder.com/150",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5370), new TimeSpan(0, 0, 0, 0, 0)),
+                            Long = 10.0,
+                            Mass = 1.0,
+                            Price = 100000.0,
+                            ProductName = "Bộ quần áo 2",
+                            RatingCount = 0,
+                            RentPrice = 50000.0,
+                            RentedCount = 0,
+                            ShopId = 1,
+                            Size = 10.0
+                        });
+                });
+
+            modelBuilder.Entity("Repository.Models.Shop", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ShopAddress")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShopAvatar")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShopEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShopName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShopPhone")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("Verified")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Id" }, "Index_Id")
+                        .IsUnique()
+                        .HasDatabaseName("Index_Id3");
+
+                    b.ToTable("Shops");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5018), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5018), new TimeSpan(0, 0, 0, 0, 0)),
+                            OwnerId = 2,
+                            ShopAddress = "123 Street",
+                            ShopAvatar = "https://via.placeholder.com/150",
+                            ShopEmail = "shopowner@example.com",
+                            ShopName = "Shop Owner",
+                            ShopPhone = "0123456789",
+                            Verified = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5023), new TimeSpan(0, 0, 0, 0, 0))
+                        });
+                });
+
+            modelBuilder.Entity("Repository.Models.Identity.UserRoleEntity", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<int>");
 
                     b.HasIndex("RoleId");
-
-                    b.ToTable("UserRoles");
 
                     b.HasDiscriminator().HasValue("UserRoleEntity");
 
@@ -380,24 +733,18 @@ namespace Repository.Migrations
                         new
                         {
                             UserId = 2,
-                            RoleId = 4
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            UserId = 3,
+                            RoleId = 3
                         });
-                });
-
-            modelBuilder.Entity("BusinessObject.Entities.Identity.RefreshToken", b =>
-                {
-                    b.HasOne("BusinessObject.Entities.Identity.UserEntity", "User")
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("BusinessObject.Entities.Identity.RoleEntity", null)
+                    b.HasOne("Repository.Models.Identity.RoleEntity", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -406,7 +753,7 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("BusinessObject.Entities.Identity.UserEntity", null)
+                    b.HasOne("Repository.Models.Identity.UserEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -415,7 +762,7 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("BusinessObject.Entities.Identity.UserEntity", null)
+                    b.HasOne("Repository.Models.Identity.UserEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -424,22 +771,61 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("BusinessObject.Entities.Identity.UserEntity", null)
+                    b.HasOne("Repository.Models.Identity.UserEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Identity.UserRoleEntity", b =>
+            modelBuilder.Entity("Repository.Models.Identity.RefreshToken", b =>
                 {
-                    b.HasOne("BusinessObject.Entities.Identity.RoleEntity", "Role")
+                    b.HasOne("Repository.Models.Identity.UserEntity", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Repository.Models.Product", b =>
+                {
+                    b.HasOne("Repository.Models.Category", "Category")
+                        .WithMany("ProductEntities")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Repository.Models.Shop", "Shop")
+                        .WithMany("ProductEntities")
+                        .HasForeignKey("ShopId");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Shop");
+                });
+
+            modelBuilder.Entity("Repository.Models.Shop", b =>
+                {
+                    b.HasOne("Repository.Models.Identity.UserEntity", "Owner")
+                        .WithOne("ManagedShop")
+                        .HasForeignKey("Repository.Models.Shop", "OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Repository.Models.Identity.UserRoleEntity", b =>
+                {
+                    b.HasOne("Repository.Models.Identity.RoleEntity", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BusinessObject.Entities.Identity.UserEntity", "User")
+                    b.HasOne("Repository.Models.Identity.UserEntity", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -450,16 +836,28 @@ namespace Repository.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Identity.RoleEntity", b =>
+            modelBuilder.Entity("Repository.Models.Category", b =>
+                {
+                    b.Navigation("ProductEntities");
+                });
+
+            modelBuilder.Entity("Repository.Models.Identity.RoleEntity", b =>
                 {
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Identity.UserEntity", b =>
+            modelBuilder.Entity("Repository.Models.Identity.UserEntity", b =>
                 {
+                    b.Navigation("ManagedShop");
+
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("Repository.Models.Shop", b =>
+                {
+                    b.Navigation("ProductEntities");
                 });
 #pragma warning restore 612, 618
         }

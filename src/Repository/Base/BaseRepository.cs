@@ -1,6 +1,10 @@
 ﻿using System.Linq.Expressions;
-using BusinessObject.Entities.Base;
 using Microsoft.EntityFrameworkCore;
+using Repository.Extensions;
+using Repository.Infrastructure;
+using Repository.Models.Base;
+using Utility.Helpers;
+
 namespace Repository.Base
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity, new()
@@ -28,18 +32,59 @@ namespace Repository.Base
             }
         }
 
+        public IQueryable<T> Set() => DbSet.AsNoTracking();
+
+        public virtual void RefreshEntity(T entity)
+        {
+            _context.Entry(entity).Reload();
+        }
+
         public IQueryable<T?> GetAll()
         {
-            
-            
             return DbSet.AsQueryable().AsNoTracking();
         }
+
+        // get all with paging, return paginated queryable and all page count
+        public async Task<PaginatedList<TResult>> GetAllPaginatedQueryable<TResult>(
+            int page,
+            int pageSize,
+            Expression<Func<T, bool>> fillterPredicate = null, // Filter Predicate
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, // Sorting function
+            params Expression<Func<T, object>>[] includeProperties) // Include related entities
+        {
+            // Start with a base query from the DbSet
+            IQueryable<T> queryable = _dbSet.AsNoTracking();
+
+            // Handle includes (expands)
+            includeProperties = includeProperties?.Distinct().ToArray();
+            if (includeProperties?.Any() ?? false)
+            {
+                foreach (var navigationPropertyPath in includeProperties)
+                {
+                    queryable = queryable.Include(navigationPropertyPath);
+                }
+            }
+
+            // Apply the filter fillterPredicate
+            if (fillterPredicate != null)
+            {
+                queryable = queryable.Where(fillterPredicate);
+            }
+
+            // Apply sorting
+            if (orderBy != null)
+            {
+                queryable = orderBy(queryable); // Apply ordering through the provided delegate
+            }
+
+            var paginatedList = await PaginatedList<T>.CreateAsync(queryable, page, pageSize);
+            return paginatedList as PaginatedList<TResult>;
+        }
+
 
         public IQueryable<T> GetAllWithCondition(Expression<Func<T, bool>> predicate = null,
             params Expression<Func<T, object>>[] includeProperties)
         {
-            
-            
             IQueryable<T> queryable = DbSet.AsNoTracking();
             includeProperties = includeProperties?.Distinct().ToArray();
             if (includeProperties?.Any() ?? false)
@@ -62,7 +107,7 @@ namespace Repository.Base
         public IQueryable<T> Get(Expression<Func<T, bool>> predicate = null
             , bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties)
         {
-            
+
             IQueryable<T> source = DbSet.AsNoTracking();
             if (predicate != null)
             {
@@ -84,15 +129,15 @@ namespace Repository.Base
 
         public T? GetById(int id)
         {
-             
-            
+
+
             return DbSet.Find(id);
         }
 
         public async Task<T?> GetByIdAsync(int id)
         {
-             
-            
+
+
             return await DbSet.FindAsync(id);
         }
 
@@ -106,7 +151,7 @@ namespace Repository.Base
         public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate,
             bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties)
         {
-            
+
             var query = DbSet.AsQueryable();
 
             if (!isIncludeDeleted)
@@ -126,30 +171,23 @@ namespace Repository.Base
 
         public T Add(T entity)
         {
-            
-            var addedEntity = DbSet.Add(entity);
-            _context.Entry(entity).State = EntityState.Detached;
-            return addedEntity.Entity;
+            entity = DbSet.Add(entity).Entity;
+            return entity;
         }
 
-        public async Task<T> AddAsync(T entity)
+        public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
-            
             await DbSet.AddAsync(entity);
-            _context.Entry(entity).State = EntityState.Detached;
             return entity;
         }
 
         public void AddRange(IEnumerable<T> entities)
         {
-             
             _context.AddRange(entities);
         }
 
         public async Task AddRangeAsync(IEnumerable<T?> entities)
         {
-             
-            
             await DbSet.AddRangeAsync(entities);
             foreach (var entity in entities)
             {
@@ -159,69 +197,46 @@ namespace Repository.Base
 
         public void Update(T entity)
         {
-             
-            var tracker = _context.Attach(entity);
-            tracker.State = EntityState.Modified;
-            _context.Entry(entity).State = EntityState.Detached;
+            TryAttach(entity);
+
+            entity.LastUpdatedTime = ObjHelper.ReplaceNullOrDefault(entity.LastUpdatedTime, DateTimeOffset.UtcNow);
+            _context.Entry(entity).State = EntityState.Modified;
         }
 
-        public async Task UpdateAsync(T entity)
+        public void Delete(T entity)
         {
-             
-            var tracker = _context.Attach(entity);
-            tracker.State = EntityState.Modified;
-            _context.Entry(entity).State = EntityState.Detached;
-        }
-
-        public async Task UpdateRangeAsync(IEnumerable<T?> entities)
-        {
-             
-            
-            DbSet.UpdateRange(entities);
-            foreach (var entity in entities)
+            try
             {
-                _context.Entry(entity).State = EntityState.Detached;
+                TryAttach(entity);
+                DbSet.Remove(entity);
+            }
+            catch (Exception)
+            {
+                RefreshEntity(entity);
+                throw;
             }
         }
 
-        public void Delete(T? entity)
+        public void DeleteRange(ICollection<T> entities)
         {
-             
-            
-            DbSet.Remove(entity);
-        }
+            try
+            {
+                TryAttachRange(entities);
+                DbSet.RemoveRange(entities);
+            }
+            catch
+            {
 
-        public async Task DeleteAsync(T? entity)
-        {
-             
-            
-            DbSet.Remove(entity);
-        }
-
-        public void RemoveRange(IEnumerable<T?> entities)
-        {
-             
-            
-            DbSet.RemoveRange(entities);
-        }
-
-        public async Task RemoveRangeAsync(IEnumerable<T?> entities)
-        {
-             
-            
-            DbSet.RemoveRange(entities);
+            }
         }
 
         public IQueryable<T?> FindByCondition(Expression<Func<T?, bool>> expression)
         {
-             
-            
             return DbSet.Where(expression).AsQueryable().AsNoTracking();
         }
 
         public async Task<IList<T?>> FindByConditionAsync(Expression<Func<T?, bool>> expression)
         {
-            
             return await DbSet.Where(expression).AsQueryable().AsNoTracking().ToListAsync();
         }
 
@@ -231,8 +246,6 @@ namespace Repository.Base
 
         public IQueryable<T> Get(Expression<Func<T, bool>>? predicate = null, params Expression<Func<T, object>>[] includeProperties)
         {
-             
-            
             IQueryable<T> reault = DbSet.AsNoTracking();
             if (predicate != null)
             {
@@ -256,8 +269,8 @@ namespace Repository.Base
         {
             try
             {
-                 
-                
+
+
                 if (_context.Entry(entity).State == EntityState.Detached)
                 {
                     DbSet.Attach(entity);
@@ -272,8 +285,6 @@ namespace Repository.Base
         {
             try
             {
-                 
-                
                 foreach (var entity in entities)
                 {
                     if (_context.Entry(entity).State != EntityState.Detached)
@@ -290,8 +301,8 @@ namespace Repository.Base
 
         public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate)
         {
-             
-            
+
+
             return await DbSet.FirstOrDefaultAsync(predicate);
         }
 

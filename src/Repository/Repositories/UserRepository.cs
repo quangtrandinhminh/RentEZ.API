@@ -1,34 +1,28 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
-using BusinessObject.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Repository.Base;
+using Repository.Infrastructure;
 using Repository.Interfaces;
-using Utility.Enum;
+using Repository.Models.Identity;
 
 namespace Repository.Repositories
 {
     public class UserRepository : UserStore<UserEntity, RoleEntity, AppDbContext, int>, IUserRepository
     {
-        private readonly AppDbContext _context = new();
-        private UserManager<UserEntity> _userManager;
-        private SignInManager<UserEntity> _signinManager;
+        private readonly AppDbContext _context;
 
         public UserRepository(AppDbContext context) : base(context)
         {
             _context = context;
         }
 
+        public async Task<int> SaveChangeAsync() => await Context.SaveChangesAsync();
+
         public IQueryable<UserEntity> GetAllWithCondition(Expression<Func<UserEntity, bool>> predicate = null,
             params Expression<Func<UserEntity, object>>[] includeProperties)
         {
-            var context = new AppDbContext();
-            var dbSet = context.Set<UserEntity>();
+            var dbSet = _context.Set<UserEntity>();
             IQueryable<UserEntity> queryable = dbSet.AsNoTracking();
             includeProperties = includeProperties?.Distinct().ToArray();
             if (includeProperties?.Any() ?? false)
@@ -43,11 +37,9 @@ namespace Repository.Repositories
             return predicate == null ? queryable : queryable.Where(predicate);
         }
 
-        public async Task<IdentityResult> CreateAsync(UserEntity user)
+        public override async Task<IdentityResult> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
         {
-            await using var context = new AppDbContext();
-            await context.Users.AddAsync(user);
-            await context.SaveChangesAsync();
+            await _context.Users.AddAsync(user, cancellationToken);
             return IdentityResult.Success;
         }
 
@@ -81,6 +73,11 @@ namespace Repository.Repositories
             }
 
             return reault.Where(x => x.DeletedTime == null);
+        }
+
+        public async Task<UserEntity?> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users.FindAsync(userId);
         }
     }
 }

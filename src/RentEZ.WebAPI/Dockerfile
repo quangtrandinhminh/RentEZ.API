@@ -10,6 +10,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["RentEZ.WebAPI/RentEZ.WebAPI.csproj", "RentEZ.WebAPI/"]
+COPY ["Service/Service.csproj", "RentEZ.Service/"]
+COPY ["Repository/Repository.csproj", "RentEZ.Repository/"]
+COPY ["Utility/Utility.csproj", "RentEZ.Utility/"]
 RUN dotnet restore "./RentEZ.WebAPI/./RentEZ.WebAPI.csproj"
 COPY . .
 WORKDIR "/src/RentEZ.WebAPI"
