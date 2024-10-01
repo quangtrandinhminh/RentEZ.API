@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Repository.Models;
 using Service.Models.Shop;
 using MapperlyMapper = Service.Mapper.MapperlyMapper;
+using System.Security.Claims;
 
 namespace Service.Services
 {
@@ -21,11 +22,28 @@ namespace Service.Services
         private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
         private readonly ILogger _logger = serviceProvider.GetRequiredService<ILogger>();
         private readonly IUnitOfWork _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
+        private readonly IHttpContextAccessor _httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
         // create new shop
         public async Task CreateShop(ShopCreateRequest shopRequest, CancellationToken cancellationToken = default)
         {
             _logger.Information("Creating new shop");
+
+            var currentOwnerIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid);
+            if (currentOwnerIdClaim == null)
+            {
+                throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstrantsShop.UNAUTHORIZED, StatusCodes.Status401Unauthorized);
+            }
+            var loggedInOwnerId = int.Parse(currentOwnerIdClaim.Value);
+            if (shopRequest.OwnerId != loggedInOwnerId)
+            {
+                throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstrantsShop.INVALID_OWNER, StatusCodes.Status403Forbidden);
+            }
+            var existingShopForOwner = await _shopRepository.GetSingleAsync(x => x.OwnerId == loggedInOwnerId);
+            if (existingShopForOwner != null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.ALREADY_OWNED_ANOTHER_SHOP, StatusCodes.Status400BadRequest);
+            }
             var existedShopEmail = await _shopRepository.GetSingleAsync(x => x.ShopEmail == shopRequest.ShopEmail);
             if (existedShopEmail != null)
             {
@@ -51,11 +69,6 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_AVATAR, StatusCodes.Status400BadRequest);
             }
-            var existingShopForOwner = await _shopRepository.GetSingleAsync(x => x.OwnerId == shopRequest.OwnerId);
-            if (existingShopForOwner != null)
-            {
-                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.ALREADY_OWNED_ANOTHER_SHOP, StatusCodes.Status400BadRequest);
-            }
             var existShopOwner = await _userRepository.GetSingleAsync(x => x.Id == shopRequest.OwnerId);
             if (existShopOwner == null)
             {
@@ -78,6 +91,7 @@ namespace Service.Services
                     ShopAvatar = shopRequest.ShopAvatar,
                     ShopEmail = shopRequest.ShopEmail,
                     ShopPhone = shopRequest.ShopPhone,
+                    CreatedBy = loggedInOwnerId,
                 };
                 _mapper.ShopToCreateShop(shopRequest, newShop);
 

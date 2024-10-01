@@ -17,6 +17,9 @@ namespace Repository.Models
         public double? RentPrice { get; set; }
         public int? RentedCount { get; set; }
         public int? RatingCount { get; set; }
+        public int? Quantity { get; set; }
+        public int? AllowRentBeforeDays { get; set; }
+        public int? Construction {  get; set; }
         public string? Description { get; set; }
         public string? Image { get; set; }
         public double? Mass { get; set; }
