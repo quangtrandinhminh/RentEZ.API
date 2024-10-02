@@ -22,39 +22,8 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
 
     }
 
-    private string GetConnectionString()
-    {
-        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        var builder = new ConfigurationBuilder()
-            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{environment}.json", optional: true)
-            .AddEnvironmentVariables();
-
-        IConfiguration config = builder.Build();
-
-        return config.GetConnectionString("PostgresConnection");
-    }
-    //private string GetConnectionString()
-    //{
-    //    IConfiguration config = new ConfigurationBuilder()
-    //        .SetBasePath(Directory.GetCurrentDirectory())
-    //        .AddJsonFile("appsettings.json", true, true)
-    //        .Build();
-    //    //var strConn = config["ConnectionStrings:DefaultConnection"];
-    //    var strConn = config["ConnectionStrings:PostgresConnection"];
-    //    return strConn;
-    //}
-
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //    //=> optionsBuilder.UseSqlServer(GetConnectionString());
-    //    => optionsBuilder.UseNpgsql(GetConnectionString());
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=RentEZ;Username=postgres;Password=123456;");
-        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

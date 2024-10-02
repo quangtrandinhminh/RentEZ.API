@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility", "Utility\Utility.csproj", "{41DD8FC7-3DB2-48BC-852E-FCF508FD2C5C}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "RentEZ", "RentEZ.dcproj", "{71C292D4-67E2-47CC-9E3D-BEE992EEDBF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{41DD8FC7-3DB2-48BC-852E-FCF508FD2C5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41DD8FC7-3DB2-48BC-852E-FCF508FD2C5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41DD8FC7-3DB2-48BC-852E-FCF508FD2C5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71C292D4-67E2-47CC-9E3D-BEE992EEDBF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71C292D4-67E2-47CC-9E3D-BEE992EEDBF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71C292D4-67E2-47CC-9E3D-BEE992EEDBF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71C292D4-67E2-47CC-9E3D-BEE992EEDBF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

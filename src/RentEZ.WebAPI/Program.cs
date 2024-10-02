@@ -40,27 +40,6 @@ builder.Services.AddCors(options =>
 // Add serilog and get configuration from appsettings.json
 builder.Services.AddSerilog(config => { config.ReadFrom.Configuration(builder.Configuration); });
 
-// Register DbContext
-/*builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-        sqlServerOptionsAction =>
-        {
-            sqlServerOptionsAction.MigrationsAssembly(
-                typeof(AppDbContext).GetTypeInfo().Assembly.GetName().Name);
-            sqlServerOptionsAction.MigrationsHistoryTable("Migration");
-        }));*/
-
-// Register DbContext Postgres
-builder.Configuration
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile("appsettingsConfig.json", optional: true, reloadOnChange: true);
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
-    options.UseNpgsql(connectionString);
-});
-
 // Add system setting from appsettings.json
 var systemSettingModel = new SystemSettingModel();
 builder.Configuration.GetSection("SystemSetting").Bind(systemSettingModel);
@@ -152,15 +131,15 @@ builder.Services.AddAuthentication(options =>
         options.SaveToken = true;
         options.UseSecurityTokenValidators = true;
         options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
+    })
+    .AddGoogle(options =>
+    {
+        options.ClientId = googleSetting.ClientID;
+        options.ClientSecret = googleSetting.ClientSecret;
+        options.Scope.Add("email");
+        options.Scope.Add("profile");
+        options.SaveTokens = true;
     });
-    //.AddGoogle(options =>
-    //{
-    //    options.ClientId = googleSetting.ClientID;
-    //    options.ClientSecret = googleSetting.ClientSecret;
-    //    options.Scope.Add("email");
-    //    options.Scope.Add("profile");
-    //    options.SaveTokens = true;
-    //});
 
 
 // Add Authorization
@@ -181,7 +160,12 @@ builder.Services.AddEndpointsApiExplorer();
 // Add DI
 builder.Services.AddScoped<MapperlyMapper>();
 // Repository
-builder.Services.AddScoped<AppDbContext>();
+// Register DbContext Postgres
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
+    options.UseNpgsql(connectionString);
+});
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
@@ -218,12 +202,7 @@ app.UseCors(myAllowSpecificOrigins);
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "RentEZ.API");
-        options.RoutePrefix = string.Empty;
-        options.DocumentTitle = "RentEZ.API";
-    });
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

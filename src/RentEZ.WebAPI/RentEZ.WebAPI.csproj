@@ -7,6 +7,7 @@
 		<InvariantGlobalization>false</InvariantGlobalization>
 		<UserSecretsId>aspnet-RentEZ.WebAPI-70a48279-7201-469e-b166-1bdfb46d3cef</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerComposeProjectPath>..\RentEZ.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
 
 	<ItemGroup>

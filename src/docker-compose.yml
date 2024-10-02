@@ -1,0 +1,42 @@
+version: '3.4'
+
+networks:
+  rentez:
+    driver: bridge
+
+services:
+  rentez.webapi:
+    container_name: rentez-api
+    image: ${DOCKER_REGISTRY-}rentezwebapi
+    build:
+      context: .
+      dockerfile: RentEZ.WebAPI/Dockerfile
+    ports:
+      - 8080:8080
+      - 8081:8081
+    environment:
+      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+    networks:
+      - rentez
+    depends_on:
+      - rentez.db
+    restart: unless-stopped
+
+  rentez.db:
+    container_name: rentez-postgresql
+    image: "postgres:latest"
+    environment:
+     - POSTGRES_DB=RentEZ
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=RentEZp@55w0rd
+    ports:
+      - "5432:5432"
+    volumes:
+      - rentezvolumne:/var/lib/postgresql/data
+    networks:
+      - rentez
+    restart: unless-stopped
+
+volumes:
+  rentezvolumne:
+
