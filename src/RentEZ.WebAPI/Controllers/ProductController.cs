@@ -23,7 +23,7 @@ namespace RentEZ.WebAPI.Controllers
             _productService = productService;
         }
 
-        [HttpGet("get/product/{id}")]
+        [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetProductById(int id)
         {
@@ -31,7 +31,7 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(product));
         }
 
-        [HttpGet("with/category")]
+        [HttpGet("category")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllProducts([FromQuery] int? categoryId = null)
         {
@@ -39,7 +39,7 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(products));
         }
 
-        [HttpPost("create")]
+        [HttpPost()]
         [Authorize(Roles = "ShopOwner")]
         public async Task<IActionResult> CreateNewProduct([FromBody] ProductCreateRequestDto request)
         {
@@ -47,7 +47,7 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         [Authorize(Roles = "ShopOwner")]
         public async Task<IActionResult> UpdateProduct([FromBody] ProductCreateRequestDto request, [FromRoute] int id)
         {
@@ -55,7 +55,7 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "ShopOwner")]
         public async Task<IActionResult> DeleteShop([FromRoute] int id)
         {
