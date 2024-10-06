@@ -11,7 +11,7 @@ public class Order : BaseEntity
 {
     public int CustomerId { get; set; }
     public int? VoucherId { get; set; }
-    public string OrderAddress { get; set; }
+    public string? OrderAddress { get; set; }
     public decimal TotalRentPrice { get; set; }
     public decimal TotalDeposit { get; set; }
     public decimal ShipFee { get; set; }
@@ -23,13 +23,13 @@ public class Order : BaseEntity
     public decimal Total { get; set; }
     public PaymentStatusEnum PaymentStatus { get; set; }
     public PaymentMethodEnum PaymentMethod { get; set; }
-    public string Note { get; set; }
+    public string? Note { get; set; }
 
     [ForeignKey("CustomerId")]
     public virtual UserEntity Customer { get; set; }
 
     [ForeignKey("VoucherId")]
-    public virtual Voucher Voucher { get; set; }
+    public virtual Voucher? Voucher { get; set; }
 
     [InverseProperty("Order")]
     public virtual ICollection<OrderDetail> OrderDetails { get; set; }

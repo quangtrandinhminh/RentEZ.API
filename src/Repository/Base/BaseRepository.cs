@@ -45,18 +45,19 @@ namespace Repository.Base
         }
 
         // get all with paging, return paginated queryable and all page count
+        // can only select the columns that are needed in the response
         public async Task<PaginatedList<TResult>> GetAllPaginatedQueryable<TResult>(
-            int page,
+            int pageNumber,
             int pageSize,
-            Expression<Func<T, bool>> fillterPredicate = null, // Filter Predicate
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, // Sorting function
-            params Expression<Func<T, object>>[] includeProperties) // Include related entities
+            Expression<Func<T, TResult>>? selector = null,
+            Expression<Func<T, bool>>? filterPredicate = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            params Expression<Func<T, object>>[]? includeProperties)
         {
-            // Start with a base query from the DbSet
-            IQueryable<T> queryable = _dbSet.AsNoTracking();
-
-            // Handle includes (expands)
+            IQueryable<T> queryable = DbSet.AsNoTracking();
             includeProperties = includeProperties?.Distinct().ToArray();
+
+            // Include related entities
             if (includeProperties?.Any() ?? false)
             {
                 foreach (var navigationPropertyPath in includeProperties)
@@ -65,22 +66,34 @@ namespace Repository.Base
                 }
             }
 
-            // Apply the filter fillterPredicate
-            if (fillterPredicate != null)
+            // Include related entities
+            if (filterPredicate != null)
             {
-                queryable = queryable.Where(fillterPredicate);
+                queryable = queryable.Where(filterPredicate);
             }
 
-            // Apply sorting
+            // Apply the ordering function
             if (orderBy != null)
             {
-                queryable = orderBy(queryable); // Apply ordering through the provided delegate
+                queryable = orderBy(queryable);
             }
 
-            var paginatedList = await PaginatedList<T>.CreateAsync(queryable, page, pageSize);
-            return paginatedList as PaginatedList<TResult>;
-        }
+            // If selector is null, select the whole entity (T)
+            if (selector == null)
+            {
+                var paginatedList = await PaginatedList<T>.CreateAsync(queryable, pageNumber, pageSize);
+                return paginatedList as PaginatedList<TResult>;
+            }
+            else
+            {
+                // Apply projection with the selector
+                var projectedQuery = queryable.Select(selector);
 
+                // Create the paginated list with the projected query
+                var paginatedList = await PaginatedList<TResult>.CreateAsync(projectedQuery, pageNumber, pageSize);
+                return paginatedList;
+            }
+        }
 
         public IQueryable<T> GetAllWithCondition(Expression<Func<T, bool>> predicate = null,
             params Expression<Func<T, object>>[] includeProperties)
@@ -102,6 +115,12 @@ namespace Repository.Base
         public async Task<IList<T>?> GetAllAsync()
         {
             return await DbSet.AsQueryable().AsNoTracking().ToListAsync();
+        }
+
+        // check if an entity exists
+        public async Task<bool> IsExistAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await DbSet.AnyAsync(predicate);
         }
 
         public IQueryable<T> Get(Expression<Func<T, bool>> predicate = null

@@ -21,8 +21,8 @@ public class OrderDetail : BaseEntity
     public decimal SubTotalDeposit { get; set; }
     public decimal? Discount { get; set; }
     public decimal SubTotal { get; set; }
-    public byte Rating { get; set; }
-    public string ReviewContent { get; set; }
+    public byte? Rating { get; set; }
+    public string? ReviewContent { get; set; }
 
     [ForeignKey("OrderId")]
     public virtual Order Order { get; set; }
@@ -31,5 +31,5 @@ public class OrderDetail : BaseEntity
     public virtual Product Product { get; set; }
 
     [ForeignKey("VoucherId")]
-    public virtual Voucher Voucher { get; set; }
+    public virtual Voucher? Voucher { get; set; }
 }

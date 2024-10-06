@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using Service.ApiModels;
 using Service.Models;
 using Utility.Constants;
 using Utility.Exceptions;
@@ -60,7 +61,7 @@ namespace RentEZ.WebAPI.Middlewares
             response.StatusCode = StatusCodes.Status401Unauthorized;
 
             var message = "You need AccessToken to access this resource. If token was provided, it may be invalid or expired";
-            var data = new BaseResponseDto(response.StatusCode, ResponseCodeConstants.UNAUTHORIZED, message);
+            var data = new BaseResponse(response.StatusCode, ResponseCodeConstants.UNAUTHORIZED, message);
             var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             return context.Response.WriteAsync(result);
         }
@@ -75,7 +76,7 @@ namespace RentEZ.WebAPI.Middlewares
                 ? ResponseMessageIdentity.USER_NOT_ALLOWED + $" You need '{requiredRoles}' role to access this resource."
                 : ResponseMessageIdentity.USER_NOT_ALLOWED;
 
-            var data = new BaseResponseDto(response.StatusCode, ResponseCodeConstants.FORBIDDEN, message);
+            var data = new BaseResponse(response.StatusCode, ResponseCodeConstants.FORBIDDEN, message);
             var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             return context.Response.WriteAsync(result);
         }
@@ -86,7 +87,7 @@ namespace RentEZ.WebAPI.Middlewares
             response.ContentType = "application/json";
             response.StatusCode = ex.StatusCode;
 
-            var data = new BaseResponseDto(response.StatusCode, ex.Code, ex.Message);
+            var data = new BaseResponse(response.StatusCode, ex.Code, ex.Message);
             var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             await response.WriteAsync(result);
         }
@@ -97,7 +98,7 @@ namespace RentEZ.WebAPI.Middlewares
             response.ContentType = "application/json";
             response.StatusCode = StatusCodes.Status500InternalServerError;
 
-            var data = new BaseResponseDto(response.StatusCode, ResponseCodeConstants.INTERNAL_SERVER_ERROR, ex.Message);
+            var data = new BaseResponse(response.StatusCode, ResponseCodeConstants.INTERNAL_SERVER_ERROR, ex.Message);
             var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             await response.WriteAsync(result);
         }

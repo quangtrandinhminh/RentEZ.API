@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Service.ApiModels;
 using Service.Interfaces;
 using Service.Models;
 using Service.Models.RefreshToken;
@@ -24,7 +25,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             await _authService.Register(request);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         }
 
         [HttpGet]
@@ -33,7 +34,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> GetAllRoles()
         {
             var roles = await _authService.GetAllRoles();
-            return Ok(BaseResponseDto.OkResponseDto(roles));
+            return Ok(BaseResponse.OkResponseDto(roles));
         }
 
         [HttpGet]
@@ -42,7 +43,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> GetAllUsers([FromQuery] UserRoleEnum? role, [FromQuery] int pageNumber = 1, int pageSize = 10)
         {
             var users = await _userService.GetAllUsersAsync(role, pageNumber, pageSize);
-            return Ok(BaseResponseDto.OkResponseDto(users));
+            return Ok(BaseResponse.OkResponseDto(users));
         }
 
         [HttpPost]
@@ -51,7 +52,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> RegisterByAdmin([FromBody] RegisterRequest request, int role)
         {
             await _authService.RegisterByAdmin(request, role);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         }
 
         [HttpPost]
@@ -69,7 +70,7 @@ namespace RentEZ.WebAPI.Controllers
             var refreshToken = request.Token ?? Request.Cookies["refreshToken"];
             var response = await _authService.RefreshToken(refreshToken);
             SetTokenCookie(response.RefreshToken);
-            return Created(nameof(RefreshToken), BaseResponseDto.OkResponseDto(response));
+            return Created(nameof(RefreshToken), BaseResponse.OkResponseDto(response));
         }
 
         private void SetTokenCookie(string token)
@@ -86,35 +87,35 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> VerifyEmail(VerifyEmailRequest request)
         {
             await _authService.VerifyEmail(request);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.VERIFY_EMAIL_SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageIdentitySuccess.VERIFY_EMAIL_SUCCESS));
         }
 
         [HttpPost("password/forgot")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
         {
             await _authService.ForgotPassword(request);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.FORGOT_PASSWORD_SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageIdentitySuccess.FORGOT_PASSWORD_SUCCESS));
         }
 
         [HttpPost("password/change")]
         public async Task<IActionResult> ChangePassword(ChangePasswordDto request)
         {
             await _authService.ChangePassword(request);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.CHANGE_PASSWORD_SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageIdentitySuccess.CHANGE_PASSWORD_SUCCESS));
         }
 
         [HttpPost("password/reset")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
         {
             await _authService.ResetPassword(request);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.RESET_PASSWORD_SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageIdentitySuccess.RESET_PASSWORD_SUCCESS));
         }
 
         [HttpPost("email/resend")]
         public async Task<IActionResult> ResendEmail(ResendEmailRequest request)
         {
             await _authService.ReSendEmail(request);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.RESEND_EMAIL_SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageIdentitySuccess.RESEND_EMAIL_SUCCESS));
         }
 
         [HttpPost("authentication/google")]
@@ -128,7 +129,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> RegisterShopkeeper([FromBody] RegisterRequest request)
         {
             await _authService.RegisterAsAShopkeeper(request);
-            return Created(nameof(RegisterShopkeeper), BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
+            return Created(nameof(RegisterShopkeeper), BaseResponse.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         }
     }
 }

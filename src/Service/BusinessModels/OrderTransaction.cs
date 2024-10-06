@@ -4,31 +4,26 @@ using Utility.Helpers;
 
 namespace Service.BusinessModels;
 
-public class OrderTransaction
+public class OrderTransaction(
+    decimal platformRate,
+    decimal taxRate,
+    decimal shipFee,
+    decimal shipSupportFee,
+    IList<OrderDetail> orderDetails,
+    Voucher voucher)
 {
-    public OrderTransaction(decimal platformRate, decimal taxRate, decimal shipFee, decimal shipSupportFee, IList<OrderDetail> orderDetails, Voucher voucher)
-    {
-        PlatformRate = platformRate;
-        TaxRate = taxRate;
-        ShipFee = shipFee;
-        ShipSupportFee = shipSupportFee;
-        PaymentStatus = PaymentStatusEnum.Pending;
-        OrderDetails = orderDetails;
-        Voucher = voucher;
-    }
-
     public decimal TotalRentPrice { get; set; }
     public decimal TotalDeposit { get; set; }
-    public decimal ShipFee { get; set; }
-    public decimal PlatformRate { get; set; }
+    public decimal ShipFee { get; set; } = shipFee;
+    public decimal PlatformRate { get; set; } = platformRate;
     public decimal PlatformFee { get; set; }
-    public decimal ShipSupportFee { get; set; }
+    public decimal ShipSupportFee { get; set; } = shipSupportFee;
     public decimal Tax { get; private set; }
-    public decimal TaxRate { get; set; }
+    public decimal TaxRate { get; set; } = taxRate;
     public decimal Total { get; set; }
-    public PaymentStatusEnum PaymentStatus { get; set; }
-    public IList<OrderDetail> OrderDetails { get; set; }
-    public Voucher Voucher { get; set; }
+    public PaymentStatusEnum PaymentStatus { get; set; } = PaymentStatusEnum.Pending;
+    public IList<OrderDetail> OrderDetails { get; set; } = orderDetails;
+    public Voucher Voucher { get; set; } = voucher;
 
     public void CalculateTotal()
     {

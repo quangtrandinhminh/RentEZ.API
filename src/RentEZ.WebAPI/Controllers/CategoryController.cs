@@ -4,6 +4,7 @@ using Service.Models;
 using Service.Models.Category;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Http;
+using Service.ApiModels;
 using Utility.Constants;
 using FromBodyAttribute = Microsoft.AspNetCore.Mvc.FromBodyAttribute;
 using HttpDeleteAttribute = Microsoft.AspNetCore.Mvc.HttpDeleteAttribute;
@@ -23,14 +24,14 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> GetAllCategories()
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
-            return Ok(BaseResponseDto.OkResponseDto(categories));
+            return Ok(BaseResponse.OkResponseDto(categories));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory([FromRoute]int id)
         {
             var category = await _categoryService.GetCategoryById(id);
-            return Ok(BaseResponseDto.OkResponseDto(category));
+            return Ok(BaseResponse.OkResponseDto(category));
         }
 
         [HttpPost()]
@@ -38,7 +39,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> CreateCategory([FromBody]CategoryCreateRequest request)
         {
             await _categoryService.CreateCategoryAsync(request);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
         [HttpPut("{id}")]
@@ -46,7 +47,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> UpdateCategory([FromBody]CategoryCreateRequest request, [FromRoute] int id)
         {
             await _categoryService.UpdateCategoryAsync(request, id);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
         [HttpDelete("{id}")]
@@ -54,7 +55,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> DeleteCategory([FromRoute]int id)
         {
             await _categoryService.DeleteCategoryAsync(id);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
     }
 }

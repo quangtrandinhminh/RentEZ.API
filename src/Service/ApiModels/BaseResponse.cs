@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Utility.Constants;
 
-namespace Service.Models
+namespace Service.ApiModels
 {
     public class BaseResponse<T>
     {
@@ -68,13 +68,13 @@ namespace Service.Models
         }
     }
 
-    public class BaseResponseDto : BaseResponse<object>
+    public class BaseResponse : BaseResponse<object>
     {
-        public BaseResponseDto(int statusCode, string code, object? data, object? additionalData = null, string? message = null) : base(statusCode, code, data, additionalData, message)
+        public BaseResponse(int statusCode, string code, object? data, object? additionalData = null, string? message = null) : base(statusCode, code, data, additionalData, message)
         {
         }
 
-        public BaseResponseDto(int statusCode, string code, string? message) : base(statusCode, code, message)
+        public BaseResponse(int statusCode, string code, string? message) : base(statusCode, code, message)
         {
         }
     }

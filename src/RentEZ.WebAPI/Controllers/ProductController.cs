@@ -2,6 +2,7 @@
 using Service.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Http;
+using Service.ApiModels;
 using Service.Models;
 using Service.Models.Product;
 using Utility.Constants;
@@ -28,7 +29,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> GetProductById(int id)
         {
             var product = await _productService.GetProductById(id);
-            return Ok(BaseResponseDto.OkResponseDto(product));
+            return Ok(BaseResponse.OkResponseDto(product));
         }
 
         [HttpGet("category")]
@@ -36,7 +37,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> GetAllProducts([FromQuery] int? categoryId = null)
         {
             var products = await _productService.GetAllProducts(categoryId);
-            return Ok(BaseResponseDto.OkResponseDto(products));
+            return Ok(BaseResponse.OkResponseDto(products));
         }
 
         [HttpPost()]
@@ -44,7 +45,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> CreateNewProduct([FromBody] ProductCreateRequestDto request)
         {
             await _productService.CreateProduct(request);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
         [HttpPut("{id}")]
@@ -52,7 +53,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> UpdateProduct([FromBody] ProductCreateRequestDto request, [FromRoute] int id)
         {
             await _productService.UpdateProductAsync(request, id);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
         [HttpDelete("{id}")]
@@ -60,7 +61,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> DeleteShop([FromRoute] int id)
         {
             await _productService.DeleteProductAsync(id);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
     }
 }
