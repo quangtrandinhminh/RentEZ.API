@@ -15,9 +15,13 @@ namespace RentEZ.WebAPI.Controllers
 {
     [Route("api/categories")]
     [ApiController]
-    public class CategoryController(IServiceProvider serviceProvider) : ControllerBase
+    public class CategoryController : ControllerBase
     {
-        private readonly ICategoryService _categoryService = serviceProvider.GetRequiredService<ICategoryService>();
+        private readonly ICategoryService _categoryService;
+        public CategoryController(ICategoryService categoryService)
+        {
+            _categoryService = categoryService;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
