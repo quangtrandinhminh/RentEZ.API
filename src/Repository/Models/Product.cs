@@ -5,10 +5,6 @@ namespace Repository.Models
 {
     public class Product : BaseEntity
     {
-        public Product()
-        {
-            RentedCount = 0;
-        }
         public string? ProductName { get; set; }
         public int? CategoryId { get; set; }
         public int? ShopId { get; set; }

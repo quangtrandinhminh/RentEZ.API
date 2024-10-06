@@ -1,6 +1,6 @@
 ﻿namespace Service.Models.User
 {
-    public class LoginResponse : UserResponse
+    public class LoginResponseDto : UserResponseDto
     {
         public string? Token { get; set; }
         public string? RefreshToken { get; set; }

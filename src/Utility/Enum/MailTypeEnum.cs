@@ -3,6 +3,5 @@
 public enum MailTypeEnum
 {
     Verify = 1,
-    ResetPassword,
-    Order,
+    ResetPassword
 }

@@ -13,10 +13,16 @@ namespace RentEZ.WebAPI.Controllers
     [ApiController]
     [Route("api/auth")]
     [EnableRateLimiting("EndpointRateLimitPolicy")]
-    public class AuthController(IServiceProvider serviceProvider) : ControllerBase
+    public class AuthController : ControllerBase
     {
-        private readonly IAuthService _authService = serviceProvider.GetRequiredService<IAuthService>();
-        private readonly IUserService _userService = serviceProvider.GetRequiredService<IUserService>();
+        private readonly IAuthService _authService;
+        private readonly IUserService _userService;
+
+        public AuthController(IAuthService authSevices, IUserService userService)
+        {
+            _userService = userService;
+            _authService = authSevices;
+        }
 
         [HttpPost]
         [AllowAnonymous]
@@ -57,9 +63,9 @@ namespace RentEZ.WebAPI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("authentication")]
-        public async Task<IActionResult> Login(LoginRequest request)
+        public async Task<IActionResult> Login(LoginDto request)
         {
-            return Created(nameof(Login), await _authService.Authenticate(request));
+            return Ok(await _authService.Authenticate(request));
         }
 
         [AllowAnonymous]
@@ -69,7 +75,7 @@ namespace RentEZ.WebAPI.Controllers
             var refreshToken = request.Token ?? Request.Cookies["refreshToken"];
             var response = await _authService.RefreshToken(refreshToken);
             SetTokenCookie(response.RefreshToken);
-            return Created(nameof(RefreshToken), BaseResponseDto.OkResponseDto(response));
+            return Ok(BaseResponseDto.OkResponseDto(response));
         }
 
         private void SetTokenCookie(string token)
@@ -83,14 +89,14 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpPost("email/verification")]
-        public async Task<IActionResult> VerifyEmail(VerifyEmailRequest request)
+        public async Task<IActionResult> VerifyEmail(VerifyEmailDto request)
         {
             await _authService.VerifyEmail(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.VERIFY_EMAIL_SUCCESS));
         }
 
         [HttpPost("password/forgot")]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto request)
         {
             await _authService.ForgotPassword(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.FORGOT_PASSWORD_SUCCESS));
@@ -104,14 +110,14 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpPost("password/reset")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto request)
         {
             await _authService.ResetPassword(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.RESET_PASSWORD_SUCCESS));
         }
 
         [HttpPost("email/resend")]
-        public async Task<IActionResult> ResendEmail(ResendEmailRequest request)
+        public async Task<IActionResult> ResendEmail(ResendEmailDto request)
         {
             await _authService.ReSendEmail(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.RESEND_EMAIL_SUCCESS));
@@ -120,7 +126,7 @@ namespace RentEZ.WebAPI.Controllers
         [HttpPost("authentication/google")]
         public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginModel request)
         {
-            return Created(nameof(GoogleLogin), await _authService.GoogleAuthenticate(request));
+            return Ok(await _authService.GoogleAuthenticate(request));
         }
 
         [HttpPost]
@@ -128,7 +134,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> RegisterShopkeeper([FromBody] RegisterRequest request)
         {
             await _authService.RegisterAsAShopkeeper(request);
-            return Created(nameof(RegisterShopkeeper), BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         }
     }
 }

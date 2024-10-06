@@ -20,6 +20,5 @@ namespace Repository.Models
         [ForeignKey(nameof(OwnerId))]
         public UserEntity? Owner { get; set; }
         public virtual ICollection<Product> ProductEntities { get; set; } = new List<Product>();
-        public virtual ICollection<Voucher> Vouchers { get; set; } = new List<Voucher>();
     }
 }
