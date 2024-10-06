@@ -25,7 +25,7 @@ namespace RentEZ.WebAPI.Controllers
             _shopService = shopService;
         }
 
-        [HttpPost("create")]
+        [HttpPost()]
         [Authorize(Roles = "ShopOwner")]
         public async Task<IActionResult> CreateNewShop([FromBody] ShopCreateRequest request)
         {
