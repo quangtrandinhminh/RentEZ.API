@@ -26,14 +26,14 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(categories));
         }
 
-        [HttpGet("get/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory([FromRoute]int id)
         {
             var category = await _categoryService.GetCategoryById(id);
             return Ok(BaseResponseDto.OkResponseDto(category));
         }
 
-        [HttpPost("create")]
+        [HttpPost()]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateCategory([FromBody]CategoryCreateRequest request)
         {
@@ -41,7 +41,7 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
-        [HttpPut("udpate/{id}")]
+        [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateCategory([FromBody]CategoryCreateRequest request, [FromRoute] int id)
         {
@@ -49,7 +49,7 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCategory([FromRoute]int id)
         {
