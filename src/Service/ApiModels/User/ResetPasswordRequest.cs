@@ -3,7 +3,7 @@ using Utility.Constants;
 
 namespace Service.Models.User;
 
-public class ResetPasswordDto
+public class ResetPasswordRequest
 {
     [Required]
     public string OTP { get; set; }

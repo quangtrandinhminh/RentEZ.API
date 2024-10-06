@@ -12,6 +12,7 @@ using Service.Interfaces;
 using RentEZ.WebAPI.Middlewares;
 using Repository.Infrastructure;
 using AspNetCoreRateLimit;
+using Repository.Base;
 using MapperlyMapper = Service.Mapper.MapperlyMapper;
 using Repository.Models.Identity;
 
@@ -39,27 +40,6 @@ builder.Services.AddCors(options =>
 
 // Add serilog and get configuration from appsettings.json
 builder.Services.AddSerilog(config => { config.ReadFrom.Configuration(builder.Configuration); });
-
-// Register DbContext
-/*builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-        sqlServerOptionsAction =>
-        {
-            sqlServerOptionsAction.MigrationsAssembly(
-                typeof(AppDbContext).GetTypeInfo().Assembly.GetName().Name);
-            sqlServerOptionsAction.MigrationsHistoryTable("Migration");
-        }));*/
-
-// Register DbContext Postgres
-builder.Configuration
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile("appsettingsConfig.json", optional: true, reloadOnChange: true);
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
-    options.UseNpgsql(connectionString);
-});
 
 // Add system setting from appsettings.json
 var systemSettingModel = new SystemSettingModel();
@@ -180,9 +160,27 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Add DI
 builder.Services.AddScoped<MapperlyMapper>();
+
 // Repository
-builder.Services.AddScoped<AppDbContext>();
+// Register DbContext
+/*builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlServerOptionsAction =>
+        {
+            sqlServerOptionsAction.MigrationsAssembly(
+                typeof(AppDbContext).GetTypeInfo().Assembly.GetName().Name);
+            sqlServerOptionsAction.MigrationsHistoryTable("Migration");
+        }));*/
+
+// Register DbContext Postgres
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
+    options.UseNpgsql(connectionString);
+});
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
