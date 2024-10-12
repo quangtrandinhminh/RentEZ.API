@@ -27,6 +27,9 @@ namespace Service.Models.Product
         [RegularExpression(@"^[+]?[0]*[1-9]\d*(\.\d+)?$", ErrorMessage = "Only natural numbers or real numbers greater than 0 are allowed")]
         public double RentPrice { get; set; }
         [Required]
+        [RegularExpression(@"^[+]?[1-9]\d*$", ErrorMessage = "Only positive integers greater than 0 are allowed")]
+        public int DepositRate { get; set; }
+        [Required]
         public string Description { get; set; }
         [Required]
         //[DataType(DataType.ImageUrl)]

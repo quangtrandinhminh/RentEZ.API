@@ -3,7 +3,7 @@ using Utility.Constants;
 
 namespace Service.Models.User;
 
-public class UserUpdateRequest
+public class UserUpdateRequestDto
 {
     [Required(ErrorMessage = ResponseMessageIdentity.USERNAME_REQUIRED)]
     [MaxLength(100)]

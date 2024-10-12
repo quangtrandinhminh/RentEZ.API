@@ -6,9 +6,9 @@ namespace Service.Interfaces;
 
 public interface IUserService
 {
-    Task<PaginatedList<UserResponse>> GetAllUsersAsync(UserRoleEnum? role, int pageNumber, int pageSize);
-    Task CreateUserAsync(UserCreateRequest dto);
-    Task UpdateUserAsync(UserUpdateRequest dto);
-    Task<UserResponse> GetByIdAsync(int id);
+    Task<PaginatedList<UserResponseDto>> GetAllUsersAsync(UserRoleEnum? role, int pageNumber, int pageSize);
+    Task CreateUserAsync(UserCreateRequestDto dto);
+    Task UpdateUserAsync(UserUpdateRequestDto dto);
+    Task<UserResponseDto> GetByIdAsync(int id);
     Task DeleteUserAsync(int id);
 }

@@ -2,7 +2,7 @@
 
 namespace Service.Models.User;
 
-public class ForgotPasswordRequest
+public class ResendEmailDto
 {
     [Required]
     public string UserName { get; set; }

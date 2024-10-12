@@ -72,8 +72,10 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
             }
             var category = await _categoryRepository.GetByIdAsync(product.CategoryId ?? 0);
+            var shop = await _shopRepository.GetByIdAsync(product.ShopId ?? 0);
             var productDto = _mapper.ProductToProductResponseDto(product);
             productDto.CategoryName = category?.CategoryName;
+            productDto.ShopName = shop?.ShopName;
             return productDto;
         }
 
@@ -110,7 +112,7 @@ namespace Service.Services
             }
             
             var validAllowRentBeforeDays = await _productRepository.GetSingleAsync(x => x.AllowRentBeforeDays == productRequest.AllowRentBeforeDays);
-            if (validAllowRentBeforeDays != null && validAllowRentBeforeDays.AllowRentBeforeDays >= 2 && validAllowRentBeforeDays.AllowRentBeforeDays <= 5)
+            if (validAllowRentBeforeDays != null && validAllowRentBeforeDays.AllowRentBeforeDays <= 2 && validAllowRentBeforeDays.AllowRentBeforeDays >= 5)
             {
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.INVALID_ALLOWRENTBEFOREDAYS, StatusCodes.Status400BadRequest);
             }
@@ -130,6 +132,7 @@ namespace Service.Services
                     AllowRentBeforeDays = productRequest.AllowRentBeforeDays,
                     Construction = productRequest.Construction,
                     RentPrice = productRequest.RentPrice,
+                    DepositRate = productRequest.DepositRate,
                     Description = productRequest.Description,
                     Image = productRequest.Image,
                     Mass = productRequest.Mass,

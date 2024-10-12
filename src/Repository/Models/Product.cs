@@ -5,10 +5,6 @@ namespace Repository.Models
 {
     public class Product : BaseEntity
     {
-        public Product()
-        {
-            RentedCount = 0;
-        }
         public string? ProductName { get; set; }
         public int? CategoryId { get; set; }
         public int? ShopId { get; set; }
@@ -26,6 +22,8 @@ namespace Repository.Models
         public double? Long { get; set; }
         public double? Width { get; set; }
         public double? Height { get; set; }
+        public int? DepositRate { get; set; }
+        public double? Deposit => DepositRate * Price / 100;
 
         [ForeignKey(nameof(CategoryId))]
         public virtual Category Category { get; set; }

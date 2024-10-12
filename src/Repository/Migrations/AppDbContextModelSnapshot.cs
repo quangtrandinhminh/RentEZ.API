@@ -176,33 +176,33 @@ namespace Repository.Migrations
                         {
                             Id = 1,
                             CategoryName = "Handbag",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5085), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9593), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Túi xách",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5085), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9593), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2,
                             CategoryName = "SetOfClothes",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5272), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9731), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Bộ quần áo",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5272), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9731), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3,
                             CategoryName = "Dress",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5275), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9745), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Váy",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5275), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9745), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 4,
                             CategoryName = "Shoes",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5293), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9747), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Giày dép",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5293), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9747), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -416,57 +416,57 @@ namespace Repository.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Avatar = "https://via.placeholder.com/150",
-                            ConcurrencyStamp = "a269205b-0dda-4c9b-8f49-392aa3f24c24",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 53, 948, DateTimeKind.Unspecified).AddTicks(124), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "e60f9fc1-1b84-439d-b38f-f0119821e08f",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 350, DateTimeKind.Unspecified).AddTicks(7666), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin User",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 53, 948, DateTimeKind.Unspecified).AddTicks(124), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 350, DateTimeKind.Unspecified).AddTicks(7666), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$n1moVGWEO9Q2tzZOL9.u7.8zTCjcp4ZEi7HE0fjzAAeZ991zoKEA2",
+                            PasswordHash = "$2a$11$oeHzrxQepLFg8LkWoZyA..IiYRbTVhX5fzvifNPI1pdXPf/XuPLfW",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "admin",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 88, DateTimeKind.Unspecified).AddTicks(8923), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 477, DateTimeKind.Unspecified).AddTicks(4554), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2,
                             AccessFailedCount = 0,
                             Avatar = "https://via.placeholder.com/150",
-                            ConcurrencyStamp = "0117b8b8-6081-45b7-80b1-447b81a07158",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 88, DateTimeKind.Unspecified).AddTicks(9134), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "94bd9885-af70-428f-bbb1-95c516b34968",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 477, DateTimeKind.Unspecified).AddTicks(4569), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "shopowner@example.com",
                             EmailConfirmed = false,
                             FullName = "Shop Owner",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 88, DateTimeKind.Unspecified).AddTicks(9134), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 477, DateTimeKind.Unspecified).AddTicks(4569), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "SHOPOWNER",
-                            PasswordHash = "$2a$11$.Tk4G2pAWPlAfF0WiPf8x.uENkVB2Bq0EbLz77f3jF4U7lqwnNHpm",
+                            PasswordHash = "$2a$11$mfjVnTSc9RjhmzxzvjU7J.Ivvn9YC8AtCFxZGviWLLV4WOzPdVkru",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "shopowner",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 246, DateTimeKind.Unspecified).AddTicks(8649), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 612, DateTimeKind.Unspecified).AddTicks(8815), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3,
                             AccessFailedCount = 0,
                             Avatar = "https://via.placeholder.com/150",
-                            ConcurrencyStamp = "70adea64-af28-4ea5-ba69-928ee34cfe60",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 246, DateTimeKind.Unspecified).AddTicks(8678), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "c44d6468-b16e-44f3-9703-bfe30afb81e5",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 612, DateTimeKind.Unspecified).AddTicks(8829), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "customer1@example.com",
                             EmailConfirmed = false,
                             FullName = "Customer 1",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 246, DateTimeKind.Unspecified).AddTicks(8678), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 612, DateTimeKind.Unspecified).AddTicks(8829), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "CUSTOMER1",
-                            PasswordHash = "$2a$11$9voQBExtwliG7bLh8HqZS./ca.P3BuScOdhpUIAKfngiprDwlC3ge",
+                            PasswordHash = "$2a$11$AfOSwIYQOYPBqj2Sps01XOvUAvdKIvgeVc2ps8xcIuRG.IFWR5c3O",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "customer1",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(4317), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9237), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -499,6 +499,9 @@ namespace Repository.Migrations
 
                     b.Property<DateTimeOffset?>("DeletedTime")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DepositRate")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -565,11 +568,11 @@ namespace Repository.Migrations
                         {
                             Id = 1,
                             CategoryId = 1,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5340), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9770), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Túi xách đẹp",
                             Height = 15.0,
                             Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5340), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9770), new TimeSpan(0, 0, 0, 0, 0)),
                             Long = 10.0,
                             Mass = 1.0,
                             Price = 100000.0,
@@ -585,11 +588,11 @@ namespace Repository.Migrations
                         {
                             Id = 2,
                             CategoryId = 1,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5353), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9784), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Túi xách đẹp",
                             Height = 15.0,
                             Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5353), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9784), new TimeSpan(0, 0, 0, 0, 0)),
                             Long = 10.0,
                             Mass = 1.0,
                             Price = 100000.0,
@@ -605,11 +608,11 @@ namespace Repository.Migrations
                         {
                             Id = 3,
                             CategoryId = 2,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5363), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9796), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Bộ quần áo đẹp",
                             Height = 15.0,
                             Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5363), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9796), new TimeSpan(0, 0, 0, 0, 0)),
                             Long = 10.0,
                             Mass = 1.0,
                             Price = 100000.0,
@@ -625,10 +628,10 @@ namespace Repository.Migrations
                         {
                             Id = 4,
                             CategoryId = 2,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5370), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9799), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Bộ quần áo đẹp",
                             Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5370), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9799), new TimeSpan(0, 0, 0, 0, 0)),
                             Long = 10.0,
                             Mass = 1.0,
                             Price = 100000.0,
@@ -704,15 +707,15 @@ namespace Repository.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5018), new TimeSpan(0, 0, 0, 0, 0)),
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5018), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9560), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9560), new TimeSpan(0, 0, 0, 0, 0)),
                             OwnerId = 2,
                             ShopAddress = "123 Street",
                             ShopAvatar = "https://via.placeholder.com/150",
                             ShopEmail = "shopowner@example.com",
                             ShopName = "Shop Owner",
                             ShopPhone = "0123456789",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 29, 5, 52, 54, 415, DateTimeKind.Unspecified).AddTicks(5023), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9563), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 

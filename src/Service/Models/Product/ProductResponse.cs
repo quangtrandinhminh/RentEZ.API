@@ -14,6 +14,8 @@ namespace Service.Models.Product
         public double? Size { get; set; }
         public double? Price { get; set; }
         public double? RentPrice { get; set; }
+        public double? DepositRate { get; set; }
+        public double? Deposit { get; set; }
         public int? RentedCount { get; set; }
         public int? RatingCount { get; set; }
         public string? Description { get; set; }

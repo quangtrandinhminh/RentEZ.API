@@ -1,6 +1,6 @@
 ﻿namespace Service.Models.User;
 
-public class UserResponse
+public class UserResponseDto
 {
     public int Id { get; set; }
     public string? UserName { get; set; }

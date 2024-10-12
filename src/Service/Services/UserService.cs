@@ -21,7 +21,7 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
     private readonly ILogger _logger = Log.Logger;
 
 
-    public async Task<PaginatedList<UserResponse>> GetAllUsersAsync(UserRoleEnum? role, int pageNumber, int pageSize)
+    public async Task<PaginatedList<UserResponseDto>> GetAllUsersAsync(UserRoleEnum? role, int pageNumber, int pageSize)
     {
         _logger.Information($"Get all users by role {role.ToString()}");
         var users = _userRepository.GetAllWithCondition(
@@ -37,21 +37,21 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
         }
 
         var userResponses = _mapper.Map(users);
-        var response = await PaginatedList<UserResponse>.CreateAsync(userResponses, pageNumber, pageSize);
+        var response = await PaginatedList<UserResponseDto>.CreateAsync(userResponses, pageNumber, pageSize);
         return response;
     }
 
-    public Task CreateUserAsync(UserCreateRequest dto)
+    public Task CreateUserAsync(UserCreateRequestDto dto)
     {
         throw new NotImplementedException();
     }
 
-    public Task UpdateUserAsync(UserUpdateRequest dto)
+    public Task UpdateUserAsync(UserUpdateRequestDto dto)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<UserResponse> GetByIdAsync(int id)
+    public async Task<UserResponseDto> GetByIdAsync(int id)
     {
         var user = await _userRepository.GetSingleAsync(e => e.Id == id);
 

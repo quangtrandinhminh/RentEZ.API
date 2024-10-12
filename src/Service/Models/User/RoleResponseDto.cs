@@ -1,6 +1,6 @@
 ﻿namespace Service.Models.User;
 
-public class RoleResponse
+public class RoleResponseDto
 {
     public int Id { get; set; }
     public string Name { get; set; }
