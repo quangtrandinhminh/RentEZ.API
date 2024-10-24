@@ -69,6 +69,11 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_AVATAR, StatusCodes.Status400BadRequest);
             }
+            var existpReceivingAccount = await _shopRepository.GetSingleAsync(x => x.ReceivingAccount == shopRequest.ReceivingAccount);
+            if (existpReceivingAccount != null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_Receiving_Account, StatusCodes.Status400BadRequest);
+            }
             var existShopOwner = await _userRepository.GetSingleAsync(x => x.Id == shopRequest.OwnerId);
             if (existShopOwner == null)
             {
@@ -78,6 +83,7 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.IS_INACTIVE_OWNER, StatusCodes.Status400BadRequest);
             }
+            
 
             try
             {
@@ -90,6 +96,7 @@ namespace Service.Services
                     CreatedTime = DateTimeOffset.UtcNow,
                     ShopAvatar = shopRequest.ShopAvatar,
                     ShopEmail = shopRequest.ShopEmail,
+                    ReceivingAccount = shopRequest.ReceivingAccount,
                     ShopPhone = shopRequest.ShopPhone,
                     CreatedBy = loggedInOwnerId,
                 };

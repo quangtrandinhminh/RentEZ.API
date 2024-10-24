@@ -105,6 +105,7 @@ namespace Utility.Constants
         public const string EXISTED_EMAIL = "Email của cửa hàng đã tồn tại.";
         public const string OWNER_NOTFOUND = "Tài khoản chủ cửa hàng không tìm thấy.";
         public const string EXISTED_NAME = "Ten cua da ton tai.";
+        public const string EXISTED_Receiving_Account = "Tài khoản nhận tiền đã tồn tại.";
         public const string EXISTED_ADDRESS = "Dia chi cua hang da ton tai.";
         public const string EXISTED_AVATAR = "Avatar da ton tai.";
         public const string NO_INISACTIVE_SHOP_FOUND = "Tất cả cửa hàng đã được duyệt.";

@@ -14,6 +14,8 @@ namespace Service.Models.Shop
         [RegularExpression("^[^0-9]+$", ErrorMessage = "Name cannot contain number")]
         public string ShopName { get; set; }
         [Required]
+        public string ReceivingAccount { get; set; }
+        [Required]
         public string ShopAddress { get; set; }
         [Required]
         public string ShopPhone { get; set; }

@@ -11,6 +11,7 @@ namespace Repository.Models
         public string? ShopPhone { get; set; }
         public string? ShopAddress { get; set; }
         public string? ShopAvatar { get; set; }
+        public string? ReceivingAccount { get; set; }
         public DateTimeOffset? Verified { get; set; }
         public bool IsVerified => Verified.HasValue;
 
