@@ -1,12 +1,18 @@
-﻿using Repository.Models;
+﻿using Repository.Extensions;
+using Repository.Models;
 using Repository.Models.Identity;
-using Microsoft.EntityFrameworkCore.Query;
 using Riok.Mapperly.Abstractions;
-using Service.Models.Product;
-using Service.Models.Shop;
-using Service.Models.Shopkeeper;
-using Service.Models.User;
-using Service.Models.Category;
+using Service.ApiModels.Order;
+using Service.BusinessModels;
+using Service.ApiModels.Shop;
+using Service.ApiModels.Category;
+using Service.ApiModels.Shopkeeper;
+using Service.ApiModels.Product;
+using Service.ApiModels.User;
+using Service.ApiModels.OrderDetail;
+using Service.ApiModels.OrderShop;
+using Service.ApiModels.Voucher;
+using Service.ApiModels.PaginatedList;
 
 namespace Service.Mapper;
 
@@ -26,12 +32,12 @@ public partial class MapperlyMapper
     // }
 
     // user
-    public partial IList<RoleResponseDto> Map(IList<RoleEntity> entity);
+    public partial IList<RoleResponse> Map(IList<RoleEntity> entity);
     public partial UserEntity Map(RegisterRequest request);
-    public partial LoginResponseDto Map(UserEntity entity);
+    public partial LoginResponse Map(UserEntity entity);
 
-    public partial IList<UserResponseDto> Map(IList<UserEntity> entity);
-    public partial IQueryable<UserResponseDto> Map(IQueryable<UserEntity> entity);
+    public partial IList<UserResponse> Map(IList<UserEntity> entity);
+    public partial IQueryable<UserResponse> Map(IQueryable<UserEntity> entity);
     public partial void Map(RegisterRequest request, UserEntity entity);
 
     // shop
@@ -40,7 +46,7 @@ public partial class MapperlyMapper
     public partial IList<ShopResponse> ShopToShopResponseDto(IList<Shop> entity);
 
     // product
-    public partial void ProductToCreateProduct(ProductCreateRequestDto request, Product entity);
+    public partial void ProductToCreateProduct(ProductCreateRequest request, Product entity);
     public partial IList<ProductResponse> ProductsToProductsResponseDto(IList<Product> entity);
     public partial ProductResponse ProductToProductResponseDto(Product entity);
 
@@ -48,6 +54,39 @@ public partial class MapperlyMapper
     public partial void CategoryToCreateCategory(CategoryCreateRequest request, Category entity);
     public partial IList<CategoryResponse> CategoriesToCategoriesResponseDto(IList<Category> entity);
     public partial CategoryResponse CategoryToCategoryResponseDto(Category entity);
+
+    // order
+    public partial OrderResponse MapToOrderResponse(Order order);
+    public partial IList<OrderListResponse> MapToOrderListResponse(IList<Order> entity);
+    public partial Order MapToOrder(OrderRequest request);
+
+    // ordershop
+    public partial OrderShop MapToOrderShop(OrderShopRequest request);
+    public partial IList<OrderShopResponse> MapToOrderShopListResponse(List<OrderShop> entity);
+    public partial PaginatedListResponse<OrderShopListResponse> MapToPaginatedListOrderShopListResponse(PaginatedList<OrderShop> entity);
+    public partial OrderShopResponse MapToOrderShopResponse(OrderShop entity);
+
+
+    // order detail
+    public partial IList<OrderDetailListResponse> MapToOrderDetailListResponse(IList<OrderShop> entity);
+    public partial OrderDetailResponse MapToOrderDetailResponse(OrderShop entity);
+    public partial void Map(OrderDetailRequest request, OrderShop entity);
+    public partial OrderDetail MapToOrderShop(OrderDetailRequest request);
+
+    // cart
+    public partial List<CartItem> MapToCartItems(List<Product> entity);
+    [MapProperty(nameof(Product.Id), nameof(CartItem.ProductId))]
+    public partial CartItem MapToCartItem(Product entity);
+    public partial void MapRequestToCartItem(CartItemCalcRequest request, CartItem cartItem);
+    public partial OrderRequest MapToOrderRequest(Cart cart);
+    public partial IList<OrderShopRequest> MapToOrderShopRequest(IList<CartShop> cartShops);
+    public partial IList<OrderDetailRequest> MapToOrderDetailRequest(IList<CartItem> cartItems);
+
+    // voucher
+    public partial Voucher MapToVoucher(VoucherRequest request);
+    public partial VoucherResponse MapToVoucherResponse(Voucher voucher);
+    public partial IReadOnlyCollection<VoucherResponse> MapToVoucherResponse(IReadOnlyCollection<Voucher> vouchers);
+    public partial PaginatedListResponse<VoucherResponse> MapToPaginatedListVoucherResponse(PaginatedList<Voucher> vouchers);
 
     // shopkeeper register
     public partial ShopkeeperRequest MapToShopkeeperResponseDto(UserEntity userEntity);

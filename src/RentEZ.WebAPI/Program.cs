@@ -12,8 +12,10 @@ using Service.Interfaces;
 using RentEZ.WebAPI.Middlewares;
 using Repository.Infrastructure;
 using AspNetCoreRateLimit;
+using Repository.Base;
 using MapperlyMapper = Service.Mapper.MapperlyMapper;
 using Repository.Models.Identity;
+using Utility.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,6 +83,10 @@ VietQRSetting.Instance = vietQrSetting;
 var googleSetting = new GoogleSetting();
 builder.Configuration.GetSection("Authentication:Google").Bind(googleSetting);
 GoogleSetting.Instance = googleSetting;
+
+var payOSSetting = new PayOSSetting();
+builder.Configuration.GetSection("PayOS").Bind(payOSSetting);
+PayOSSetting.Instance = payOSSetting;
 
 // Add Identity Core
 builder.Services.AddIdentityCore<UserEntity>()
@@ -152,15 +158,15 @@ builder.Services.AddAuthentication(options =>
         options.SaveToken = true;
         options.UseSecurityTokenValidators = true;
         options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
-    });
-    //.AddGoogle(options =>
-    //{
-    //    options.ClientId = googleSetting.ClientID;
-    //    options.ClientSecret = googleSetting.ClientSecret;
-    //    options.Scope.Add("email");
-    //    options.Scope.Add("profile");
-    //    options.SaveTokens = true;
-    //});
+    })
+    /*.AddGoogle(options =>
+    {
+       options.ClientId = googleSetting.ClientID;
+       options.ClientSecret = googleSetting.ClientSecret;
+       options.Scope.Add("email");
+       options.Scope.Add("profile");
+        options.SaveTokens = true;
+    })*/;
 
 
 // Add Authorization
@@ -183,12 +189,14 @@ builder.Services.AddScoped<MapperlyMapper>();
 // Repository
 builder.Services.AddScoped<AppDbContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IShopRepository, ShopRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // Service
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -197,6 +205,10 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IShopService, ShopService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IVoucherService, VoucherService>();
+builder.Services.AddScoped<IPayOSService, PayOSService>();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddHttpContextAccessor();
 
 //-----------------------------------------------------------------------------------------------

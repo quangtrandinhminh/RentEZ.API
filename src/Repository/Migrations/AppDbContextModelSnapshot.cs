@@ -132,6 +132,21 @@ namespace Repository.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("OrderVoucher", b =>
+                {
+                    b.Property<int>("OrdersId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlatformVouchersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("OrdersId", "PlatformVouchersId");
+
+                    b.HasIndex("PlatformVouchersId");
+
+                    b.ToTable("OrderVoucher");
+                });
+
             modelBuilder.Entity("Repository.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -176,33 +191,33 @@ namespace Repository.Migrations
                         {
                             Id = 1,
                             CategoryName = "Handbag",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9593), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(2976), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Túi xách",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9593), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(2976), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2,
                             CategoryName = "SetOfClothes",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9731), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3014), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Bộ quần áo",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9731), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3014), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3,
                             CategoryName = "Dress",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9745), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3016), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Váy",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9745), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3016), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 4,
                             CategoryName = "Shoes",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9747), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3024), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Giày dép",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9747), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3024), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -313,11 +328,23 @@ namespace Repository.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("AccountName")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("AccountNo")
+                        .HasMaxLength(19)
+                        .HasColumnType("character varying(19)");
+
                     b.Property<string>("Address")
                         .HasColumnType("text");
 
                     b.Property<string>("Avatar")
                         .HasColumnType("text");
+
+                    b.Property<int?>("BankId")
+                        .HasMaxLength(6)
+                        .HasColumnType("integer");
 
                     b.Property<DateOnly?>("BirthDate")
                         .HasColumnType("date");
@@ -416,58 +443,326 @@ namespace Repository.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Avatar = "https://via.placeholder.com/150",
-                            ConcurrencyStamp = "e60f9fc1-1b84-439d-b38f-f0119821e08f",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 350, DateTimeKind.Unspecified).AddTicks(7666), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "7ff2eb7e-35fc-477f-b903-699039d123eb",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 25, 917, DateTimeKind.Unspecified).AddTicks(8228), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin User",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 350, DateTimeKind.Unspecified).AddTicks(7666), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 25, 917, DateTimeKind.Unspecified).AddTicks(8228), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$oeHzrxQepLFg8LkWoZyA..IiYRbTVhX5fzvifNPI1pdXPf/XuPLfW",
+                            PasswordHash = "$2a$11$rW1pjAB8l1pVidMuPRn8c.WgODY7EetM6Urq9WWYDlLdexmsZ5gEm",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "admin",
-                            Verified = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 477, DateTimeKind.Unspecified).AddTicks(4554), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 34, DateTimeKind.Unspecified).AddTicks(9328), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2,
                             AccessFailedCount = 0,
                             Avatar = "https://via.placeholder.com/150",
-                            ConcurrencyStamp = "94bd9885-af70-428f-bbb1-95c516b34968",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 477, DateTimeKind.Unspecified).AddTicks(4569), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "ba691b50-01f1-4114-92ce-88bfe7e8113a",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 34, DateTimeKind.Unspecified).AddTicks(9384), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "shopowner@example.com",
                             EmailConfirmed = false,
                             FullName = "Shop Owner",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 477, DateTimeKind.Unspecified).AddTicks(4569), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 34, DateTimeKind.Unspecified).AddTicks(9384), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "SHOPOWNER",
-                            PasswordHash = "$2a$11$mfjVnTSc9RjhmzxzvjU7J.Ivvn9YC8AtCFxZGviWLLV4WOzPdVkru",
+                            PasswordHash = "$2a$11$9aAwvdw/FAz7ICScX94dVerbDKeLeGENuwDQe8KCAJ99aHaKJU59G",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "shopowner",
-                            Verified = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 612, DateTimeKind.Unspecified).AddTicks(8815), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 157, DateTimeKind.Unspecified).AddTicks(712), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3,
                             AccessFailedCount = 0,
                             Avatar = "https://via.placeholder.com/150",
-                            ConcurrencyStamp = "c44d6468-b16e-44f3-9703-bfe30afb81e5",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 612, DateTimeKind.Unspecified).AddTicks(8829), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "0aa3be9e-1d21-45bb-b696-0afc1c82dfa6",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 157, DateTimeKind.Unspecified).AddTicks(743), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "customer1@example.com",
                             EmailConfirmed = false,
                             FullName = "Customer 1",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 612, DateTimeKind.Unspecified).AddTicks(8829), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 157, DateTimeKind.Unspecified).AddTicks(743), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "CUSTOMER1",
-                            PasswordHash = "$2a$11$AfOSwIYQOYPBqj2Sps01XOvUAvdKIvgeVc2ps8xcIuRG.IFWR5c3O",
+                            PasswordHash = "$2a$11$LIbs12jfQRZjx/xk/UI9iOEKUR1wGTroViNxIJWCdqM2a8VcNcHke",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "customer1",
-                            Verified = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9237), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(2053), new TimeSpan(0, 0, 0, 0, 0))
                         });
+                });
+
+            modelBuilder.Entity("Repository.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OrderAddress")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("PaymentTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("ShipFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("ShipSupportFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TaxRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalDeposit")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalDiscount")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalRentPrice")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex(new[] { "Id" }, "Index_Id")
+                        .IsUnique()
+                        .HasDatabaseName("Index_Id2");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Deposit")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("DepositRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("OrderShopId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<byte?>("Rating")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTimeOffset>("RentDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("RentPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("RentQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("ReturnDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReviewContent")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("SubTotalDeposit")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("SubTotalRentPrice")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderShopId");
+
+                    b.ToTable("OrderDetail");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderShop", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CancelBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CancelReason")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Commission")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("CommissionRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("CustomerReceiveTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("PlatformRentPriceDiscount")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("ShipFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("ShipFeeSupport")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ShopId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("ShopReceiveTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("ShopRentPriceDiscount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TaxRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("TotalCustomerRefund")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalDeposit")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalDiscount")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalRentPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("TotalShopReceive")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("VoucherId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ShopId");
+
+                    b.HasIndex("VoucherId");
+
+                    b.HasIndex(new[] { "Id" }, "Index_Id")
+                        .IsUnique()
+                        .HasDatabaseName("Index_Id3");
+
+                    b.ToTable("OrderShops");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderTracking", b =>
+                {
+                    b.Property<int>("OrderTrackingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OrderTrackingId"));
+
+                    b.Property<int>("OrderShopId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("OrderTrackingId");
+
+                    b.HasIndex("OrderShopId");
+
+                    b.ToTable("OrderTracking");
                 });
 
             modelBuilder.Entity("Repository.Models.Product", b =>
@@ -481,8 +776,7 @@ namespace Repository.Migrations
                     b.Property<int?>("AllowRentBeforeDays")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CategoryId")
-                        .IsRequired()
+                    b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
                     b.Property<int?>("Construction")
@@ -500,8 +794,8 @@ namespace Repository.Migrations
                     b.Property<DateTimeOffset?>("DeletedTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("DepositRate")
-                        .HasColumnType("integer");
+                    b.Property<double?>("DepositRate")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -530,19 +824,19 @@ namespace Repository.Migrations
                     b.Property<string>("ProductName")
                         .HasColumnType("text");
 
-                    b.Property<int?>("Quantity")
+                    b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("RatingCount")
+                    b.Property<int>("RatingCount")
                         .HasColumnType("integer");
 
                     b.Property<double?>("RentPrice")
                         .HasColumnType("double precision");
 
-                    b.Property<int?>("RentedCount")
+                    b.Property<int>("RentedCount")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ShopId")
+                    b.Property<int>("ShopId")
                         .HasColumnType("integer");
 
                     b.Property<double?>("Size")
@@ -559,7 +853,7 @@ namespace Repository.Migrations
 
                     b.HasIndex(new[] { "Id" }, "Index_Id")
                         .IsUnique()
-                        .HasDatabaseName("Index_Id2");
+                        .HasDatabaseName("Index_Id4");
 
                     b.ToTable("Products");
 
@@ -568,15 +862,17 @@ namespace Repository.Migrations
                         {
                             Id = 1,
                             CategoryId = 1,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9770), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3096), new TimeSpan(0, 0, 0, 0, 0)),
+                            DepositRate = 0.5,
                             Description = "Túi xách đẹp",
                             Height = 15.0,
                             Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9770), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3096), new TimeSpan(0, 0, 0, 0, 0)),
                             Long = 10.0,
                             Mass = 1.0,
                             Price = 100000.0,
                             ProductName = "Túi xách 1",
+                            Quantity = 0,
                             RatingCount = 0,
                             RentPrice = 50000.0,
                             RentedCount = 0,
@@ -588,15 +884,17 @@ namespace Repository.Migrations
                         {
                             Id = 2,
                             CategoryId = 1,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9784), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3107), new TimeSpan(0, 0, 0, 0, 0)),
+                            DepositRate = 0.5,
                             Description = "Túi xách đẹp",
                             Height = 15.0,
                             Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9784), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3107), new TimeSpan(0, 0, 0, 0, 0)),
                             Long = 10.0,
                             Mass = 1.0,
                             Price = 100000.0,
                             ProductName = "Túi xách 2",
+                            Quantity = 0,
                             RatingCount = 0,
                             RentPrice = 50000.0,
                             RentedCount = 0,
@@ -608,19 +906,21 @@ namespace Repository.Migrations
                         {
                             Id = 3,
                             CategoryId = 2,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9796), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3110), new TimeSpan(0, 0, 0, 0, 0)),
+                            DepositRate = 0.69999999999999996,
                             Description = "Bộ quần áo đẹp",
                             Height = 15.0,
                             Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9796), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3110), new TimeSpan(0, 0, 0, 0, 0)),
                             Long = 10.0,
                             Mass = 1.0,
                             Price = 100000.0,
                             ProductName = "Bộ quần áo 1",
+                            Quantity = 0,
                             RatingCount = 0,
                             RentPrice = 50000.0,
                             RentedCount = 0,
-                            ShopId = 1,
+                            ShopId = 2,
                             Size = 10.0,
                             Width = 5.0
                         },
@@ -628,19 +928,23 @@ namespace Repository.Migrations
                         {
                             Id = 4,
                             CategoryId = 2,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9799), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3113), new TimeSpan(0, 0, 0, 0, 0)),
+                            DepositRate = 0.69999999999999996,
                             Description = "Bộ quần áo đẹp",
+                            Height = 15.0,
                             Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9799), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3113), new TimeSpan(0, 0, 0, 0, 0)),
                             Long = 10.0,
                             Mass = 1.0,
                             Price = 100000.0,
                             ProductName = "Bộ quần áo 2",
+                            Quantity = 0,
                             RatingCount = 0,
                             RentPrice = 50000.0,
                             RentedCount = 0,
                             ShopId = 1,
-                            Size = 10.0
+                            Size = 10.0,
+                            Width = 5.0
                         });
                 });
 
@@ -651,6 +955,18 @@ namespace Repository.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccountName")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("AccountNo")
+                        .HasMaxLength(19)
+                        .HasColumnType("character varying(19)");
+
+                    b.Property<int?>("BankId")
+                        .HasMaxLength(6)
+                        .HasColumnType("integer");
 
                     b.Property<int?>("CreatedBy")
                         .HasColumnType("integer");
@@ -699,7 +1015,7 @@ namespace Repository.Migrations
 
                     b.HasIndex(new[] { "Id" }, "Index_Id")
                         .IsUnique()
-                        .HasDatabaseName("Index_Id3");
+                        .HasDatabaseName("Index_Id5");
 
                     b.ToTable("Shops");
 
@@ -707,16 +1023,217 @@ namespace Repository.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9560), new TimeSpan(0, 0, 0, 0, 0)),
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9560), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(2895), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(2895), new TimeSpan(0, 0, 0, 0, 0)),
                             OwnerId = 2,
                             ShopAddress = "123 Street",
                             ShopAvatar = "https://via.placeholder.com/150",
                             ShopEmail = "shopowner@example.com",
                             ShopName = "Shop Owner",
                             ShopPhone = "0123456789",
-                            Verified = new DateTimeOffset(new DateTime(2024, 10, 5, 11, 47, 12, 741, DateTimeKind.Unspecified).AddTicks(9563), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(2902), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(2905), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(2905), new TimeSpan(0, 0, 0, 0, 0)),
+                            OwnerId = 3,
+                            ShopAddress = "123 Street",
+                            ShopAvatar = "https://via.placeholder.com/150",
+                            ShopEmail = "customershop1@example.com",
+                            ShopName = "Customer Shop",
+                            ShopPhone = "0123456789",
+                            Verified = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(2906), new TimeSpan(0, 0, 0, 0, 0))
                         });
+                });
+
+            modelBuilder.Entity("Repository.Models.Voucher", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("Limit")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("MaxDiscountValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("MinRentValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ShopId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Used")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ValueType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShopId");
+
+                    b.HasIndex(new[] { "Id" }, "Index_Id")
+                        .IsUnique()
+                        .HasDatabaseName("Index_Id6");
+
+                    b.ToTable("Vouchers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "Voucher1",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3178), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 100.000đ phí thuê, RentEZ chào bạn mới",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3178), new TimeSpan(0, 0, 0, 0, 0)),
+                            Limit = 10,
+                            Name = "Voucher 100k",
+                            Type = 1,
+                            Used = 0,
+                            Value = 100000m,
+                            ValueType = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "Voucher2",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3188), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 10% phí thuê cho đơn hàng từ Shop 1 có tiền thuê từ 250.000đ tối đa 100.000",
+                            EndDate = new DateTimeOffset(new DateTime(2024, 11, 5, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3197), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3188), new TimeSpan(0, 0, 0, 0, 0)),
+                            Limit = 10,
+                            MaxDiscountValue = 100000m,
+                            MinRentValue = 250000m,
+                            Name = "Voucher 10% phí thuê",
+                            ShopId = 1,
+                            StartDate = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3196), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 1,
+                            Used = 0,
+                            Value = 0.10m,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "Voucher3",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3222), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 10% phí thuê cho mọi đơn hàng từ Shop 2",
+                            EndDate = new DateTimeOffset(new DateTime(2024, 11, 5, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3224), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3222), new TimeSpan(0, 0, 0, 0, 0)),
+                            Limit = 10,
+                            Name = "Voucher 10% phí thuê",
+                            ShopId = 2,
+                            StartDate = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3223), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 1,
+                            Used = 0,
+                            Value = 0.10m,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Code = "Voucher4",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3226), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 30% phí ship cho đơn hàng có phí thuê từ 100.000đ, tối đa 10.000đ",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3226), new TimeSpan(0, 0, 0, 0, 0)),
+                            MaxDiscountValue = 10000m,
+                            MinRentValue = 100000m,
+                            Name = "Voucher 30% phí ship",
+                            Type = 2,
+                            Used = 0,
+                            Value = 0.30m,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Code = "Voucher5",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3228), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 50% phí ship cho đơn hàng có phí thuê từ 300.000đ, tối đa 25.000đ",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3228), new TimeSpan(0, 0, 0, 0, 0)),
+                            MaxDiscountValue = 25000m,
+                            MinRentValue = 300000m,
+                            Name = "Voucher 15% phí ship",
+                            Type = 2,
+                            Used = 0,
+                            Value = 0.5m,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Code = "Voucher5",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3231), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 70% phí ship cho đơn hàng có phí thuê từ 500.000đ, tối đa 75.000đ",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 26, 21, 17, 26, 277, DateTimeKind.Unspecified).AddTicks(3231), new TimeSpan(0, 0, 0, 0, 0)),
+                            MaxDiscountValue = 75000m,
+                            MinRentValue = 150000m,
+                            Name = "Voucher 15% phí ship",
+                            Type = 2,
+                            Used = 0,
+                            Value = 0.7m,
+                            ValueType = 1
+                        });
+                });
+
+            modelBuilder.Entity("UserEntityVoucher", b =>
+                {
+                    b.Property<int>("UsersId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VouchersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UsersId", "VouchersId");
+
+                    b.HasIndex("VouchersId");
+
+                    b.ToTable("UserEntityVoucher");
                 });
 
             modelBuilder.Entity("Repository.Models.Identity.UserRoleEntity", b =>
@@ -742,6 +1259,11 @@ namespace Repository.Migrations
                         {
                             UserId = 3,
                             RoleId = 3
+                        },
+                        new
+                        {
+                            UserId = 3,
+                            RoleId = 2
                         });
                 });
 
@@ -781,6 +1303,21 @@ namespace Repository.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OrderVoucher", b =>
+                {
+                    b.HasOne("Repository.Models.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Repository.Models.Voucher", null)
+                        .WithMany()
+                        .HasForeignKey("PlatformVouchersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Repository.Models.Identity.RefreshToken", b =>
                 {
                     b.HasOne("Repository.Models.Identity.UserEntity", "User")
@@ -790,6 +1327,64 @@ namespace Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Repository.Models.Order", b =>
+                {
+                    b.HasOne("Repository.Models.Identity.UserEntity", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderDetail", b =>
+                {
+                    b.HasOne("Repository.Models.OrderShop", "OrderShop")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderShop");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderShop", b =>
+                {
+                    b.HasOne("Repository.Models.Order", "Order")
+                        .WithMany("OrderShops")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Repository.Models.Shop", "Shop")
+                        .WithMany()
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Repository.Models.Voucher", "Voucher")
+                        .WithMany("OrderShops")
+                        .HasForeignKey("VoucherId");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Shop");
+
+                    b.Navigation("Voucher");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderTracking", b =>
+                {
+                    b.HasOne("Repository.Models.OrderShop", "OrderShop")
+                        .WithMany("OrderTrackings")
+                        .HasForeignKey("OrderShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderShop");
                 });
 
             modelBuilder.Entity("Repository.Models.Product", b =>
@@ -802,7 +1397,9 @@ namespace Repository.Migrations
 
                     b.HasOne("Repository.Models.Shop", "Shop")
                         .WithMany("ProductEntities")
-                        .HasForeignKey("ShopId");
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
 
@@ -818,6 +1415,30 @@ namespace Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Repository.Models.Voucher", b =>
+                {
+                    b.HasOne("Repository.Models.Shop", "Shop")
+                        .WithMany()
+                        .HasForeignKey("ShopId");
+
+                    b.Navigation("Shop");
+                });
+
+            modelBuilder.Entity("UserEntityVoucher", b =>
+                {
+                    b.HasOne("Repository.Models.Identity.UserEntity", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Repository.Models.Voucher", null)
+                        .WithMany()
+                        .HasForeignKey("VouchersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Repository.Models.Identity.UserRoleEntity", b =>
@@ -858,9 +1479,26 @@ namespace Repository.Migrations
                     b.Navigation("UserRoles");
                 });
 
+            modelBuilder.Entity("Repository.Models.Order", b =>
+                {
+                    b.Navigation("OrderShops");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderShop", b =>
+                {
+                    b.Navigation("OrderDetails");
+
+                    b.Navigation("OrderTrackings");
+                });
+
             modelBuilder.Entity("Repository.Models.Shop", b =>
                 {
                     b.Navigation("ProductEntities");
+                });
+
+            modelBuilder.Entity("Repository.Models.Voucher", b =>
+                {
+                    b.Navigation("OrderShops");
                 });
 #pragma warning restore 612, 618
         }

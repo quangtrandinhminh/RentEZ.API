@@ -9,13 +9,20 @@ public interface IBaseRepository<T> where T : class, new()
     void RefreshEntity(T entity);
     IQueryable<T?> GetAll();
     Task<IList<T>?> GetAllAsync();
-    Task<PaginatedList<TResult>> GetAllPaginatedQueryable<TResult>(int page, int pageSize, Expression<Func<T, bool>> fillterPredicate = null,
-        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+
+    Task<PaginatedList<T>> GetAllPaginatedQueryable(int pageNumber,
+        int pageSize,
+        Expression<Func<T, bool>> predicate = null,
+        Expression<Func<T, object>>? orderBy = null,
+        params Expression<Func<T, object>>[]? includeProperties);
+    IQueryable<T> GetAllWithCondition(
+        Expression<Func<T, bool>> predicate = null,
         params Expression<Func<T, object>>[] includeProperties);
-    IQueryable<T> GetAllWithCondition(Expression<Func<T, bool>> predicate = null, params Expression<Func<T, object>>[] includeProperties);
+    Task<bool> IsExistAsync(Expression<Func<T, bool>> predicate);
     T? GetById(int id);
     Task<T?> GetByIdAsync(int id);
-    Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties);
+    Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, bool isIncludeDeleted = false,
+        params Expression<Func<T, object>>[] includeProperties);
     T Add(T? entity);
     Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
     void AddRange(IEnumerable<T?> entities);
@@ -25,6 +32,7 @@ public interface IBaseRepository<T> where T : class, new()
     void DeleteRange(ICollection<T> entities);
     IQueryable<T?> FindByCondition(Expression<Func<T?, bool>> expression);
     Task<IList<T?>> FindByConditionAsync(Expression<Func<T?, bool>> expression);
+    void TryAttachRange(ICollection<T> entities);
     Task SaveChangesAsync();
     void SaveChanges();
 }
