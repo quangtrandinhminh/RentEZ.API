@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
-using System.ComponentModel.DataAnnotations;
 using System.Web.Http;
-using Service.ApiModels;
-using Service.Models;
-using Service.Models.Product;
+using Service.ApiModels.Product;
 using Utility.Constants;
+using BaseResponse = Service.ApiModels.BaseResponse;
 using FromBodyAttribute = Microsoft.AspNetCore.Mvc.FromBodyAttribute;
 using HttpDeleteAttribute = Microsoft.AspNetCore.Mvc.HttpDeleteAttribute;
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
@@ -42,7 +40,7 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpPost()]
         [Authorize(Roles = "ShopOwner")]
-        public async Task<IActionResult> CreateNewProduct([FromBody] ProductCreateRequestDto request)
+        public async Task<IActionResult> CreateNewProduct([FromBody] ProductCreateRequest request)
         {
             await _productService.CreateProduct(request);
             return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
@@ -50,7 +48,7 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "ShopOwner")]
-        public async Task<IActionResult> UpdateProduct([FromBody] ProductCreateRequestDto request, [FromRoute] int id)
+        public async Task<IActionResult> UpdateProduct([FromBody] ProductCreateRequest request, [FromRoute] int id)
         {
             await _productService.UpdateProductAsync(request, id);
             return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));

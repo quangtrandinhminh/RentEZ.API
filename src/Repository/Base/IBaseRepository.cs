@@ -9,14 +9,14 @@ public interface IBaseRepository<T> where T : class, new()
     void RefreshEntity(T entity);
     IQueryable<T?> GetAll();
     Task<IList<T>?> GetAllAsync();
-    Task<PaginatedList<TResult>> GetAllPaginatedQueryable<TResult>(
-        int pageNumber,
+
+    Task<PaginatedList<T>> GetAllPaginatedQueryable(int pageNumber,
         int pageSize,
-        Expression<Func<T, TResult>>? selector = null,
-        Expression<Func<T, bool>>? filterPredicate = null,
-        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+        Expression<Func<T, bool>> predicate = null,
+        Expression<Func<T, object>>? orderBy = null,
         params Expression<Func<T, object>>[]? includeProperties);
-    IQueryable<T> GetAllWithCondition(Expression<Func<T, bool>> predicate = null,
+    IQueryable<T> GetAllWithCondition(
+        Expression<Func<T, bool>> predicate = null,
         params Expression<Func<T, object>>[] includeProperties);
     Task<bool> IsExistAsync(Expression<Func<T, bool>> predicate);
     T? GetById(int id);
@@ -32,6 +32,7 @@ public interface IBaseRepository<T> where T : class, new()
     void DeleteRange(ICollection<T> entities);
     IQueryable<T?> FindByCondition(Expression<Func<T?, bool>> expression);
     Task<IList<T?>> FindByConditionAsync(Expression<Func<T?, bool>> expression);
+    void TryAttachRange(ICollection<T> entities);
     Task SaveChangesAsync();
     void SaveChanges();
 }

@@ -15,5 +15,5 @@ public class OrderListResponse
     public PaymentStatusEnum PaymentStatus { get; set; }
     public PaymentMethodEnum? PaymentMethod { get; set; }
     public string? Note { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset CreatedTime { get; set; }
 }

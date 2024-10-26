@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
-using Service.ApiModels;
-using Service.Models;
 using Utility.Constants;
 using Utility.Exceptions;
+using BaseResponse = Service.ApiModels.BaseResponse;
 using ILogger = Serilog.ILogger;
 
 namespace RentEZ.WebAPI.Middlewares

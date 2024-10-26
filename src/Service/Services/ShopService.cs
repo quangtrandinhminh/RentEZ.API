@@ -9,9 +9,9 @@ using Utility.Constants;
 using Utility.Exceptions;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Models;
-using Service.Models.Shop;
 using MapperlyMapper = Service.Mapper.MapperlyMapper;
 using System.Security.Claims;
+using Service.ApiModels.Shop;
 
 namespace Service.Services
 {

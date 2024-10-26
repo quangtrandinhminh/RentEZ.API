@@ -2,39 +2,26 @@
 using Serilog;
 using Repository.Infrastructure;
 using Repository.Interfaces;
-using Repository.Repositories;
 using Service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Utility.Constants;
 using Utility.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Repository.Base;
 using Repository.Models;
 using Service.Mapper;
-using Service.Models.Category;
+using Service.ApiModels.Category;
 
 namespace Service.Services
 {
-    public class CategoryService : ICategoryService
+    public class CategoryService(IServiceProvider serviceProvider) : ICategoryService
     {
-        private readonly ICategoryRepository _categoryRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly MapperlyMapper _mapper;
-        private readonly ILogger _logger;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public CategoryService(ICategoryRepository categoryRepository, IUserRepository userRepository, MapperlyMapper mapper, ILogger logger, IUnitOfWork unitOfWork)
-        {
-            _categoryRepository = categoryRepository;
-            _userRepository = userRepository;
-            _mapper = mapper;
-            _logger = logger;
-            _unitOfWork = unitOfWork;
-        }
+        private readonly ICategoryRepository _categoryRepository = serviceProvider.GetRequiredService<ICategoryRepository>();
+        private readonly IUserRepository _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
+        private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
+        private readonly ILogger _logger = serviceProvider.GetRequiredService<ILogger>();
+        private readonly IUnitOfWork _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
 
         public async Task<List<CategoryResponse>> GetAllCategoriesAsync()
         {

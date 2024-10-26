@@ -1,11 +1,11 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Service.ApiModels;
 using Service.ApiModels.Order;
+using Service.ApiModels.OrderShop;
+using Service.ApiModels.VNPay;
 using Service.Interfaces;
-using Service.Models;
+using Utility.Enum;
+using BaseResponse = Service.ApiModels.BaseResponse;
 
 namespace RentEZ.WebAPI.Controllers
 {
@@ -24,8 +24,7 @@ namespace RentEZ.WebAPI.Controllers
         [Authorize(Roles="Admin")]
         public async Task<IActionResult> GetAllOrders()
         {
-            var userId = Extensions.ClaimExtension.GetUserId(User);
-            var response = await _orderService.GetAllOrdersAsync(userId);
+            var response = await _orderService.GetAllOrdersAsync();
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
@@ -36,36 +35,43 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
-        [HttpPost("calculation")]
-        public async Task<IActionResult> CalculateTotalPrice([FromBody] OrderCalcRequest request)
+        [HttpPost("cart/calculation")]
+        public async Task<IActionResult> CalculateTotalPrice([FromBody] CartCalcRequest request)
         {
             var response = await _orderService.CalculateTotalPrice(request);
             return Created(nameof(CalculateTotalPrice), BaseResponse.OkResponseDto(response));
         }
 
         [HttpPost]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> CreateOrder([FromBody] OrderRequest request)
         {
             var response = await _orderService.CreateOrderAsync(request);
-            return Created(nameof(CreateOrder), BaseResponse.OkResponseDto(response));
+            return Created(nameof(CreateOrder), BaseResponse.OkResponseDto("OrderId: " +response));
         }
 
-        [HttpGet("order-details")]
+        [HttpGet("order-shops")]
         [Authorize(Roles="Customer, ShopOwner")]
-        public async Task<IActionResult> GetAllOrderDetails()
+        public async Task<IActionResult> GetAllOrderShops([FromQuery] OrderShopListRequest request)
         {
-            var userId = Extensions.ClaimExtension.GetUserId(User);
-            var response = await _orderService.GetAllOrderDetailsAsync(userId);
+            var response = await _orderService.GetAllOrderShopsAsync(request);
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
-        [HttpGet("order-details/{orderDetailId}")]
+        [HttpGet("order-details/{orderShopId}")]
         [Authorize(Roles="Customer, ShopOwner")]
-        public async Task<IActionResult> GetOrderDetailById(int orderDetailId)
+        public async Task<IActionResult> GetOrderShopById([FromRoute] int orderShopId)
         {
-            var userId = Extensions.ClaimExtension.GetUserId(User);
-            var response = await _orderService.GetOrderDetailByIdAsync(userId, orderDetailId);
+            var response = await _orderService.GetOrderShopsByIdAsync(orderShopId);
             return Ok(BaseResponse.OkResponseDto(response));
+        }
+
+        [HttpDelete("{orderId}")]
+        [Authorize(Roles = "ShopOwner, Customer")]
+        public async Task<IActionResult> CancelOrder([FromRoute] int orderId)
+        {
+            await _orderService.CancelOrderAsync(orderId);
+            return Ok(BaseResponse.OkResponseDto("Order canceled successfully"));
         }
     }
 }

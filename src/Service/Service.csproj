@@ -11,11 +11,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Repository\Repository.csproj" />
+      <Folder Include="ApiModels\Voucher\" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="ApiModels\Voucher\" />
+      <ProjectReference Include="..\Repository\Repository.csproj" />
     </ItemGroup>
 
 </Project>

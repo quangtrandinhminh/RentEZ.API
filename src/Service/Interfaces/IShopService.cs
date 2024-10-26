@@ -1,5 +1,4 @@
-﻿using Service.Models.Shop;
-using System.Security.Claims;
+﻿using Service.ApiModels.Shop;
 
 namespace Service.Interfaces
 {

@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
-using Service.Models;
-using Service.Models.Category;
-using System.ComponentModel.DataAnnotations;
 using System.Web.Http;
-using Service.ApiModels;
 using Utility.Constants;
+using BaseResponse = Service.ApiModels.BaseResponse;
 using FromBodyAttribute = Microsoft.AspNetCore.Mvc.FromBodyAttribute;
 using HttpDeleteAttribute = Microsoft.AspNetCore.Mvc.HttpDeleteAttribute;
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 using HttpPutAttribute = Microsoft.AspNetCore.Mvc.HttpPutAttribute;
+using Service.ApiModels.Category;
 
 namespace RentEZ.WebAPI.Controllers
 {

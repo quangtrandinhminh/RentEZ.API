@@ -1,4 +1,4 @@
-﻿using Service.Models;
+﻿using Service.ApiModels;
 
 namespace Service.Interfaces
 {

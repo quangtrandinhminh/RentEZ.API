@@ -46,13 +46,13 @@ namespace Repository.Base
 
         // get all with paging, return paginated queryable and all page count
         // can only select the columns that are needed in the response
-        public async Task<PaginatedList<TResult>> GetAllPaginatedQueryable<TResult>(
+        public async Task<PaginatedList<T>> GetAllPaginatedQueryable(
             int pageNumber,
             int pageSize,
-            Expression<Func<T, TResult>>? selector = null,
-            Expression<Func<T, bool>>? filterPredicate = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-            params Expression<Func<T, object>>[]? includeProperties)
+            Expression<Func<T, bool>> predicate = null,
+            Expression<Func<T, object>>? orderBy = null,
+            params Expression<Func<T, object>>[]? includeProperties
+            )
         {
             IQueryable<T> queryable = DbSet.AsNoTracking();
             includeProperties = includeProperties?.Distinct().ToArray();
@@ -66,33 +66,14 @@ namespace Repository.Base
                 }
             }
 
-            // Include related entities
-            if (filterPredicate != null)
-            {
-                queryable = queryable.Where(filterPredicate);
-            }
+            // Apply the predicate
+            queryable = predicate != null ? queryable.Where(predicate) : queryable;
+            queryable = orderBy != null ? queryable.OrderBy(orderBy) : queryable;
 
-            // Apply the ordering function
-            if (orderBy != null)
-            {
-                queryable = orderBy(queryable);
-            }
+            // Create the paginated list with the projected query
+            var paginatedList = await PaginatedList<T>.CreateAsync(queryable, pageNumber, pageSize);
+            return paginatedList;
 
-            // If selector is null, select the whole entity (T)
-            if (selector == null)
-            {
-                var paginatedList = await PaginatedList<T>.CreateAsync(queryable, pageNumber, pageSize);
-                return paginatedList as PaginatedList<TResult>;
-            }
-            else
-            {
-                // Apply projection with the selector
-                var projectedQuery = queryable.Select(selector);
-
-                // Create the paginated list with the projected query
-                var paginatedList = await PaginatedList<TResult>.CreateAsync(projectedQuery, pageNumber, pageSize);
-                return paginatedList;
-            }
         }
 
         public IQueryable<T> GetAllWithCondition(Expression<Func<T, bool>> predicate = null,
@@ -107,9 +88,11 @@ namespace Repository.Base
                 {
                     queryable = queryable.Include(navigationPropertyPath);
                 }
+
+                queryable = queryable.AsSplitQuery();
             }
 
-            return predicate == null ? queryable : queryable.Where(predicate);
+            return predicate != null ? queryable.Where(predicate) : queryable;
         }
 
         public async Task<IList<T>?> GetAllAsync()
@@ -148,15 +131,11 @@ namespace Repository.Base
 
         public T? GetById(int id)
         {
-
-
             return DbSet.Find(id);
         }
 
         public async Task<T?> GetByIdAsync(int id)
         {
-
-
             return await DbSet.FindAsync(id);
         }
 
@@ -168,7 +147,8 @@ namespace Repository.Base
         }*/
 
         public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate,
-            bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties)
+            bool isIncludeDeleted = false, 
+            params Expression<Func<T, object>>[] includeProperties)
         {
 
             var query = DbSet.AsQueryable();
@@ -184,6 +164,9 @@ namespace Repository.Base
                 {
                     query = query.Include(includeProperty);
                 }
+
+
+                query = query.AsSplitQuery();
             }
             return await query.FirstOrDefaultAsync(predicate);
         }
@@ -196,8 +179,8 @@ namespace Repository.Base
 
         public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
-            await DbSet.AddAsync(entity);
-            return entity;
+            var result = await DbSet.AddAsync(entity);
+            return result.Entity;
         }
 
         public void AddRange(IEnumerable<T> entities)
@@ -300,7 +283,7 @@ namespace Repository.Base
             }
         }
 
-        protected void TryAttachRange(ICollection<T> entities)
+        public void TryAttachRange(ICollection<T> entities)
         {
             try
             {

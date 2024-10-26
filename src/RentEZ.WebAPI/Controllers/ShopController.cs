@@ -2,15 +2,13 @@
 using Service.Interfaces;
 using Utility.Constants;
 using Microsoft.AspNetCore.RateLimiting;
-using Service.Models;
-using Service.Models.Shop;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
 using AllowAnonymousAttribute = Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
-using Service.ApiModels;
+using BaseResponse = Service.ApiModels.BaseResponse;
+using Service.ApiModels.Shop;
 
 namespace RentEZ.WebAPI.Controllers
 {
