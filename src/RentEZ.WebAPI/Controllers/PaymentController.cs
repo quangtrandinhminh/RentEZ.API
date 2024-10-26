@@ -50,8 +50,8 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
-        [HttpGet("payos/payment-info/{orderId}")]
-        public async Task<IActionResult> GetPayOSPaymentInfo([FromRoute] int orderId)
+        [HttpGet("payos/payment-info")]
+        public async Task<IActionResult> GetPayOSPaymentInfo([FromQuery] int orderId)
         {
             var response = await _payosService.GetPaymentLinkInformationAsync(orderId);
             return Ok(BaseResponse.OkResponseDto(response));
