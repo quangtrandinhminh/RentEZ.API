@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Utility.Constants
+﻿namespace Utility.Constants
 {
     public class ApplicationConstants
     {
@@ -114,6 +112,7 @@ namespace Utility.Constants
         public const string ALREADY_OWNED_ANOTHER_SHOP = "Đã sở hữu một cửa hàng khác.";
         public const string PHONE_VALIDATED = "Phone number is validated.";
         public const string NOTFOUND = "Cửa hàng không tồn tại.";
+        public const string NOTALLOWED = "Chỉ chủ shop được xem thông tin này";
     }
 
     public class ResponseMessageConstrantsProduct
@@ -127,6 +126,7 @@ namespace Utility.Constants
         public const string EXISTED_IMAGE = "Hình ảnh của sản phẩm đã được sử dụng.";
         public const string NONEXISTENT_CATEGORY = "Loại sản phẩm không tồn tại.";
         public const string NOTHING_CHANGED = "Không có gì được thay đổi sau lần chỉnh sửa này.";
+        public const string NOT_EXISTED = "Danh sách có sản phẩm không tồn tại";
     }
 
     public class ResponseMessageConstrantsCategory
@@ -135,5 +135,21 @@ namespace Utility.Constants
         public const string EXISTED_CATEGORYNAME = "Loại sản phẩm này đã tồn tại.";
         public const string NOTFOUND = "Không tìm thấy loại sản phẩm.";
         public const string EXISTED_DESCRIPTION = "Mô tả bị trùng với một loại sản phẩm khác.";
+    }
+
+    public class ResponseMessageConstrantsOrder
+    {
+        public const string NOT_FOUND = "Không tìm thấy đơn hàng";
+        public const string INVALID_DATA = "Dữ liệu không hợp lệ";
+        public const string NOTALLOWED = "Bạn không có quyền xem thông tin này";
+        public const string STATUS_CHANGE_NOTALLOWED = "Không thể thay đổi trạng thái của đơn hàng này";
+
+    }
+
+    public class ResponseMessageConstrantsVoucher
+    {
+        public const string NOT_EXISTED = "Danh sách có voucher không tồn tại";
+        public const string NOT_FOUND = "Không tìm thấy voucher";
+        public const string NOT_AVAILABLE = "Voucher không khả dụng";
     }
 }

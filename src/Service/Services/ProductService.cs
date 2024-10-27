@@ -6,12 +6,12 @@ using Microsoft.IdentityModel.Tokens;
 using Repository.Infrastructure;
 using Repository.Interfaces;
 using Service.Interfaces;
-using Service.Models.Product;
 using Utility.Constants;
 using Utility.Exceptions;
 using Service.Mapper;
 using Repository.Models;
 using System.Security.Claims;
+using Service.ApiModels.Product;
 
 namespace Service.Services
 {
@@ -71,8 +71,8 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
             }
-            var category = await _categoryRepository.GetByIdAsync(product.CategoryId ?? 0);
-            var shop = await _shopRepository.GetByIdAsync(product.ShopId ?? 0);
+            var category = await _categoryRepository.GetByIdAsync(product.CategoryId);
+            var shop = await _shopRepository.GetByIdAsync(product.ShopId);
             var productDto = _mapper.ProductToProductResponseDto(product);
             productDto.CategoryName = category?.CategoryName;
             productDto.ShopName = shop?.ShopName;
@@ -80,7 +80,7 @@ namespace Service.Services
         }
 
         // create product
-        public async Task CreateProduct(ProductCreateRequestDto productRequest, CancellationToken cancellationToken = default)
+        public async Task CreateProduct(ProductCreateRequest productRequest, CancellationToken cancellationToken = default)
         {
             _logger.Information("Creating new product");
             var currentOwnerIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid);
@@ -155,7 +155,7 @@ namespace Service.Services
 
         // update product
 
-        public async Task UpdateProductAsync(ProductCreateRequestDto productRequest, int id)
+        public async Task UpdateProductAsync(ProductCreateRequest productRequest, int id)
         {
             _logger.Information("Update product");
 

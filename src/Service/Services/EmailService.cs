@@ -5,7 +5,7 @@ using Utility.Config;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
-using Service.Models;
+using Service.ApiModels;
 
 namespace Service.Services
 {

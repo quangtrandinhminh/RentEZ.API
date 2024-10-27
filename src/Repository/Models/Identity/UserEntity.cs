@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using Repository.Models.Base;
 using Utility.Helpers;
@@ -18,9 +19,18 @@ public class UserEntity : IdentityUser<int>
     public DateOnly? BirthDate { get; set; }
 
     public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
-
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+    public virtual ICollection<Voucher> Vouchers { get; set; }
     public virtual Shop? ManagedShop { get; set; }
+
+    [MaxLength(6)]
+    public int? BankId { get; set; }
+
+    [MaxLength(19)]
+    public String? AccountNo { get; set; }
+
+    [MaxLength(255)]
+    public String? AccountName { get; set; }
 
     // Base Property
     public int? CreatedBy { get; set; }

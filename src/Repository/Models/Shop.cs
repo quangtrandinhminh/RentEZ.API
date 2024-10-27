@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Repository.Models.Base;
 using Repository.Models.Identity;
 
@@ -21,5 +22,14 @@ namespace Repository.Models
         [ForeignKey(nameof(OwnerId))]
         public UserEntity? Owner { get; set; }
         public virtual ICollection<Product> ProductEntities { get; set; } = new List<Product>();
+
+        [MaxLength(6)]
+        public int? BankId { get; set; }
+
+        [MaxLength(19)]
+        public String? AccountNo { get; set; }
+
+        [MaxLength(255)]
+        public String? AccountName { get; set; }
     }
 }

@@ -22,9 +22,37 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
 
     }
 
+    /*private string GetConnectionString()
+    {
+        var builder = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile("appsettingsconfig.json", optional: false, reloadOnChange: true);
+
+        IConfiguration config = builder.Build();
+
+        return config.GetConnectionString("PostgresConnection");
+    }
+    //private string GetConnectionString()
+    //{
+    //    IConfiguration config = new ConfigurationBuilder()
+    //        .SetBasePath(Directory.GetCurrentDirectory())
+    //        .AddJsonFile("appsettings.json", true, true)
+    //        .Build();
+    //    //var strConn = config["ConnectionStrings:DefaultConnection"];
+    //    var strConn = config["ConnectionStrings:PostgresConnection"];
+    //    return strConn;
+    //}
+
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //    //=> optionsBuilder.UseSqlServer(GetConnectionString());
+    //    => optionsBuilder.UseNpgsql(GetConnectionString());
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-    }
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseNpgsql(GetConnectionString());
+        }
+    }*/
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -144,7 +172,8 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
         modelBuilder.Entity<UserRoleEntity>().HasData(
             new UserRoleEntity { UserId = 1, RoleId = 1 },
             new UserRoleEntity { UserId = 2, RoleId = 2 },
-            new UserRoleEntity { UserId = 3, RoleId = 3 }
+            new UserRoleEntity { UserId = 3, RoleId = 3 },
+            new UserRoleEntity { UserId = 3, RoleId = 2 }
         );
 
         // Seed data shop
@@ -159,6 +188,17 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 ShopAvatar = "https://via.placeholder.com/150",
                 Verified = CoreHelper.SystemTimeNow,
                 OwnerId = 2
+            },
+            new Shop
+            {
+                Id = 2,
+                ShopEmail = "customershop1@example.com",
+                ShopName = "Customer Shop",
+                ShopPhone = "0123456789",
+                ShopAddress = "123 Street",
+                ShopAvatar = "https://via.placeholder.com/150",
+                Verified = CoreHelper.SystemTimeNow,
+                OwnerId = 3
             });
 
         // Seed data category from enum
@@ -187,7 +227,8 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 Mass = 1,
                 Long = 10,
                 Width = 5,
-                Height = 15
+                Height = 15,
+                DepositRate = 0.5
             },
             new Product
             {
@@ -205,14 +246,15 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 Mass = 1,
                 Long = 10,
                 Width = 5,
-                Height = 15
+                Height = 15,
+                DepositRate = 0.5
             },
             new Product
             {
                 Id = 3,
                 ProductName = "Bộ quần áo 1",
                 CategoryId = 2,
-                ShopId = 1,
+                ShopId = 2,
                 Size = 10,
                 Price = 100000,
                 RentPrice = 50000,
@@ -223,7 +265,8 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 Mass = 1,
                 Long = 10,
                 Width = 5,
-                Height = 15
+                Height = 15,
+                DepositRate = 0.7
             },
             new Product
             {
@@ -240,7 +283,94 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 Image = "https://via.placeholder.com/150",
                 Mass = 1,
                 Long = 10,
+                Width = 5,
+                Height = 15,
+                DepositRate = 0.7
             }
             );
+
+        // Seed data voucher
+        modelBuilder.Entity<Voucher>().HasData(
+            new Voucher
+            {
+                Id = 1,
+                ShopId = null,
+                Code = "Voucher1",
+                Name = "Voucher 100k",
+                Value = 100000,
+                Type = VoucherTypeEnum.Rent,
+                ValueType = VoucherValueTypeEnum.Amount,
+                Limit = 10,
+                Description = "Giảm 100.000đ phí thuê, RentEZ chào bạn mới"
+            },
+            new Voucher
+            {
+                Id = 2,
+                ShopId = 1,
+                Code = "Voucher2",
+                Name = "Voucher 10% phí thuê",
+                Value = 0.10m,
+                MinRentValue = 250000,
+                MaxDiscountValue = 100000,
+                Type = VoucherTypeEnum.Rent,
+                ValueType = VoucherValueTypeEnum.Percent,
+                StartDate = CoreHelper.SystemTimeNow,
+                EndDate = CoreHelper.SystemTimeNow.AddDays(10),
+                Limit = 10,
+                Description = "Giảm 10% phí thuê cho đơn hàng từ Shop 1 có tiền thuê từ 250.000đ tối đa 100.000"
+            },
+            new Voucher
+            {
+                Id = 3,
+                ShopId = 2,
+                Code = "Voucher3",
+                Name = "Voucher 10% phí thuê",
+                Value = 0.10m,
+                Type = VoucherTypeEnum.Rent,
+                ValueType = VoucherValueTypeEnum.Percent,
+                StartDate = CoreHelper.SystemTimeNow,
+                EndDate = CoreHelper.SystemTimeNow.AddDays(10),
+                Limit = 10,
+                Description = "Giảm 10% phí thuê cho mọi đơn hàng từ Shop 2"
+            },
+            new Voucher
+            {
+                Id = 4,
+                ShopId = null,
+                Code = "Voucher4",
+                Name = "Voucher 30% phí ship",
+                Value = 0.30m,
+                MinRentValue = 100000,
+                MaxDiscountValue = 10000,
+                Type = VoucherTypeEnum.Ship,
+                ValueType = VoucherValueTypeEnum.Percent,
+                Description = "Giảm 30% phí ship cho đơn hàng có phí thuê từ 100.000đ, tối đa 10.000đ"
+            },
+            new Voucher
+            {
+                Id = 5,
+                ShopId = null,
+                Code = "Voucher5",
+                Name = "Voucher 15% phí ship",
+                Value = 0.5m,
+                MinRentValue = 300000,
+                MaxDiscountValue = 25000,
+                Type = VoucherTypeEnum.Ship,
+                ValueType = VoucherValueTypeEnum.Percent,
+                Description = "Giảm 50% phí ship cho đơn hàng có phí thuê từ 300.000đ, tối đa 25.000đ"
+            },
+            new Voucher
+            {
+                Id = 6,
+                ShopId = null,
+                Code = "Voucher5",
+                Name = "Voucher 15% phí ship",
+                Value = 0.7m,
+                MinRentValue = 150000,
+                MaxDiscountValue = 75000,
+                Type = VoucherTypeEnum.Ship,
+                ValueType = VoucherValueTypeEnum.Percent,
+                Description = "Giảm 70% phí ship cho đơn hàng có phí thuê từ 500.000đ, tối đa 75.000đ"
+            });
     }
 }
