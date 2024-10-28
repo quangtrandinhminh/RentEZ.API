@@ -14,7 +14,14 @@ namespace Service.ApiModels.Shop
         [RegularExpression("^[^0-9]+$", ErrorMessage = "Name cannot contain number")]
         public string ShopName { get; set; }
         [Required]
-        public string ReceivingAccount { get; set; }
+        [MaxLength(6)]
+        public int BankId { get; set; }
+        [Required]
+        [MaxLength(19)]
+        public String AccountNo { get; set; }
+        [Required]
+        [MaxLength(255)]
+        public String AccountName { get; set; }
         [Required]
         public string ShopAddress { get; set; }
         [Required]

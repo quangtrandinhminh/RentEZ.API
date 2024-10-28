@@ -69,7 +69,7 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_AVATAR, StatusCodes.Status400BadRequest);
             }
-            var existpReceivingAccount = await _shopRepository.GetSingleAsync(x => x.ReceivingAccount == shopRequest.ReceivingAccount);
+            var existpReceivingAccount = await _shopRepository.GetSingleAsync(x => x.AccountNo == shopRequest.AccountNo);
             if (existpReceivingAccount != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_Receiving_Account, StatusCodes.Status400BadRequest);
@@ -96,7 +96,9 @@ namespace Service.Services
                     CreatedTime = DateTimeOffset.UtcNow,
                     ShopAvatar = shopRequest.ShopAvatar,
                     ShopEmail = shopRequest.ShopEmail,
-                    ReceivingAccount = shopRequest.ReceivingAccount,
+                    BankId = shopRequest.BankId,
+                    AccountNo = shopRequest.AccountNo,
+                    AccountName = shopRequest.AccountName,
                     ShopPhone = shopRequest.ShopPhone,
                     CreatedBy = loggedInOwnerId,
                 };

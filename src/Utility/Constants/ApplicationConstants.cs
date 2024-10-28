@@ -118,6 +118,9 @@
     public class ResponseMessageConstrantsProduct
     {
         public const string NUll = "Có trường hợp bị null.";
+        public const string RENTPRICE_EXACT_VALUE = "Giá cho thuê phải có 7 giá trị";
+        public const string RENTPRICE_INVALID = "Giá cho thuê không được quá 30% so với giá sản phẩm";
+        public const string RENTPRICE_NOT_ASCENDING = "Giá cho thuê của ngày hôm sau phải cao hơn giá thuê của ngày hôm trước";
         public const string INVALID_ALLOWRENTBEFOREDAYS = "Ngày cho thuê phải từ 2 đến 5 ngày.";
         public const string UNAUTHORIZED = "Người dùng này chưa được phép để tạo sản phẩm.";
         public const string SHOP_NOTFOUND = "Cửa hàng chưa tồn tại.";

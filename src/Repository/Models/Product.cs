@@ -11,7 +11,7 @@ namespace Repository.Models
         public int ShopId { get; set; }
         public double? Size { get; set; }
         public double? Price { get; set; }
-        public double? RentPrice { get; set; }
+        public string? RentPrice { get; set; }
         public int RentedCount { get; set; } = 0;
         public int RatingCount { get; set; } = 0;
         public int Quantity { get; set; } = 0;
