@@ -6,7 +6,6 @@ namespace Service.ApiModels.Order;
 
 public class OrderRequest
 {
-    public int CustomerId { get; set; }
     public string OrderAddress { get; set; }
     public decimal TotalRentPrice { get; set; }
     public decimal TotalDeposit { get; set; }

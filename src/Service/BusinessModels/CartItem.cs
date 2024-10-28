@@ -10,7 +10,8 @@ public class CartItem
     public DateTimeOffset RentDateTime { get; set; }
     public DateTimeOffset ReturnDateTime { get; set; }
     public decimal Price { get; set; }
-    public decimal RentPrice { get; set; }
+    public decimal RentPriceOnDays { get; set; }
+    public IList<double> RentPrice { get; set; }
     public decimal Deposit { get; set; }
     public decimal DepositRate { get; set; }
     public decimal SubTotalRentPrice { get; private set; }
@@ -20,7 +21,24 @@ public class CartItem
 
     public void CalculateSubTotal()
     {
-        SubTotalRentPrice = CalculateHelper.CalculateTotalRentPrice(RentPrice, RentQuantity, (int)(ReturnDateTime - RentDateTime).TotalDays);
+        var totalDays = (int)(ReturnDateTime - RentDateTime).TotalDays;
+        if (totalDays < 1)
+        {
+            totalDays = 1;
+        }
+
+        // if totalDays > RentPrice.Count, then calculate RentPriceOnDays by the last element of RentPrice and the first element of RentPrice
+        if (totalDays > RentPrice.Count)
+        {
+            RentPriceOnDays = (decimal)RentPrice.Last() + (decimal)RentPrice.First() *
+                (totalDays - RentPrice.Count);
+        }
+        else
+        {
+            RentPriceOnDays = (decimal)RentPrice.ElementAt(totalDays - 1);
+        }
+        
+        SubTotalRentPrice = CalculateHelper.CalculateTotalRentPrice(RentPriceOnDays, RentQuantity);
         SubTotalDeposit = Deposit * RentQuantity; 
         SubTotal = SubTotalRentPrice + SubTotalDeposit - Discount;
     }

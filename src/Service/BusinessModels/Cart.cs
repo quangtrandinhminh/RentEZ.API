@@ -41,8 +41,10 @@ public class Cart()
         var shipVoucher = PlatformVouchers.FirstOrDefault(x => x.Type == VoucherTypeEnum.Ship);
         var platformVoucher = PlatformVouchers.FirstOrDefault(x => x.Type == VoucherTypeEnum.Rent);
 
-        PlatformRentDiscount += CalculateHelper.ApplyShopRentVoucher(platformVoucher, TotalRentPrice);
-        ShipSupportFee = CalculateHelper.ApplyPlatformShipVoucher(shipVoucher, TotalRentPrice, TotalShipFee);
+        if (platformVoucher != null)
+            PlatformRentDiscount += CalculateHelper.ApplyShopRentVoucher(platformVoucher, TotalRentPrice);
+        if (shipVoucher != null)
+            ShipSupportFee = CalculateHelper.ApplyPlatformShipVoucher(shipVoucher, TotalRentPrice, TotalShipFee);
 
         /*if (platformVoucher is { ValueType: VoucherValueTypeEnum.Amount })
             PlatformRentDiscount = CalculateHelper.ApplyPlatformRentVoucherAmount(platformVoucher, TotalRentPrice);
@@ -61,7 +63,7 @@ public class Cart()
                     CalculateHelper.ApplyPlatformShipVoucher(shipVoucher, shop, TotalRentPrice, TotalShipFee, ref shipFeeSupport);
                     ShipSupportFee = shipFeeSupport;
                 }
-                    
+
                 if (platformVoucher is { ValueType: VoucherValueTypeEnum.Percent })
                     CalculateHelper.ApplyPlatformRentVoucherPercent(platformVoucher, TotalRentPrice, shop);
                 shop.CalculateShopTotalWithPlatform();
