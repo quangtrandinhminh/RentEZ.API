@@ -213,7 +213,7 @@ namespace Service.Services
 
             if (productRequest.RentPrices == null || productRequest.RentPrices.Count != 7)
             {
-                throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENT_PRICE_EXACT_VALUE, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_EXACT_VALUE, StatusCodes.Status400BadRequest);
             }
             string rentPricesJson = JsonConvert.SerializeObject(productRequest.RentPrices);
             List<double> rentPrices = JsonConvert.DeserializeObject<List<double>>(rentPricesJson);
@@ -222,7 +222,7 @@ namespace Service.Services
             {
                 if (rentPrice > productRequest.Price * 0.30)
                 {
-                    throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENT_PRICE_INVALID, StatusCodes.Status400BadRequest);
+                    throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_INVALID, StatusCodes.Status400BadRequest);
                 }
             }
 
@@ -230,6 +230,14 @@ namespace Service.Services
             {
 
                 throw new AppException(ResponseCodeConstants.NOTHINGCHANGED, ResponseMessageConstrantsProduct.NOTHING_CHANGED, StatusCodes.Status400BadRequest);
+            }
+
+            for (int i = 1; i < rentPrices.Count; i++)
+            {
+                if (rentPrices[i] <= rentPrices[i - 1])
+                {
+                    throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_NOT_ASCENDING, StatusCodes.Status400BadRequest);
+                }
             }
 
             try
