@@ -1,4 +1,5 @@
-﻿using Repository.Extensions;
+﻿using System.Text.Json;
+using Repository.Extensions;
 using Repository.Models;
 using Repository.Models.Identity;
 using Riok.Mapperly.Abstractions;
@@ -13,6 +14,7 @@ using Service.ApiModels.OrderDetail;
 using Service.ApiModels.OrderShop;
 using Service.ApiModels.Voucher;
 using Service.ApiModels.PaginatedList;
+using Utility.Helpers;
 
 namespace Service.Mapper;
 
@@ -102,6 +104,12 @@ public partial class MapperlyMapper
     public DateOnly Map(DateTime dateTime)
     {
         return DateOnly.FromDateTime(dateTime);
+    }
+
+    // jsonstring to list double
+    public IList<double> Map(string jsonString)
+    {
+        return JsonSerializer.Deserialize<List<double>>(jsonString);
     }
 
     // role

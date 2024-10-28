@@ -139,20 +139,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         // if status == "00" change status of order to success
         if (request.code == "00")
         {
-            // update order
-            order.PaymentStatus = PaymentStatusEnum.Paid;
-            order.PaymentTime = CoreHelper.SystemTimeNow;
-            _orderRepository.Update(order);
-
-            // update order shop
-            foreach (var orderShop in order.OrderShops)
-            {
-                OrderShopProcessor processor = new OrderShopProcessor(orderShop);
-                processor.ChangeNextStatus();
-                _orderShopRepository.Update(orderShop);
-            }
-
-            await _unitOfWork.SaveChangeAsync();
+            await UpdateOrderPayment(order, data.orderCode.ToString());
         }
         else
         {
@@ -164,5 +151,25 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
     {
         var payOS = new PayOS(_payOSSetting.ClientID, _payOSSetting.ApiKey, _payOSSetting.ChecksumKey);
         return await payOS.getPaymentLinkInformation(orderId);
+    }
+
+    private async Task UpdateOrderPayment(Order order, string paymentId)
+    {
+        // update order
+        order.PaymentStatus = PaymentStatusEnum.Paid;
+        order.PaymentTime = CoreHelper.SystemTimeNow;
+        order.PaymentMethod = PaymentMethodEnum.PayOS;
+        order.PaymentId = paymentId;
+        _orderRepository.Update(order);
+
+        // update order shop
+        foreach (var orderShop in order.OrderShops)
+        {
+            OrderShopProcessor processor = new OrderShopProcessor(orderShop);
+            processor.ChangeNextStatus();
+            _orderShopRepository.Update(orderShop);
+        }
+
+        await _unitOfWork.SaveChangeAsync();
     }
 }

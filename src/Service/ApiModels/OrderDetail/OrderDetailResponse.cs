@@ -1,4 +1,6 @@
-﻿namespace Service.ApiModels.OrderDetail;
+﻿using Repository.Models;
+
+namespace Service.ApiModels.OrderDetail;
 
 public class OrderDetailResponse : OrderDetailListResponse
 { 

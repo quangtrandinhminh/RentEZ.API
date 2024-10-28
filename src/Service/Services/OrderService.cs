@@ -61,44 +61,46 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
     {
         _logger.Information("Calculate total price for order");
 
-        // get all vouchers in request
-        var voucherRequestIds = request.Vouchers.Select(x => x.Id).ToList();
-
         // get all vouchers that shopId is null and those ids are in request.PlatformVouchers, Status is Active
-        var voucherEntities = request.Vouchers.Any()
-            ? await _voucherRepository.GetAllWithCondition(v => voucherRequestIds.Contains(v.Id)).ToListAsync()
+        var voucherEntities = request.VoucherIds != null && request.VoucherIds.Any()
+            ? await _voucherRepository.GetAllWithCondition(v => request.VoucherIds.Contains(v.Id)).ToListAsync()
             : null;
 
-        if (voucherEntities != null && voucherEntities.Count != voucherRequestIds.Count)
+        if (request.VoucherIds != null && voucherEntities != null && voucherEntities.Count != request.VoucherIds.Count)
         {
             throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsVoucher.NOT_EXISTED,
                                                              StatusCodes.Status400BadRequest);
         }
 
-        foreach (var voucher in voucherEntities)
+        if (voucherEntities != null)
         {
-            if (voucher.Status != VoucherStatusEnum.Active)
+            foreach (var voucher in voucherEntities)
             {
-                throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsVoucher.NOT_AVAILABLE,
-                                                                                    StatusCodes.Status400BadRequest);
+                if (voucher.Status != VoucherStatusEnum.Active)
+                {
+                    throw new AppException(ResponseCodeConstants.BAD_REQUEST,
+                        ResponseMessageConstrantsVoucher.NOT_AVAILABLE,
+                        StatusCodes.Status400BadRequest);
+                }
             }
         }
 
         // get all products in request
         var cartItemIds = request.CartItems.Select(x => x.ProductId).ToList();
         var productEntities = await _productRepository.GetAllWithCondition(
-            x => cartItemIds.Contains(x.Id) && x.DeletedTime == null, x => x.Shop).ToListAsync();
+            x => cartItemIds.Contains(x.Id) && x.DeletedTime == null,
+            x => x.Shop).ToListAsync();
 
         if (!productEntities.Any())
         {
             throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND,
-                               StatusCodes.Status404NotFound);
+                StatusCodes.Status404NotFound);
         }
 
         if (productEntities.Count != cartItemIds.Count)
         {
             throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.NOT_EXISTED,
-                                              StatusCodes.Status400BadRequest);
+                StatusCodes.Status400BadRequest);
         }
 
         // get all shops in request, group by shop id
@@ -128,9 +130,11 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
                 var requestItem = request.CartItems.FirstOrDefault(x => x.ProductId == cartItem.ProductId);
                 if (requestItem == null)
                 {
-                    throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND,
-                                                                             StatusCodes.Status404NotFound);
+                    throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                        ResponseMessageConstrantsProduct.NOTFOUND,
+                        StatusCodes.Status404NotFound);
                 }
+
                 _mapper.MapRequestToCartItem(requestItem, cartItem);
                 cartItem.CalculateSubTotal();
             }
@@ -159,12 +163,14 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         {
             cart.PlatformVouchers.AddRange(voucherEntities.Where(x => x.ShopId == null));
         }
+
         cart.CalculateTotal(TaxRate, PlatformRate, cartShops);
 
         // map to order request
         var result = _mapper.MapToOrderRequest(cart);
         return result;
     }
+
 
     public Task<IList<OrderListResponse>> GetAllOrdersAsync()
     {
@@ -205,6 +211,7 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
     {
         _logger.Information("Create order {@request}", request);
         var order = _mapper.MapToOrder(request);
+        order.CustomerId = int.Parse(GetLoginUser().FindFirst(ClaimTypes.Sid).Value);
 
         // get all vouchers in request
         var shopVoucherIds = order.OrderShops.Where(x => x.VoucherId != null)
@@ -345,12 +352,13 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         }
 
         var loginUser = GetLoginUser();
+        var userId = int.Parse(loginUser.FindFirst(ClaimTypes.Sid).Value);
         var order = await _orderRepository.GetSingleAsync(x => x.Id == orderId,
             false,
             x => x.OrderShops,
             x => x.PlatformVouchers);
 
-        if (order.CustomerId != int.Parse(loginUser.FindFirst(ClaimTypes.Sid).Value))
+        if (order.CustomerId != userId)
         {
             throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.NOTALLOWED,
                                               StatusCodes.Status403Forbidden);
@@ -366,6 +374,7 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         {
             var processor = new OrderShopProcessor(orderShop);
             processor.Cancel();
+            orderShop.CancelBy = userId;
             _orderShopRepository.Update(orderShop);
         }
 

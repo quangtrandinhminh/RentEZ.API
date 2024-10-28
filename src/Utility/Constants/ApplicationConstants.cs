@@ -103,6 +103,7 @@
         public const string EXISTED_EMAIL = "Email của cửa hàng đã tồn tại.";
         public const string OWNER_NOTFOUND = "Tài khoản chủ cửa hàng không tìm thấy.";
         public const string EXISTED_NAME = "Ten cua da ton tai.";
+        public const string EXISTED_Receiving_Account = "Tài khoản nhận tiền đã tồn tại.";
         public const string EXISTED_ADDRESS = "Dia chi cua hang da ton tai.";
         public const string EXISTED_AVATAR = "Avatar da ton tai.";
         public const string NO_INISACTIVE_SHOP_FOUND = "Tất cả cửa hàng đã được duyệt.";
@@ -117,6 +118,9 @@
     public class ResponseMessageConstrantsProduct
     {
         public const string NUll = "Có trường hợp bị null.";
+        public const string RENTPRICE_EXACT_VALUE = "Giá cho thuê phải có 7 giá trị";
+        public const string RENTPRICE_INVALID = "Giá cho thuê không được quá 30% so với giá sản phẩm";
+        public const string RENTPRICE_NOT_ASCENDING = "Giá cho thuê của ngày hôm sau phải cao hơn giá thuê của ngày hôm trước";
         public const string INVALID_ALLOWRENTBEFOREDAYS = "Ngày cho thuê phải từ 2 đến 5 ngày.";
         public const string UNAUTHORIZED = "Người dùng này chưa được phép để tạo sản phẩm.";
         public const string SHOP_NOTFOUND = "Cửa hàng chưa tồn tại.";

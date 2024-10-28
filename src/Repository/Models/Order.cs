@@ -24,6 +24,7 @@ public class Order : BaseEntity
     public PaymentStatusEnum PaymentStatus { get; set; }
     public PaymentMethodEnum PaymentMethod { get; set; }
     public DateTimeOffset? PaymentTime { get; set; }
+    public string? PaymentId { get; set; }
     public string? Note { get; set; }
 
     [ForeignKey("CustomerId")]

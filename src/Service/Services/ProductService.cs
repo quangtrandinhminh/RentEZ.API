@@ -12,6 +12,7 @@ using Service.Mapper;
 using Repository.Models;
 using System.Security.Claims;
 using Service.ApiModels.Product;
+using Newtonsoft.Json;
 
 namespace Service.Services
 {
@@ -116,7 +117,28 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.INVALID_ALLOWRENTBEFOREDAYS, StatusCodes.Status400BadRequest);
             }
+            if (productRequest.RentPrices == null || productRequest.RentPrices.Count != 7)
+            {
+                throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_EXACT_VALUE, StatusCodes.Status400BadRequest);
+            }
+            string rentPricesJson = JsonConvert.SerializeObject(productRequest.RentPrices);
+            List<double> rentPrices = JsonConvert.DeserializeObject<List<double>>(rentPricesJson);
 
+            //each RentPrice is not more than 30% of the Price
+            foreach (var rentPrice in rentPrices)
+            {
+                if (rentPrice > productRequest.Price * 0.30)
+                {
+                    throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_INVALID, StatusCodes.Status400BadRequest);
+                }
+            }
+            for (int i = 1; i < rentPrices.Count; i++)
+            {
+                if (rentPrices[i] <= rentPrices[i - 1])
+                {
+                    throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_NOT_ASCENDING, StatusCodes.Status400BadRequest);
+                }
+            }
             try
             {
                 var newProduct = new Product
@@ -131,7 +153,7 @@ namespace Service.Services
                     Quantity = productRequest.Quantity,
                     AllowRentBeforeDays = productRequest.AllowRentBeforeDays,
                     Construction = productRequest.Construction,
-                    RentPrice = productRequest.RentPrice,
+                    RentPrice = rentPricesJson,
                     DepositRate = productRequest.DepositRate,
                     Description = productRequest.Description,
                     Image = productRequest.Image,
@@ -183,10 +205,39 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NONEXISTENT_CATEGORY, StatusCodes.Status400BadRequest);
             }
 
-            if (existingProduct.ProductName == productRequest.ProductName && existingProduct.Image == existingProduct.Image)
+            var validAllowRentBeforeDays = await _productRepository.GetSingleAsync(x => x.AllowRentBeforeDays == productRequest.AllowRentBeforeDays);
+            if (validAllowRentBeforeDays != null && validAllowRentBeforeDays.AllowRentBeforeDays <= 2 && validAllowRentBeforeDays.AllowRentBeforeDays >= 5)
+            {
+                throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.INVALID_ALLOWRENTBEFOREDAYS, StatusCodes.Status400BadRequest);
+            }
+
+            if (productRequest.RentPrices == null || productRequest.RentPrices.Count != 7)
+            {
+                throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_EXACT_VALUE, StatusCodes.Status400BadRequest);
+            }
+            string rentPricesJson = JsonConvert.SerializeObject(productRequest.RentPrices);
+            List<double> rentPrices = JsonConvert.DeserializeObject<List<double>>(rentPricesJson);
+            // Validate each RentPrice is not more than 30% of the Price
+            foreach (var rentPrice in rentPrices)
+            {
+                if (rentPrice > productRequest.Price * 0.30)
+                {
+                    throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_INVALID, StatusCodes.Status400BadRequest);
+                }
+            }
+
+            if (existingProduct.ProductName == productRequest.ProductName && existingProduct.Image == existingProduct.Image && existingProduct.RentPrice == rentPricesJson && existingProduct.Id == id)
             {
 
                 throw new AppException(ResponseCodeConstants.NOTHINGCHANGED, ResponseMessageConstrantsProduct.NOTHING_CHANGED, StatusCodes.Status400BadRequest);
+            }
+
+            for (int i = 1; i < rentPrices.Count; i++)
+            {
+                if (rentPrices[i] <= rentPrices[i - 1])
+                {
+                    throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_NOT_ASCENDING, StatusCodes.Status400BadRequest);
+                }
             }
 
             try
@@ -196,7 +247,11 @@ namespace Service.Services
                 existingProduct.Size = productRequest.Size;
                 existingProduct.LastUpdatedTime = DateTimeOffset.UtcNow;
                 existingProduct.Price = productRequest.Price;
-                existingProduct.RentPrice = productRequest.RentPrice;
+                existingProduct.Quantity = productRequest.Quantity;
+                existingProduct.AllowRentBeforeDays = productRequest.AllowRentBeforeDays;
+                existingProduct.Construction = productRequest.Construction;
+                existingProduct.RentPrice = rentPricesJson;
+                existingProduct.DepositRate = productRequest.DepositRate;
                 existingProduct.Description = productRequest.Description;
                 existingProduct.Image = productRequest.Image;
                 existingProduct.Mass = productRequest.Mass;
@@ -227,5 +282,17 @@ namespace Service.Services
             await _unitOfWork.SaveChangeAsync();
             _logger.Information("Deleted product successfully");
         }
+        //public static class ObjectHelper
+        //{
+        //    public static string ConvertToJson(List<double> rentPrices)
+        //    {
+        //        return JsonConvert.SerializeObject(rentPrices);
+        //    }
+
+        //    public static List<double> ConvertFromJson(string rentPricesJson)
+        //    {
+        //        return JsonConvert.DeserializeObject<List<double>>(rentPricesJson);
+        //    }
+        //}
     }
 }

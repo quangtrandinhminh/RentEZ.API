@@ -6,9 +6,9 @@ namespace Service.Helpers
 {
     public static class CalculateHelper
     {
-        public static decimal CalculateTotalRentPrice(decimal rentPrice, int quantity, int rentDays)
+        public static decimal CalculateTotalRentPrice(decimal rentPrice, int quantity)
         {
-            var totalRentPrice = rentPrice * quantity * rentDays;
+            var totalRentPrice = rentPrice * quantity;
             return totalRentPrice;
         }
 

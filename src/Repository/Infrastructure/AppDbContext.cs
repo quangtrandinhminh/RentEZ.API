@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Repository.Models;
 using Repository.Models.Identity;
 using Utility.Enum;
@@ -219,16 +220,29 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 ShopId = 1,
                 Size = 10,
                 Price = 100000,
-                RentPrice = 50000,
+                RentPrice = JsonConvert.SerializeObject(new List<double> {
+                    25000, // 25% của Price
+                    27000,
+                    28000,
+                    29000,
+                    29500,
+                    29800,
+                    30000  // Max 30% của Price
+                }),
                 RentedCount = 0,
                 RatingCount = 0,
+                Quantity = 5,
+                AllowRentBeforeDays = 3,
+                Construction = 5,
                 Description = "Túi xách đẹp",
                 Image = "https://via.placeholder.com/150",
                 Mass = 1,
                 Long = 10,
                 Width = 5,
                 Height = 15,
-                DepositRate = 0.5
+                DepositRate = 0.5,
+                CreatedTime = DateTimeOffset.UtcNow,
+                LastUpdatedTime = DateTimeOffset.UtcNow,
             },
             new Product
             {
@@ -238,16 +252,29 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 ShopId = 1,
                 Size = 10,
                 Price = 100000,
-                RentPrice = 50000,
+                RentPrice = JsonConvert.SerializeObject(new List<double> {
+                    20000, // 20% của Price
+                    22000,
+                    24000,
+                    26000,
+                    27000,
+                    28000,
+                    29000  // 29% của Price
+                }),
                 RentedCount = 0,
                 RatingCount = 0,
+                Quantity = 3,
+                AllowRentBeforeDays = 4,
+                Construction = 5,
                 Description = "Túi xách đẹp",
                 Image = "https://via.placeholder.com/150",
                 Mass = 1,
                 Long = 10,
                 Width = 5,
                 Height = 15,
-                DepositRate = 0.5
+                DepositRate = 0.5,
+                CreatedTime = DateTimeOffset.UtcNow,
+                LastUpdatedTime = DateTimeOffset.UtcNow,
             },
             new Product
             {
@@ -257,16 +284,29 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 ShopId = 2,
                 Size = 10,
                 Price = 100000,
-                RentPrice = 50000,
+                RentPrice = JsonConvert.SerializeObject(new List<double> {
+                    15000, // 15% của Price
+                    18000,
+                    21000,
+                    23000,
+                    25000,
+                    27000,
+                    29000  // 29% của Price
+                }),
                 RentedCount = 0,
                 RatingCount = 0,
+                Quantity = 8,
+                AllowRentBeforeDays = 3,
+                Construction = 5,
                 Description = "Bộ quần áo đẹp",
                 Image = "https://via.placeholder.com/150",
                 Mass = 1,
                 Long = 10,
                 Width = 5,
                 Height = 15,
-                DepositRate = 0.7
+                DepositRate = 0.7,
+                CreatedTime = DateTimeOffset.UtcNow,
+                LastUpdatedTime = DateTimeOffset.UtcNow,
             },
             new Product
             {
@@ -276,16 +316,29 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                 ShopId = 1,
                 Size = 10,
                 Price = 100000,
-                RentPrice = 50000,
+                RentPrice = JsonConvert.SerializeObject(new List<double> {
+                    20000, // 20% của Price
+                    22000,
+                    24000,
+                    25000,
+                    26000,
+                    28000,
+                    29500  // 29.5% của Price
+                }),
                 RentedCount = 0,
                 RatingCount = 0,
+                Quantity = 4,
+                AllowRentBeforeDays = 4,
+                Construction = 5,
                 Description = "Bộ quần áo đẹp",
                 Image = "https://via.placeholder.com/150",
                 Mass = 1,
                 Long = 10,
                 Width = 5,
                 Height = 15,
-                DepositRate = 0.7
+                DepositRate = 0.7,
+                CreatedTime = DateTimeOffset.UtcNow,
+                LastUpdatedTime = DateTimeOffset.UtcNow,
             }
             );
 
