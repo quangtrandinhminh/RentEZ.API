@@ -57,6 +57,20 @@ namespace Service.Services
             {
                 var dto = _mapper.ProductToProductResponseDto(product);
                 dto.CategoryName = product.Category?.CategoryName;
+                // Deserialize RentPrice string to List<double>
+                if (!string.IsNullOrEmpty(product.RentPrice))
+                {
+                    try
+                    {
+                        dto.RentPrices = JsonConvert.DeserializeObject<List<double>>(product.RentPrice);
+                    }
+                    catch (JsonException)
+                    {
+                        dto.RentPrices = new List<double>();
+                        _logger.Warning("Failed to deserialize RentPrice for products");
+                    }
+                }
+
                 productDtos.Add(dto);
             }
 
@@ -77,6 +91,18 @@ namespace Service.Services
             var productDto = _mapper.ProductToProductResponseDto(product);
             productDto.CategoryName = category?.CategoryName;
             productDto.ShopName = shop?.ShopName;
+            if (!string.IsNullOrEmpty(product.RentPrice))
+            {
+                try
+                {
+                    productDto.RentPrices = JsonConvert.DeserializeObject<List<double>>(product.RentPrice);
+                }
+                catch (JsonException)
+                {
+                    productDto.RentPrices = new List<double>();
+                    _logger.Warning($"Failed to deserialize RentPrice for product {product.Id}");
+                }
+            }
             return productDto;
         }
 
