@@ -26,7 +26,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
     private readonly IBaseRepository<OrderShop> _orderShopRepository = serviceProvider.GetRequiredService<IBaseRepository<OrderShop>>();
     private readonly ILogger _logger = serviceProvider.GetRequiredService<ILogger>();
     private readonly PayOSSetting _payOSSetting = PayOSSetting.Instance;
-    private const string PAYMENT_DESCRIPTION = "RentEZ thanh toan don hang";
+    private const string PAYMENT_DESCRIPTION = "RentEZ don hang";
 
     public async Task<CreatePaymentResult> CreatePaymentLinkAsync(PayOSRequest request)
     {
