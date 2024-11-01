@@ -68,6 +68,14 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
+        [HttpPut("order-shops/{orderShopId}/status")]
+        [Authorize(Roles = "Customer, ShopOwner")]
+        public async Task<IActionResult> ChangeOrderStatus([FromRoute] int orderShopId)
+        {
+            await _orderService.ChangeOrderStatus(orderShopId);
+            return Ok(BaseResponse.OkResponseDto("Order status changed successfully"));
+        }
+
         [HttpDelete("{orderId}")]
         [Authorize(Roles = "ShopOwner, Customer")]
         public async Task<IActionResult> CancelOrder([FromRoute] int orderId)
