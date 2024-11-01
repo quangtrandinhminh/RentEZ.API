@@ -8,7 +8,7 @@ public class VoucherResponse
     public string Description { get; set; }
     public decimal Value { get; set; }
     public decimal MinOrderValue { get; set; }
-    public DateTimeOffset StartDate { get; set; }
-    public DateTimeOffset EndDate { get; set; }
+    public DateTimeOffset? StartDate { get; set; }
+    public DateTimeOffset? EndDate { get; set; }
     public string Status { get; set; }
 }

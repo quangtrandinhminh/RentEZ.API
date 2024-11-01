@@ -6,7 +6,7 @@ public class OrderDetailRequest : CartItemCalcRequest
 {
     public int ShopId { get; set; }
     public decimal Price { get; set; }
-    public decimal RentPrice { get; set; }
+    public decimal RentPriceOnDays { get; set; }
     public decimal Deposit { get; set; }
     public decimal DepositRate { get; set; }
     public decimal SubTotalRentPrice { get; set; }

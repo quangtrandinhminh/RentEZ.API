@@ -3,6 +3,7 @@ using Repository.Models;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
+using Utility.Helpers;
 
 namespace Service.BusinessModels;
 
@@ -42,7 +43,10 @@ public class OrderShopProcessor(OrderShop orderShop)
             default:
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST, "Invalid status", StatusCodes.Status400BadRequest);
         }
+
+        AddOrderTracking();
     }
+
     public void Reject()
     {
         if (orderShop.Status == OrderShopStatusEnum.Pending)
@@ -77,25 +81,21 @@ public class OrderShopProcessor(OrderShop orderShop)
     private void Approve()
     {
         orderShop.Status = OrderShopStatusEnum.Approved;
-        AddOrderTracking();
     }
 
     private void Shipping()
     {
         orderShop.Status = OrderShopStatusEnum.Shipping;
-        AddOrderTracking();
     }
 
     private void Received()
     {
         orderShop.Status = OrderShopStatusEnum.Received;
-        AddOrderTracking();
     }
 
     private void Returning()
     {
         orderShop.Status = OrderShopStatusEnum.Returning;
-        AddOrderTracking();
     }
 
     private void Returned()
@@ -106,19 +106,16 @@ public class OrderShopProcessor(OrderShop orderShop)
     private void ReturnedWithDamage()
     {
         orderShop.Status = OrderShopStatusEnum.ReturnedWithDamage;
-        AddOrderTracking();
     }
 
     private void WaitingForRefund()
     {
         orderShop.Status = OrderShopStatusEnum.WaitingForRefund;
-        AddOrderTracking();
     }
 
     private void Completed()
     {
         orderShop.Status = OrderShopStatusEnum.Completed;
-        AddOrderTracking();
     }
 
     private void AddOrderTracking()

@@ -9,6 +9,7 @@ using BaseResponse = Service.ApiModels.BaseResponse;
 
 namespace RentEZ.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/orders")]
     [ApiController]
     public class OrderController : ControllerBase
@@ -36,6 +37,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpPost("cart/calculation")]
+        [AllowAnonymous]
         public async Task<IActionResult> CalculateTotalPrice([FromBody] CartCalcRequest request)
         {
             var response = await _orderService.CalculateTotalPrice(request);
@@ -58,7 +60,7 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
-        [HttpGet("order-details/{orderShopId}")]
+        [HttpGet("order-shops/{orderShopId}")]
         [Authorize(Roles="Customer, ShopOwner")]
         public async Task<IActionResult> GetOrderShopById([FromRoute] int orderShopId)
         {
