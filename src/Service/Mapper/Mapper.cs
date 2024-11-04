@@ -85,8 +85,9 @@ public partial class MapperlyMapper
     public partial IList<OrderDetailRequest> MapToOrderDetailRequest(IList<CartItem> cartItems);
 
     // voucher
-    public partial Voucher MapToVoucher(VoucherRequest request);
+    public partial Voucher MapToVoucher(VoucherRequest orderRequest);
     public partial VoucherResponse MapToVoucherResponse(Voucher voucher);
+    public partial void MapToVoucher(VoucherOrderRequest request, Voucher entity);
     public partial IReadOnlyCollection<VoucherResponse> MapToVoucherResponse(IReadOnlyCollection<Voucher> vouchers);
     public partial PaginatedListResponse<VoucherResponse> MapToPaginatedListVoucherResponse(PaginatedList<Voucher> vouchers);
 
