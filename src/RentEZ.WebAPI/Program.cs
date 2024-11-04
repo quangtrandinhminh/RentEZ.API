@@ -67,6 +67,10 @@ var payOSSetting = new PayOSSetting();
 builder.Configuration.GetSection("PayOS").Bind(payOSSetting);
 PayOSSetting.Instance = payOSSetting;
 
+var admin = new AdminSetting();
+builder.Configuration.GetSection("AdminUser").Bind(admin);
+AdminSetting.Instance = admin;
+
 // Add Identity Core
 builder.Services.AddIdentityCore<UserEntity>()
     .AddRoles<RoleEntity>()
@@ -138,14 +142,14 @@ builder.Services.AddAuthentication(options =>
         options.UseSecurityTokenValidators = true;
         options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
     })
-    /*.AddGoogle(options =>
+    .AddGoogle(options =>
     {
        options.ClientId = googleSetting.ClientID;
        options.ClientSecret = googleSetting.ClientSecret;
        options.Scope.Add("email");
        options.Scope.Add("profile");
         options.SaveTokens = true;
-    })*/;
+    });
 
 
 // Add Authorization

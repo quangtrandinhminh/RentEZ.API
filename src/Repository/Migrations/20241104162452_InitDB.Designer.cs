@@ -12,8 +12,8 @@ using Repository.Infrastructure;
 namespace Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240926194420_AddSampleData_ShopProductCategory")]
-    partial class AddSampleData_ShopProductCategory
+    [Migration("20241104162452_InitDB")]
+    partial class InitDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -135,6 +135,21 @@ namespace Repository.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("OrderVoucher", b =>
+                {
+                    b.Property<int>("OrdersId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlatformVouchersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("OrdersId", "PlatformVouchersId");
+
+                    b.HasIndex("PlatformVouchersId");
+
+                    b.ToTable("OrderVoucher");
+                });
+
             modelBuilder.Entity("Repository.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -179,33 +194,33 @@ namespace Repository.Migrations
                         {
                             Id = 1,
                             CategoryName = "Handbag",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5070), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7864), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Túi xách",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5070), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7864), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2,
                             CategoryName = "SetOfClothes",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5297), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7914), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Bộ quần áo",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5297), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7914), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3,
                             CategoryName = "Dress",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5299), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7919), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Váy",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5299), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7919), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 4,
                             CategoryName = "Shoes",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5309), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7922), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Giày dép",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5309), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7922), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -316,11 +331,23 @@ namespace Repository.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("AccountName")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("AccountNo")
+                        .HasMaxLength(19)
+                        .HasColumnType("character varying(19)");
+
                     b.Property<string>("Address")
                         .HasColumnType("text");
 
                     b.Property<string>("Avatar")
                         .HasColumnType("text");
+
+                    b.Property<int?>("BankId")
+                        .HasMaxLength(6)
+                        .HasColumnType("integer");
 
                     b.Property<DateOnly?>("BirthDate")
                         .HasColumnType("date");
@@ -419,58 +446,291 @@ namespace Repository.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Avatar = "https://via.placeholder.com/150",
-                            ConcurrencyStamp = "69fbb4c1-66c7-4041-92cc-dadde47be887",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 19, 900, DateTimeKind.Unspecified).AddTicks(2647), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "3d356c88-e133-4215-b1be-b7c0715146be",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 33, DateTimeKind.Unspecified).AddTicks(7470), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin User",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 19, 900, DateTimeKind.Unspecified).AddTicks(2647), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 33, DateTimeKind.Unspecified).AddTicks(7470), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$q7UC1g8VVH83bXBYhiBGx.jn6qF./uMywSV9KZOCsrOdesJtvk0AC",
+                            PasswordHash = "$2a$11$oviM/kFz/dTg0IOP8SdIdeNlhxZyhAI1mXW0gIcE9iMAjOFIMZFC.",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "admin",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 18, DateTimeKind.Unspecified).AddTicks(3207), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AccessFailedCount = 0,
-                            Avatar = "https://via.placeholder.com/150",
-                            ConcurrencyStamp = "0cb4517c-512a-4f61-b820-65a9242cae3d",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 18, DateTimeKind.Unspecified).AddTicks(3230), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "shopowner@example.com",
-                            EmailConfirmed = false,
-                            FullName = "Shop Owner",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 18, DateTimeKind.Unspecified).AddTicks(3230), new TimeSpan(0, 0, 0, 0, 0)),
-                            LockoutEnabled = false,
-                            NormalizedUserName = "SHOPOWNER",
-                            PasswordHash = "$2a$11$C6aEMOBCJpLtRj/BSlhPSOVBdazI4ZExt.QkEzHfAID1ynyAuFz5m",
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "shopowner",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 137, DateTimeKind.Unspecified).AddTicks(6308), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AccessFailedCount = 0,
-                            Avatar = "https://via.placeholder.com/150",
-                            ConcurrencyStamp = "498ede0e-7dcc-4c3a-9035-5c8f8a0172cd",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 137, DateTimeKind.Unspecified).AddTicks(6343), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "customer1@example.com",
-                            EmailConfirmed = false,
-                            FullName = "Customer 1",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 137, DateTimeKind.Unspecified).AddTicks(6343), new TimeSpan(0, 0, 0, 0, 0)),
-                            LockoutEnabled = false,
-                            NormalizedUserName = "CUSTOMER1",
-                            PasswordHash = "$2a$11$MQ5xkUY8DNKBecV9w4QJMeOamap/E4RYEeXkdqLHbQjeGEuzHkUQC",
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "customer1",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(4299), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(6953), new TimeSpan(0, 0, 0, 0, 0))
                         });
+                });
+
+            modelBuilder.Entity("Repository.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OrderAddress")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("PaymentTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("ShipFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("ShipSupportFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TaxRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalDeposit")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalDiscount")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalRentPrice")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex(new[] { "Id" }, "Index_Id")
+                        .IsUnique()
+                        .HasDatabaseName("Index_Id2");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Deposit")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("DepositRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("OrderShopId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<byte?>("Rating")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTimeOffset>("RentDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("RentPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("RentQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("ReturnDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReviewContent")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("SubTotalDeposit")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("SubTotalRentPrice")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderShopId");
+
+                    b.ToTable("OrderDetail");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderShop", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CancelBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CancelReason")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Commission")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("CommissionRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("CustomerReceiveTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("PlatformRentPriceDiscount")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("ShipFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("ShipFeeSupport")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ShopId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("ShopReceiveTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("ShopRentPriceDiscount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TaxRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("TotalCustomerRefund")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalDeposit")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalDiscount")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalRentPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("TotalShopReceive")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("VoucherId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ShopId");
+
+                    b.HasIndex("VoucherId");
+
+                    b.HasIndex(new[] { "Id" }, "Index_Id")
+                        .IsUnique()
+                        .HasDatabaseName("Index_Id3");
+
+                    b.ToTable("OrderShops");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderTracking", b =>
+                {
+                    b.Property<int>("OrderTrackingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OrderTrackingId"));
+
+                    b.Property<int>("OrderShopId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("OrderTrackingId");
+
+                    b.HasIndex("OrderShopId");
+
+                    b.ToTable("OrderTracking");
                 });
 
             modelBuilder.Entity("Repository.Models.Product", b =>
@@ -481,8 +741,13 @@ namespace Repository.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CategoryId")
-                        .IsRequired()
+                    b.Property<int?>("AllowRentBeforeDays")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Construction")
                         .HasColumnType("integer");
 
                     b.Property<int?>("CreatedBy")
@@ -496,6 +761,9 @@ namespace Repository.Migrations
 
                     b.Property<DateTimeOffset?>("DeletedTime")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<double?>("DepositRate")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -524,16 +792,19 @@ namespace Repository.Migrations
                     b.Property<string>("ProductName")
                         .HasColumnType("text");
 
-                    b.Property<int?>("RatingCount")
+                    b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<double?>("RentPrice")
-                        .HasColumnType("double precision");
-
-                    b.Property<int?>("RentedCount")
+                    b.Property<int>("RatingCount")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ShopId")
+                    b.Property<string>("RentPrice")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RentedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ShopId")
                         .HasColumnType("integer");
 
                     b.Property<double?>("Size")
@@ -550,89 +821,9 @@ namespace Repository.Migrations
 
                     b.HasIndex(new[] { "Id" }, "Index_Id")
                         .IsUnique()
-                        .HasDatabaseName("Index_Id2");
+                        .HasDatabaseName("Index_Id4");
 
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoryId = 1,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5349), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Túi xách đẹp",
-                            Height = 15.0,
-                            Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5349), new TimeSpan(0, 0, 0, 0, 0)),
-                            Long = 10.0,
-                            Mass = 1.0,
-                            Price = 100000.0,
-                            ProductName = "Túi xách 1",
-                            RatingCount = 0,
-                            RentPrice = 50000.0,
-                            RentedCount = 0,
-                            ShopId = 1,
-                            Size = 10.0,
-                            Width = 5.0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CategoryId = 1,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5358), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Túi xách đẹp",
-                            Height = 15.0,
-                            Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5358), new TimeSpan(0, 0, 0, 0, 0)),
-                            Long = 10.0,
-                            Mass = 1.0,
-                            Price = 100000.0,
-                            ProductName = "Túi xách 2",
-                            RatingCount = 0,
-                            RentPrice = 50000.0,
-                            RentedCount = 0,
-                            ShopId = 1,
-                            Size = 10.0,
-                            Width = 5.0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CategoryId = 2,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5367), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Bộ quần áo đẹp",
-                            Height = 15.0,
-                            Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5367), new TimeSpan(0, 0, 0, 0, 0)),
-                            Long = 10.0,
-                            Mass = 1.0,
-                            Price = 100000.0,
-                            ProductName = "Bộ quần áo 1",
-                            RatingCount = 0,
-                            RentPrice = 50000.0,
-                            RentedCount = 0,
-                            ShopId = 1,
-                            Size = 10.0,
-                            Width = 5.0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CategoryId = 2,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5370), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Bộ quần áo đẹp",
-                            Image = "https://via.placeholder.com/150",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5370), new TimeSpan(0, 0, 0, 0, 0)),
-                            Long = 10.0,
-                            Mass = 1.0,
-                            Price = 100000.0,
-                            ProductName = "Bộ quần áo 2",
-                            RatingCount = 0,
-                            RentPrice = 50000.0,
-                            RentedCount = 0,
-                            ShopId = 1,
-                            Size = 10.0
-                        });
                 });
 
             modelBuilder.Entity("Repository.Models.Shop", b =>
@@ -642,6 +833,18 @@ namespace Repository.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccountName")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("AccountNo")
+                        .HasMaxLength(19)
+                        .HasColumnType("character varying(19)");
+
+                    b.Property<int?>("BankId")
+                        .HasMaxLength(6)
+                        .HasColumnType("integer");
 
                     b.Property<int?>("CreatedBy")
                         .HasColumnType("integer");
@@ -690,24 +893,100 @@ namespace Repository.Migrations
 
                     b.HasIndex(new[] { "Id" }, "Index_Id")
                         .IsUnique()
-                        .HasDatabaseName("Index_Id3");
+                        .HasDatabaseName("Index_Id5");
 
                     b.ToTable("Shops");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5006), new TimeSpan(0, 0, 0, 0, 0)),
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5006), new TimeSpan(0, 0, 0, 0, 0)),
-                            OwnerId = 2,
-                            ShopAddress = "123 Street",
-                            ShopAvatar = "https://via.placeholder.com/150",
-                            ShopEmail = "shopowner@example.com",
-                            ShopName = "Shop Owner",
-                            ShopPhone = "0123456789",
-                            Verified = new DateTimeOffset(new DateTime(2024, 9, 26, 19, 44, 20, 262, DateTimeKind.Unspecified).AddTicks(5012), new TimeSpan(0, 0, 0, 0, 0))
-                        });
+            modelBuilder.Entity("Repository.Models.Voucher", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("Limit")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("MaxDiscountValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("MinRentValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ShopId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Used")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ValueType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShopId");
+
+                    b.HasIndex(new[] { "Id" }, "Index_Id")
+                        .IsUnique()
+                        .HasDatabaseName("Index_Id6");
+
+                    b.ToTable("Vouchers");
+                });
+
+            modelBuilder.Entity("UserEntityVoucher", b =>
+                {
+                    b.Property<int>("UsersId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VouchersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UsersId", "VouchersId");
+
+                    b.HasIndex("VouchersId");
+
+                    b.ToTable("UserEntityVoucher");
                 });
 
             modelBuilder.Entity("Repository.Models.Identity.UserRoleEntity", b =>
@@ -723,16 +1002,6 @@ namespace Repository.Migrations
                         {
                             UserId = 1,
                             RoleId = 1
-                        },
-                        new
-                        {
-                            UserId = 2,
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = 3,
-                            RoleId = 3
                         });
                 });
 
@@ -772,6 +1041,21 @@ namespace Repository.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OrderVoucher", b =>
+                {
+                    b.HasOne("Repository.Models.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Repository.Models.Voucher", null)
+                        .WithMany()
+                        .HasForeignKey("PlatformVouchersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Repository.Models.Identity.RefreshToken", b =>
                 {
                     b.HasOne("Repository.Models.Identity.UserEntity", "User")
@@ -781,6 +1065,64 @@ namespace Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Repository.Models.Order", b =>
+                {
+                    b.HasOne("Repository.Models.Identity.UserEntity", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderDetail", b =>
+                {
+                    b.HasOne("Repository.Models.OrderShop", "OrderShop")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderShop");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderShop", b =>
+                {
+                    b.HasOne("Repository.Models.Order", "Order")
+                        .WithMany("OrderShops")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Repository.Models.Shop", "Shop")
+                        .WithMany()
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Repository.Models.Voucher", "Voucher")
+                        .WithMany("OrderShops")
+                        .HasForeignKey("VoucherId");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Shop");
+
+                    b.Navigation("Voucher");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderTracking", b =>
+                {
+                    b.HasOne("Repository.Models.OrderShop", "OrderShop")
+                        .WithMany("OrderTrackings")
+                        .HasForeignKey("OrderShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderShop");
                 });
 
             modelBuilder.Entity("Repository.Models.Product", b =>
@@ -793,7 +1135,9 @@ namespace Repository.Migrations
 
                     b.HasOne("Repository.Models.Shop", "Shop")
                         .WithMany("ProductEntities")
-                        .HasForeignKey("ShopId");
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
 
@@ -809,6 +1153,30 @@ namespace Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Repository.Models.Voucher", b =>
+                {
+                    b.HasOne("Repository.Models.Shop", "Shop")
+                        .WithMany()
+                        .HasForeignKey("ShopId");
+
+                    b.Navigation("Shop");
+                });
+
+            modelBuilder.Entity("UserEntityVoucher", b =>
+                {
+                    b.HasOne("Repository.Models.Identity.UserEntity", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Repository.Models.Voucher", null)
+                        .WithMany()
+                        .HasForeignKey("VouchersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Repository.Models.Identity.UserRoleEntity", b =>
@@ -849,9 +1217,26 @@ namespace Repository.Migrations
                     b.Navigation("UserRoles");
                 });
 
+            modelBuilder.Entity("Repository.Models.Order", b =>
+                {
+                    b.Navigation("OrderShops");
+                });
+
+            modelBuilder.Entity("Repository.Models.OrderShop", b =>
+                {
+                    b.Navigation("OrderDetails");
+
+                    b.Navigation("OrderTrackings");
+                });
+
             modelBuilder.Entity("Repository.Models.Shop", b =>
                 {
                     b.Navigation("ProductEntities");
+                });
+
+            modelBuilder.Entity("Repository.Models.Voucher", b =>
+                {
+                    b.Navigation("OrderShops");
                 });
 #pragma warning restore 612, 618
         }
