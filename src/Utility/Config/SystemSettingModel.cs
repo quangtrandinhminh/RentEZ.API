@@ -52,11 +52,12 @@ namespace Utility.Config
     public class VnPaySetting
     {
         public static VnPaySetting Instance { get; set; }
-        public string VnPayUrl { get; set; }
-        public string VnPayReturnUrl { get; set; }
-        public string VnPayIPNUrl { get; set; }
-        public string VnPayTmnCode { get; set; }
-        public string VnPayHashSecret { get; set; }
+        public string TmnCode { get; set; }
+        public string HashSecret { get; set; }
+        public string BaseUrl { get; set; }
+        public string Version { get; set; }
+        public string CurrCode { get; set; }
+        public string Locale { get; set; }
     }
 
     public class VietQRSetting
@@ -72,4 +73,47 @@ namespace Utility.Config
         public string ClientID { get; set; }
         public string ClientSecret { get; set; }
     }
+
+    public class PayOSSetting
+    {
+        public static PayOSSetting Instance { get; set; }
+        public string ClientID { get; set; }
+        public string ApiKey { get; set; }
+        public string ChecksumKey { get; set; }
+    }
+
+    /*public class AppConfig
+    {
+        public static AppConfig Instance { get; set; }
+        private static Dictionary<string, string> _configValues = new Dictionary<string, string>();
+
+        public string TAX => GetConfigValue("TAX");
+        public string PLATFORM_FEE => GetConfigValue("PLATFORM_FEE");
+
+        // Load all configs at startup or when needed
+        public static void LoadConfigValues(ISystemConfigRepository configRepository)
+        {
+            var configs = configRepository.GetAllActiveConfigsAsync().Result;
+            _configValues = configs.ToDictionary(c => c.Key, c => c.Value);
+        }
+
+        private static string GetConfigValue(string key)
+        {
+            if (_configValues.TryGetValue(key, out var value))
+            {
+                return value;
+            }
+            throw new KeyNotFoundException($"Configuration key {key} not found.");
+        }
+
+        // Update config in cache after a change
+        public static void UpdateConfigInCache(string key, string newValue)
+        {
+            if (_configValues.ContainsKey(key))
+            {
+                _configValues[key] = newValue;
+            }
+        }
+    }*/
+
 }

@@ -1,4 +1,4 @@
-﻿using Service.Models.Product;
+﻿using Service.ApiModels.Product;
 
 namespace Service.Interfaces
 {
@@ -6,8 +6,8 @@ namespace Service.Interfaces
     {
         Task<List<ProductResponse>> GetAllProducts(int? categoryId = null);
         Task<ProductResponse> GetProductById(int id);
-        Task CreateProduct(ProductCreateRequestDto productRequest, CancellationToken cancellationToken = default);
-        Task UpdateProductAsync(ProductCreateRequestDto productRequest, int id);
+        Task CreateProduct(ProductCreateRequest productRequest, CancellationToken cancellationToken = default);
+        Task UpdateProductAsync(ProductCreateRequest productRequest, int id);
         Task DeleteProductAsync(int id);
     }
 }

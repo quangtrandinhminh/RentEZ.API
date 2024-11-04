@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Utility.Constants
+﻿namespace Utility.Constants
 {
     public class ApplicationConstants
     {
@@ -105,6 +103,7 @@ namespace Utility.Constants
         public const string EXISTED_EMAIL = "Email của cửa hàng đã tồn tại.";
         public const string OWNER_NOTFOUND = "Tài khoản chủ cửa hàng không tìm thấy.";
         public const string EXISTED_NAME = "Ten cua da ton tai.";
+        public const string EXISTED_Receiving_Account = "Tài khoản nhận tiền đã tồn tại.";
         public const string EXISTED_ADDRESS = "Dia chi cua hang da ton tai.";
         public const string EXISTED_AVATAR = "Avatar da ton tai.";
         public const string NO_INISACTIVE_SHOP_FOUND = "Tất cả cửa hàng đã được duyệt.";
@@ -113,11 +112,15 @@ namespace Utility.Constants
         public const string ALREADY_OWNED_ANOTHER_SHOP = "Đã sở hữu một cửa hàng khác.";
         public const string PHONE_VALIDATED = "Phone number is validated.";
         public const string NOTFOUND = "Cửa hàng không tồn tại.";
+        public const string NOTALLOWED = "Chỉ chủ shop được xem thông tin này";
     }
 
     public class ResponseMessageConstrantsProduct
     {
         public const string NUll = "Có trường hợp bị null.";
+        public const string RENTPRICE_EXACT_VALUE = "Giá cho thuê phải có 7 giá trị";
+        public const string RENTPRICE_INVALID = "Giá cho thuê không được quá 30% so với giá sản phẩm";
+        public const string RENTPRICE_NOT_ASCENDING = "Giá cho thuê của ngày hôm sau phải cao hơn giá thuê của ngày hôm trước";
         public const string INVALID_ALLOWRENTBEFOREDAYS = "Ngày cho thuê phải từ 2 đến 5 ngày.";
         public const string UNAUTHORIZED = "Người dùng này chưa được phép để tạo sản phẩm.";
         public const string SHOP_NOTFOUND = "Cửa hàng chưa tồn tại.";
@@ -126,6 +129,7 @@ namespace Utility.Constants
         public const string EXISTED_IMAGE = "Hình ảnh của sản phẩm đã được sử dụng.";
         public const string NONEXISTENT_CATEGORY = "Loại sản phẩm không tồn tại.";
         public const string NOTHING_CHANGED = "Không có gì được thay đổi sau lần chỉnh sửa này.";
+        public const string NOT_EXISTED = "Danh sách có sản phẩm không tồn tại";
     }
 
     public class ResponseMessageConstrantsCategory
@@ -134,5 +138,21 @@ namespace Utility.Constants
         public const string EXISTED_CATEGORYNAME = "Loại sản phẩm này đã tồn tại.";
         public const string NOTFOUND = "Không tìm thấy loại sản phẩm.";
         public const string EXISTED_DESCRIPTION = "Mô tả bị trùng với một loại sản phẩm khác.";
+    }
+
+    public class ResponseMessageConstrantsOrder
+    {
+        public const string NOT_FOUND = "Không tìm thấy đơn hàng";
+        public const string INVALID_DATA = "Dữ liệu không hợp lệ";
+        public const string NOTALLOWED = "Bạn không có quyền xem thông tin này";
+        public const string STATUS_CHANGE_NOTALLOWED = "Không thể thay đổi trạng thái của đơn hàng này";
+
+    }
+
+    public class ResponseMessageConstrantsVoucher
+    {
+        public const string NOT_EXISTED = "Danh sách có voucher không tồn tại";
+        public const string NOT_FOUND = "Không tìm thấy voucher";
+        public const string NOT_AVAILABLE = "Voucher không khả dụng";
     }
 }

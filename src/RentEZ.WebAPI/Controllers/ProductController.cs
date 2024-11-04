@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
-using System.ComponentModel.DataAnnotations;
 using System.Web.Http;
-using Service.Models;
-using Service.Models.Product;
+using Service.ApiModels.Product;
 using Utility.Constants;
+using BaseResponse = Service.ApiModels.BaseResponse;
 using FromBodyAttribute = Microsoft.AspNetCore.Mvc.FromBodyAttribute;
 using HttpDeleteAttribute = Microsoft.AspNetCore.Mvc.HttpDeleteAttribute;
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
@@ -28,7 +27,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> GetProductById(int id)
         {
             var product = await _productService.GetProductById(id);
-            return Ok(BaseResponseDto.OkResponseDto(product));
+            return Ok(BaseResponse.OkResponseDto(product));
         }
 
         [HttpGet("category")]
@@ -36,23 +35,23 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> GetAllProducts([FromQuery] int? categoryId = null)
         {
             var products = await _productService.GetAllProducts(categoryId);
-            return Ok(BaseResponseDto.OkResponseDto(products));
+            return Ok(BaseResponse.OkResponseDto(products));
         }
 
         [HttpPost()]
         [Authorize(Roles = "ShopOwner")]
-        public async Task<IActionResult> CreateNewProduct([FromBody] ProductCreateRequestDto request)
+        public async Task<IActionResult> CreateNewProduct([FromBody] ProductCreateRequest request)
         {
             await _productService.CreateProduct(request);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "ShopOwner")]
-        public async Task<IActionResult> UpdateProduct([FromBody] ProductCreateRequestDto request, [FromRoute] int id)
+        public async Task<IActionResult> UpdateProduct([FromBody] ProductCreateRequest request, [FromRoute] int id)
         {
             await _productService.UpdateProductAsync(request, id);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
         [HttpDelete("{id}")]
@@ -60,7 +59,7 @@ namespace RentEZ.WebAPI.Controllers
         public async Task<IActionResult> DeleteShop([FromRoute] int id)
         {
             await _productService.DeleteProductAsync(id);
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
     }
 }

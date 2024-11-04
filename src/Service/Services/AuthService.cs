@@ -5,15 +5,18 @@ using Google.Apis.Auth;
 using Invedia.Core.StringUtils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Repository.Base;
 using Repository.Infrastructure;
 using Repository.Interfaces;
+using Repository.Models;
 using Repository.Models.Identity;
 using Serilog;
+using Service.ApiModels;
+using Service.ApiModels.User;
 using Service.Interfaces;
-using Service.Models;
-using Service.Models.User;
 using Service.Utils;
 using Utility.Config;
 using Utility.Constants;
@@ -32,12 +35,12 @@ namespace Service.Services
         private readonly RoleManager<RoleEntity> _roleManager = serviceProvider.GetRequiredService<RoleManager<RoleEntity>>();
         private readonly UserManager<UserEntity> _userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
         private readonly ILogger _logger = Log.Logger;
-        private readonly IRefreshTokenRepository _refreshTokenRepository = serviceProvider.GetRequiredService<IRefreshTokenRepository>();
+        private readonly IBaseRepository<RefreshToken> _refreshTokenRepository = serviceProvider.GetRequiredService<IBaseRepository<RefreshToken>>();
         private readonly IEmailService _emailService = serviceProvider.GetRequiredService<IEmailService>();
         private readonly IUnitOfWork _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
 
         // get all roles
-        public async Task<IList<RoleResponseDto>> GetAllRoles()
+        public async Task<IList<RoleResponse>> GetAllRoles()
         {
             _logger.Information("Get all roles");
             var roles = await _roleManager.Roles.ToListAsync();
@@ -215,7 +218,7 @@ namespace Service.Services
             }
         }
 
-        public async Task<LoginResponseDto> Authenticate(LoginDto dto)
+        public async Task<LoginResponse> Authenticate(LoginRequest dto)
         {
             _logger.Information("Authenticate user: {@dto}", dto);
             var account = await GetUserByUserName(dto.Username);
@@ -251,7 +254,7 @@ namespace Service.Services
             }
         }
 
-        public async Task<LoginResponseDto> GoogleAuthenticate(GoogleLoginModel model)
+        public async Task<LoginResponse> GoogleAuthenticate(GoogleLoginModel model)
         {
             _logger.Information("Google authenticate: {@model}", model);
             var payload = await ValidateGoogleToken(model.IdToken);
@@ -293,7 +296,7 @@ namespace Service.Services
             return response;
         }
 
-        public async Task<LoginResponseDto> RefreshToken(string token)
+        public async Task<LoginResponse> RefreshToken(string token)
         {
             _logger.Information("Refresh token: {@token}", token);
             var (refreshToken, account) = await GetRefreshToken(token);
@@ -324,12 +327,12 @@ namespace Service.Services
             }
         }
 
-        public async Task VerifyEmail(VerifyEmailDto dto, CancellationToken cancellationToken = default)
+        public async Task VerifyEmail(VerifyEmailRequest request, CancellationToken cancellationToken = default)
         {
-            _logger.Information("Verify email: {@dto}", dto);
-            var account = await GetUserByUserName(dto.UserName);
+            _logger.Information("Verify email: {@request}", request);
+            var account = await GetUserByUserName(request.UserName);
 
-            if (account == null || account.OTP != dto.OTP)
+            if (account == null || account.OTP != request.OTP)
                 throw new AppException(ErrorCode.TokenInvalid, ResponseMessageIdentity.TOKEN_INVALID, StatusCodes.Status401Unauthorized);
 
             account.Verified = CoreHelper.SystemTimeNow;
@@ -345,7 +348,7 @@ namespace Service.Services
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="AppException"></exception>
-        public async Task ForgotPassword(ForgotPasswordDto model, CancellationToken cancellationToken = default)
+        public async Task ForgotPassword(ForgotPasswordRequest model, CancellationToken cancellationToken = default)
         {
             _logger.Information("Forgot password: {@model}", model);
             var account = await GetUserByUserName(model.UserName);
@@ -372,7 +375,7 @@ namespace Service.Services
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="AppException"></exception>
-        public async Task ResetPassword(ResetPasswordDto dto, CancellationToken cancellationToken = default)
+        public async Task ResetPassword(ResetPasswordRequest dto, CancellationToken cancellationToken = default)
         {
             _logger.Information("Reset password: {@dto}", dto);
             var account = await GetUserByUserName(dto.UserName);
@@ -393,7 +396,7 @@ namespace Service.Services
             await _userRepository.UpdateAsync(account, cancellationToken);
         }
 
-        public async Task ChangePassword(ChangePasswordDto dto, CancellationToken cancellationToken)
+        public async Task ChangePassword(ChangePasswordRequest dto, CancellationToken cancellationToken)
         {
             _logger.Information("Change password: {@dto}", dto);
             var account = await GetUserByUserName(dto.UserName);
@@ -412,7 +415,7 @@ namespace Service.Services
             await _userRepository.UpdateAsync(account, cancellationToken);
         }
 
-        public async Task ReSendEmail(ResendEmailDto model, CancellationToken cancellationToken = default)
+        public async Task ReSendEmail(ResendEmailRequest model, CancellationToken cancellationToken = default)
         {
             _logger.Information("Resend email: {@model}", model);
             var account = await GetUserByUserName(model.UserName);
