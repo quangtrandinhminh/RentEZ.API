@@ -45,11 +45,12 @@ public partial class MapperlyMapper
     // shop
     public partial void ShopToCreateShop(ShopCreateRequest request, Shop entity);
     public partial Shop MapShopToCreateShop(ShopCreateRequest request);
-    public partial IList<ShopResponse> ShopToShopResponseDto(IList<Shop> entity);
+    public partial IList<ShopResponse> ShopsToShopsResponseDto(IList<Shop> entity);
+    public partial ShopResponse ShopToShopResponseDto(Shop entity);
 
     // product
     public partial void ProductToCreateProduct(ProductCreateRequest request, Product entity);
-    public partial IList<ProductResponse> ProductsToProductsResponseDto(IList<Product> entity);
+    public partial IList<ProductListResponse> ProductsToProductsResponseDto(IList<Product> entity);
     public partial ProductResponse ProductToProductResponseDto(Product entity);
 
     // category

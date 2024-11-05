@@ -128,7 +128,22 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NO_INISACTIVE_SHOP_FOUND, StatusCodes.Status404NotFound);
             }
-            return _mapper.ShopToShopResponseDto(inActiveShop).ToList();
+            return _mapper.ShopsToShopsResponseDto(inActiveShop).ToList();
+        }
+
+        // get shop by Id
+        public async Task<ShopResponse> GetShopById(int id)
+        {
+            _logger.Information($"Get shop by id");
+            var shop = await _shopRepository.GetAllWithCondition()
+                                 .Include(s => s.Owner)
+                                 .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (shop == null)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND, StatusCodes.Status404NotFound);
+            }
+            return _mapper.ShopToShopResponseDto(shop);
         }
 
         // get all products
@@ -143,7 +158,7 @@ namespace Service.Services
             var sortedShops = shops
                 .OrderByDescending(s => s.IsActive)
                 .ToList();
-            return _mapper.ShopToShopResponseDto(sortedShops).ToList();
+            return _mapper.ShopsToShopsResponseDto(sortedShops).ToList();
         }
 
         // shop approval
