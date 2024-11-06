@@ -19,7 +19,7 @@ public class OrderRequest
     public decimal Total { get; set; }
     public string? Note { get; set; }
     public PaymentMethodEnum? PaymentMethod { get; set; }
-    public IList<VoucherRequest?> PlatformVouchers { get; set; }
+    public IList<VoucherOrderRequest?> PlatformVouchers { get; set; }
     public IList<OrderShopRequest> OrderShops { get; set; }
     public int ShopCount => OrderShops.Count;
     public int ItemCount => OrderShops.Sum(x => x.OrderDetails.Sum(y => y.RentQuantity));

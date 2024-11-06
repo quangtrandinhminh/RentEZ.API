@@ -153,6 +153,31 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         return await payOS.getPaymentLinkInformation(orderId);
     }
 
+    public async Task ConfirmPayment(int orderId, string paymentId)
+    {
+        var order = await GetOrderById(orderId);
+        if (order.PaymentStatus == PaymentStatusEnum.Paid)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, 
+                               ResponseMessageConstrantsOrder.ALREADY_PAID, StatusCodes.Status400BadRequest);
+        }
+
+        var payment = await GetPaymentLinkInformationAsync(orderId);
+        if (payment == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, 
+                                              ResponseMessageConstrantsOrder.NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        if (payment.status != "00")
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, 
+                                              ResponseMessageConstrantsOrder.NOT_PAID, StatusCodes.Status400BadRequest);
+        }
+
+        await UpdateOrderPayment(order, paymentId);
+    }
+
     private async Task UpdateOrderPayment(Order order, string paymentId)
     {
         // update order
@@ -171,5 +196,17 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         }
 
         await _unitOfWork.SaveChangeAsync();
+    }
+
+    private async Task<Order> GetOrderById(int orderId)
+    {
+        var order = await _orderRepository.GetSingleAsync(o => o.Id == orderId, 
+                       false, o => o.OrderShops);
+        if (order == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, 
+                               ResponseMessageConstrantsOrder.NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+        return order;
     }
 }

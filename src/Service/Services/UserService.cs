@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Extensions;
 using Repository.Interfaces;
+using Repository.Models.Identity;
 using Serilog;
 using Service.ApiModels.User;
 using Service.Interfaces;
@@ -10,6 +11,7 @@ using Service.Mapper;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
+using Utility.Helpers;
 
 namespace Service.Services;
 
@@ -41,25 +43,43 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
         return response;
     }
 
-    public Task CreateUserAsync(UserCreateRequest dto)
+    public async Task CreateUserAsync(UserCreateRequest request)
     {
-        throw new NotImplementedException();
+        _logger.Information("Create user {@request}", request);
+        var user = _mapper.Map(request);
+        await _userRepository.CreateAsync(user);
     }
 
-    public Task UpdateUserAsync(UserUpdateRequest dto)
+    public async Task UpdateUserAsync(UserUpdateRequest request)
     {
-        throw new NotImplementedException();
+        _logger.Information("Update user {@request}", request);
+        var user = await GetUserById(request.Id);
+        _mapper.Map(request, user);
     }
 
     public async Task<UserResponse> GetByIdAsync(int id)
     {
-        var user = await _userRepository.GetSingleAsync(e => e.Id == id);
-
+        _logger.Information($"Get user by id {id}");
+        var user = await GetUserById(id);
         return _mapper.Map(user);
     }
 
-    public Task DeleteUserAsync(int id)
+    public async Task DeleteUserAsync(int id)
     {
-        throw new NotImplementedException();
+        _logger.Information($"Delete user by id {id}");
+        var user = await GetUserById(id);
+        user.DeletedTime = CoreHelper.SystemTimeNow;
+        await _userRepository.UpdateAsync(user);
+    }
+
+    private async Task<UserEntity> GetUserById(int id)
+    {
+        var user = await _userRepository.GetSingleAsync(e => e.Id == id);
+        if (user == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsUser.USER_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        return user;
     }
 }

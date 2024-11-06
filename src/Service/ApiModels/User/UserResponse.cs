@@ -1,4 +1,6 @@
-﻿namespace Service.ApiModels.User;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Service.ApiModels.User;
 
 public class UserResponse
 {
@@ -11,4 +13,7 @@ public class UserResponse
     public string? Avatar { get; set; } = string.Empty;
     public IList<string?> Role { get; set; } = new List<string?>();
     public DateTimeOffset? BirthDate { get; set; }
+    public int? BankId { get; set; }
+    public String? AccountNo { get; set; }
+    public String? AccountName { get; set; }
 }
