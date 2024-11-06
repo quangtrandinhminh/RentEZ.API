@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Immutable;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,10 @@ using Utility.Constants;
 using Utility.Exceptions;
 using Utility.Helpers;
 using ILogger = Serilog.ILogger;
+using System.Security.Claims;
+using Service.Utils;
+using Utility.Enum;
+using System.Data;
 
 namespace Service.Services;
 
@@ -30,14 +35,34 @@ public class VoucherService(IServiceProvider serviceProvider) : IVoucherService
     private readonly MapperlyMapper _mapper = serviceProvider
         .GetRequiredService<MapperlyMapper>();
     private readonly ILogger _logger = serviceProvider.GetRequiredService<ILogger>();
+    private readonly IHttpContextAccessor _httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
+    public VoucherEnumResponse GetAllVoucherEnum()
+    {
+        // Get all voucher types and value types, make them a idictionary with key-value
+        var voucherTypeEnum = EnumHelper.GetEnumDictionary<VoucherTypeEnum>();
+        var voucherValueTypeEnum = EnumHelper.GetEnumDictionary<VoucherValueTypeEnum>();
+        var voucherStatusEnum = EnumHelper.GetEnumDictionary<VoucherStatusEnum>();
+        return new VoucherEnumResponse
+        {
+            VoucherTypeEnums = voucherTypeEnum,
+            VoucherValueTypeEnums = voucherValueTypeEnum,
+            VoucherStatusEnums = voucherStatusEnum
+        };
+    }
     public async Task<PaginatedListResponse<VoucherResponse>> GetAllVoucherAsync(VoucherQueryRequest request)
     {
         _logger.Information("Get all voucher request {@request}", request);
 
-        var predicate = await VoucherPredicateBuilder(request);
+        var predicate = VoucherPredicateBuilder(request);
         var vouchers = await _voucherRepository.GetAllPaginatedQueryable(
             request.PageNumber, request.PageSize, predicate, includeProperties: v => v.Users);
+
+        // filter voucher by status 
+        if (request.Status != null)
+        {
+            vouchers.Items = vouchers.Items.Where(v => v.Status == request.Status).ToList();
+        }
 
         if (vouchers == null || !vouchers.Items.Any())
         {
@@ -47,6 +72,22 @@ public class VoucherService(IServiceProvider serviceProvider) : IVoucherService
 
         var voucherResponses = _mapper.MapToPaginatedListVoucherResponse(vouchers);
         return voucherResponses;
+    }
+
+    public async Task AddVoucherToCustomer(int voucherId)
+    {
+        var userId = JwtClaimUltils.GetUserId(JwtClaimUltils.GetLoginedUser(_httpContextAccessor));
+        _logger.Information("Add voucher to customer {@voucherId} {@userId}", voucherId, userId);
+        var voucher = await GetVoucherEntityByIdAsync(voucherId);
+        var user = await _userRepository.GetSingleAsync(x => x.Id == userId);
+        if (user == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsUser.USER_NOT_FOUND,
+                               StatusCodes.Status404NotFound);
+        }
+        voucher.Users.Add(user);
+        _voucherRepository.Update(voucher);
+        await _unitOfWork.SaveChangeAsync();
     }
 
     public async Task<VoucherResponse> GetVoucherByIdAsync(int voucherId)
@@ -59,25 +100,65 @@ public class VoucherService(IServiceProvider serviceProvider) : IVoucherService
     public async Task<VoucherResponse> CreateVoucherAsync(VoucherRequest request, CancellationToken cancellationToken = default)
     {
         _logger.Information("Create voucher {@request}", request);
+        var loginedUser = JwtClaimUltils.GetLoginedUser(_httpContextAccessor);
+        var userId = JwtClaimUltils.GetUserId(loginedUser);
+        var roles = JwtClaimUltils.GetUserRole(loginedUser);
+        
+        ValidVoucherRequest(request);
         var voucher = _mapper.MapToVoucher(request);
-        var response = _mapper.MapToVoucherResponse(await _voucherRepository.AddAsync(voucher, cancellationToken));
-        await _unitOfWork.SaveChangeAsync();
+        if (roles.Contains(UserRoleEnum.ShopOwner.ToString()))
+        {
+            var shop = await _shopRepository.GetSingleAsync(s => s.OwnerId == userId);
+            voucher.ShopId = shop.Id;
+        }
+
+        voucher = await _voucherRepository.AddAsync(voucher, cancellationToken);
+        await _unitOfWork.SaveChangeAsync(_httpContextAccessor);
+        var response = _mapper.MapToVoucherResponse(voucher);
         return response;
     }
 
     public async Task UpdateVoucherAsync(VoucherOrderRequest request)
     {
         _logger.Information("Update request {@request}", request);
+        var loginedUser = JwtClaimUltils.GetLoginedUser(_httpContextAccessor);
+        var userId = JwtClaimUltils.GetUserId(loginedUser);
+        var roles = JwtClaimUltils.GetUserRole(loginedUser);
+        
+        ValidVoucherRequest(request);
         var voucher = await GetVoucherEntityByIdAsync(request.Id);
+
+        // admin try to update shop voucher, forbidden
+        // shop owner try to update other shop voucher, forbidden
+        if (roles.Contains(UserRoleEnum.Admin.ToString()) ||
+            (roles.Contains(UserRoleEnum.ShopOwner.ToString()) && voucher.Shop?.OwnerId != userId))
+        {
+            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsShop.NOTALLOWED,
+                                                             StatusCodes.Status403Forbidden);
+        }
+
         _mapper.MapToVoucher(request, voucher);
         _voucherRepository.Update(voucher);
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangeAsync(_httpContextAccessor);
     }
 
     public async Task DeleteVoucherAsync(int voucherId)
     {
         _logger.Information("Delete voucher {@voucherId}", voucherId);
+        var loginedUser = JwtClaimUltils.GetLoginedUser(_httpContextAccessor);
+        var userId = JwtClaimUltils.GetUserId(loginedUser);
+        var roles = JwtClaimUltils.GetUserRole(loginedUser);
         var voucher = await GetVoucherEntityByIdAsync(voucherId);
+
+        // admin try to update shop voucher, forbidden
+        // shop owner try to update other shop voucher, forbidden
+        if (roles.Contains(UserRoleEnum.Admin.ToString()) ||
+            (roles.Contains(UserRoleEnum.ShopOwner.ToString()) && voucher.Shop?.OwnerId != userId))
+        {
+            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsShop.NOTALLOWED,
+                StatusCodes.Status403Forbidden);
+        }
+
         voucher.DeletedTime = CoreHelper.SystemTimeNow;
         _voucherRepository.Update(voucher);
         await _unitOfWork.SaveChangeAsync();
@@ -85,7 +166,7 @@ public class VoucherService(IServiceProvider serviceProvider) : IVoucherService
 
     private async Task<Voucher> GetVoucherEntityByIdAsync(int voucherId)
     {
-        var voucher = await _voucherRepository.GetSingleAsync(x => x.Id == voucherId);
+        var voucher = await _voucherRepository.GetSingleAsync(x => x.Id == voucherId, includeProperties: x => x.Shop);
         if (voucher == null)
         {
             throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsVoucher.NOT_FOUND,
@@ -94,8 +175,9 @@ public class VoucherService(IServiceProvider serviceProvider) : IVoucherService
         return voucher;
     }
 
-    private async Task<Expression<Func<Voucher, bool>>> VoucherPredicateBuilder(VoucherQueryRequest request)
+    private Expression<Func<Voucher, bool>> VoucherPredicateBuilder(VoucherQueryRequest request)
     {
+        // Not need token, just narrow down the query
         Expression<Func<Voucher, bool>> predicate = v => v.DeletedTime == null;
         if (request.Type != null)
         {
@@ -107,23 +189,52 @@ public class VoucherService(IServiceProvider serviceProvider) : IVoucherService
             predicate = predicate.And(v => (int)v.ValueType == request.ValueType);
         }
 
-        if (request.UserId != null)
+        if (request.CustomerId != null)
         {
-            var user = await _userRepository.GetSingleAsync(x => x.Id == request.UserId);
-            if (user == null)
-            {
-                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsUser.USER_NOT_FOUND,
-                    StatusCodes.Status404NotFound);
-            }
-            predicate = predicate.And(v => v.Users.Select(u => u.Id).Contains<>(request.UserId));
+            predicate = predicate.And(v => v.Users.Select(u => u.Id).Contains<int>(request.CustomerId.Value));
         }
 
         if (request.ShopId != null)
         {
-            await _shopRepository.IsExistAsync(x => x.Id == request.ShopId);
             predicate = predicate.And(v => v.ShopId == request.ShopId);
         }
 
         return predicate;
+    }
+
+    private void ValidVoucherRequest(VoucherRequest request)
+    {
+        // value > 0
+        if (request.Value <= 0)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsVoucher.VALUE_INVALID,
+                                              StatusCodes.Status400BadRequest);
+        }
+
+        // if min max value is not null, min, max > 0
+        if (request.MinRentValue != null && request.MinRentValue < 0)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsVoucher.MIN_RENTVALUE_INVALID,
+                                              StatusCodes.Status400BadRequest);
+        }
+
+        if (request.MaxDiscountValue != null && request.MaxDiscountValue < 0)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsVoucher.MAX_DISVALUE_INVALID,
+                StatusCodes.Status400BadRequest);
+        }
+
+        // value type is percentage, value <= 1
+        if (request.ValueType == VoucherValueTypeEnum.Percent && request.Value > 1)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsVoucher.VALUE_INVALID,
+                               StatusCodes.Status400BadRequest);
+        }
+
+        if (request is { StartDate: not null, EndDate: not null } && request.StartDate > request.EndDate)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsVoucher.EXPIRED_TIME_INVALID,
+                               StatusCodes.Status400BadRequest);
+        }
     }
 }

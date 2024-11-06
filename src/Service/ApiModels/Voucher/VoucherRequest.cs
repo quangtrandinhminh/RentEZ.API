@@ -1,4 +1,5 @@
-﻿using Utility.Enum;
+﻿using System.ComponentModel.DataAnnotations;
+using Utility.Enum;
 
 namespace Service.ApiModels.Voucher;
 

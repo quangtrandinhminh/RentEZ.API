@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Service.ApiModels;
 using Service.ApiModels.Voucher;
 using Service.Interfaces;
 using Utility.Constants;
+using Utility.Enum;
 
 namespace RentEZ.WebAPI.Controllers
 {
@@ -15,6 +17,13 @@ namespace RentEZ.WebAPI.Controllers
         public VoucherController(IVoucherService voucherService)
         {
             _voucherService = voucherService;
+        }
+
+        [HttpGet("enums")]
+        public IActionResult GetAllVoucherEnums()
+        {
+            var enums = _voucherService.GetAllVoucherEnum();
+            return Ok(BaseResponse.OkResponseDto(enums));
         }
 
         [HttpGet]
@@ -32,6 +41,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, ShopOwner")]
         public async Task<IActionResult> CreateVoucher([FromBody] VoucherRequest request)
         {
             var voucher = await _voucherService.CreateVoucherAsync(request);
@@ -39,6 +49,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpPut]
+        //[Authorize(Roles = "Admin, ShopOwner")]
         public async Task<IActionResult> UpdateVoucher([FromBody] VoucherOrderRequest request)
         {
             await _voucherService.UpdateVoucherAsync(request);
@@ -46,6 +57,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpDelete("{voucherId}")]
+        //[Authorize(Roles = "Admin, ShopOwner")]
         public async Task<IActionResult> DeleteVoucher(int voucherId)
         {
             await _voucherService.DeleteVoucherAsync(voucherId);

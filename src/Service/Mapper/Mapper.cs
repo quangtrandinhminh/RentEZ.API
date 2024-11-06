@@ -83,6 +83,11 @@ public partial class MapperlyMapper
     public partial CartItem MapToCartItem(Product entity);
     public partial void MapRequestToCartItem(CartItemCalcRequest request, CartItem cartItem);
     public partial OrderRequest MapToOrderRequest(Cart cart);
+
+    public int? MapToVoucherId(int? voucherId)
+    {
+        return voucherId ?? null;
+    }
     public partial IList<OrderShopRequest> MapToOrderShopRequest(IList<CartShop> cartShops);
     public partial IList<OrderDetailRequest> MapToOrderDetailRequest(IList<CartItem> cartItems);
 

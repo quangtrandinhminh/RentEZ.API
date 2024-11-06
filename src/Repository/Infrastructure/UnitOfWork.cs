@@ -11,11 +11,10 @@ namespace Repository.Infrastructure
     {
         private readonly AppDbContext _dbContext;
         private bool disposed = false;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private IHttpContextAccessor? _httpContextAccessor;
         public UnitOfWork(IServiceProvider serviceProvider)
         {
             _dbContext = serviceProvider.GetRequiredService<AppDbContext>();
-            _httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
         }
         #region Save
         public int SaveChange()
@@ -24,8 +23,9 @@ namespace Repository.Infrastructure
             return _dbContext.SaveChanges();
         }
 
-        public Task<int> SaveChangeAsync()
+        public Task<int> SaveChangeAsync(IHttpContextAccessor accessor = null)
         {
+            _httpContextAccessor = accessor;
             StandardizeEntities();
             return _dbContext.SaveChangesAsync();
         }
@@ -68,7 +68,7 @@ namespace Repository.Infrastructure
                 if (!(entry.Entity is BaseEntity entity)) continue;
 
                 // Get the logged in user id from the claim and set it to the entity
-                var loginUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid);
+                var loginUserId = _httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.Sid);
                 if (loginUserId != null)
                 {
                     int? loggedInUserId = int.Parse(loginUserId.Value);
