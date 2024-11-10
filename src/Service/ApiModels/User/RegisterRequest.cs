@@ -34,7 +34,17 @@ namespace Service.ApiModels.User
         [DataType(DataType.Password)]
         [MaxLength(100)]
         public string ConfirmPassword { get; set; }
-
         public string? Address { get; set; }
+        public string? Avatar { get; set; }
+        public DateOnly? BirthDate { get; set; }
+
+        [MaxLength(6)]
+        public int? BankId { get; set; }
+
+        [MaxLength(19)]
+        public String? AccountNo { get; set; }
+
+        [MaxLength(255)]
+        public String? AccountName { get; set; }
     }
 }

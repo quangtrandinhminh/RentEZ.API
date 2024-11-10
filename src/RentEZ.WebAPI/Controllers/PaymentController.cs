@@ -62,6 +62,11 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
+        [HttpGet("payos/confirmation")]
+        public async Task<IActionResult> PayOSConfirmPayment([FromQuery] int orderId, string paymentId)
+        {
+            await _payosService.ConfirmPayment(orderId, paymentId);
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         [HttpPost("refund")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ProcessRefund([FromBody] RefundRequest request)

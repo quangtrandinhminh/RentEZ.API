@@ -6,4 +6,5 @@ public enum VoucherStatusEnum
     Active,
     Expired,
     Limited,
+    Used
 }

@@ -24,6 +24,12 @@ namespace RentEZ.WebAPI.Controllers
             _authService = authSevices;
         }
 
+        [HttpGet("hello")]
+        public IActionResult Hello()
+        {
+            return Ok("Hello");
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [Route("register")]

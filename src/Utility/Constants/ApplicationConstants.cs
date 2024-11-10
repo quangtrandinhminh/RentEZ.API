@@ -146,6 +146,8 @@
         public const string INVALID_DATA = "Dữ liệu không hợp lệ";
         public const string NOTALLOWED = "Bạn không có quyền xem thông tin này";
         public const string STATUS_CHANGE_NOTALLOWED = "Không thể thay đổi trạng thái của đơn hàng này";
+        public const string ALREADY_PAID = "Đơn hàng đã được thanh toán";
+        public const string NOT_PAID = "Đơn hàng chưa được thanh toán";
 
     }
 
@@ -154,5 +156,9 @@
         public const string NOT_EXISTED = "Danh sách có voucher không tồn tại";
         public const string NOT_FOUND = "Không tìm thấy voucher";
         public const string NOT_AVAILABLE = "Voucher không khả dụng";
+        public const string EXPIRED_TIME_INVALID = "Thời gian hết hạn không hợp lệ";
+        public const string VALUE_INVALID = "Giá trị voucher không hợp lệ";
+        public const string MIN_RENTVALUE_INVALID = "Giá trị tối thiểu không hợp lệ";
+        public const string MAX_DISVALUE_INVALID = "Giá trị tối đa không hợp lệ";
     }
 }

@@ -1,10 +1,10 @@
-﻿using Utility.Enum;
+﻿using System.ComponentModel.DataAnnotations;
+using Utility.Enum;
 
 namespace Service.ApiModels.Voucher;
 
 public class VoucherRequest
 {
-    public int Id { get; set; }
     public decimal Value { get; set; }
     public decimal? MinRentValue { get; set; }
     public decimal? MaxDiscountValue { get; set; }
