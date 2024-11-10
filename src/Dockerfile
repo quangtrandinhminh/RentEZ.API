@@ -34,12 +34,24 @@ WORKDIR /app
 # Copy published app
 COPY --from=publish /app/publish .
 
-# Copy secrets.json if provided (optional)
-ARG USER_SECRETS_PATH
-COPY ${USER_SECRETS_PATH}/secrets.json /app/secrets.json
+# Attempt to copy secrets.json using Docker Build Secrets
+USER root
+RUN --mount=type=secret,id=usersecrets,required=false \
+    if [ -f /run/secrets/usersecrets ]; then \
+        cp /run/secrets/usersecrets /app/secrets.json && \
+        echo "Using Docker Build Secret for secrets.json"; \
+    else \
+        echo "Docker Build Secret not provided, using fallback COPY command"; \
+    fi
+
+# Fallback to COPY if the secret was not provided
+COPY RentEZ.WebAPI/secrets.json /app/secrets.json
 
 # Set environment variables for secrets (optional)
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV SECRETS_FILE_PATH=/app/secrets.json
+
+# Revert back to non-root user
+USER app
 
 ENTRYPOINT ["dotnet", "RentEZ.WebAPI.dll"]
