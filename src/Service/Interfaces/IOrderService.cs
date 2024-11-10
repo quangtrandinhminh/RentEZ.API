@@ -30,4 +30,5 @@ public interface IOrderService
 
     Task CancelOrderAsync(int orderId);
     Task ChangeOrderStatus (int orderShopId);
+    Task ChangeToWaitingForRefund(int id);
 }

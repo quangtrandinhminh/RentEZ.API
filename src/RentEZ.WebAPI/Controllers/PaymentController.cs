@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Net.payOS.Types;
 using Service.ApiModels.VNPay;
 using Service.ApiModels;
 using Service.ApiModels.PayOS;
 using Service.Interfaces;
 using Utility.Constants;
+using Service.ApiModels.Refund;
+using Service.Services;
+using Utility.Exceptions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace RentEZ.WebAPI.Controllers
 {
@@ -15,11 +19,12 @@ namespace RentEZ.WebAPI.Controllers
     {
         private readonly IVnPayService _vnPayService;
         private readonly IPayOSService _payosService;
-
-        public PaymentController(IVnPayService vnPayService, IPayOSService payosService)
+        private readonly IRefundService _refundService;
+        public PaymentController(IVnPayService vnPayService, IPayOSService payosService, IRefundService refundService)
         {
             _vnPayService = vnPayService;
             _payosService = payosService;
+            _refundService = refundService;
         }
 
         [HttpPost("vnpay/payment-url")]
@@ -55,6 +60,21 @@ namespace RentEZ.WebAPI.Controllers
         {
             var response = await _payosService.GetPaymentLinkInformationAsync(orderId);
             return Ok(BaseResponse.OkResponseDto(response));
+        }
+
+        [HttpPost("refund")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ProcessRefund([FromBody] RefundRequest request)
+        {
+            try
+            {
+                var (customerQR, shopQR) = await _refundService.ProcessRefundAsync(request);
+                return Ok(new { CustomerRefundQR = customerQR, ShopPaymentQR = shopQR });
+            }
+            catch (AppException ex)
+            {
+                return StatusCode(ex.StatusCode, new { ex.Code, ex.Message });
+            }
         }
     }
 }
