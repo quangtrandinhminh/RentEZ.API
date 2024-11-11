@@ -64,6 +64,7 @@ public class VoucherService(IServiceProvider serviceProvider) : IVoucherService
             vouchers.Items = vouchers.Items.Where(v => v.Status == request.Status).ToList();
         }
 
+        // if not found any voucher
         if (vouchers == null || !vouchers.Items.Any())
         {
             throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsVoucher.NOT_FOUND,
@@ -128,10 +129,10 @@ public class VoucherService(IServiceProvider serviceProvider) : IVoucherService
         ValidVoucherRequest(request);
         var voucher = await GetVoucherEntityByIdAsync(request.Id);
 
-        // admin try to update shop voucher, forbidden
+        // admin have permission to update all voucher
         // shop owner try to update other shop voucher, forbidden
-        if (roles.Contains(UserRoleEnum.Admin.ToString()) ||
-            (roles.Contains(UserRoleEnum.ShopOwner.ToString()) && voucher.Shop?.OwnerId != userId))
+        if (roles.Contains(UserRoleEnum.ShopOwner.ToString() ) 
+            && voucher.ShopId != null && voucher.Shop?.OwnerId != userId)
         {
             throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsShop.NOTALLOWED,
                                                              StatusCodes.Status403Forbidden);
@@ -150,10 +151,10 @@ public class VoucherService(IServiceProvider serviceProvider) : IVoucherService
         var roles = JwtClaimUltils.GetUserRole(loginedUser);
         var voucher = await GetVoucherEntityByIdAsync(voucherId);
 
-        // admin try to update shop voucher, forbidden
+        // admin have permission to delete all voucher
         // shop owner try to update other shop voucher, forbidden
-        if (roles.Contains(UserRoleEnum.Admin.ToString()) ||
-            (roles.Contains(UserRoleEnum.ShopOwner.ToString()) && voucher.Shop?.OwnerId != userId))
+        if (roles.Contains(UserRoleEnum.ShopOwner.ToString()) 
+            && voucher.ShopId != null && voucher.Shop?.OwnerId != userId)
         {
             throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsShop.NOTALLOWED,
                 StatusCodes.Status403Forbidden);

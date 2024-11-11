@@ -49,7 +49,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpPut]
-        //[Authorize(Roles = "Admin, ShopOwner")]
+        [Authorize(Roles = "Admin, ShopOwner")]
         public async Task<IActionResult> UpdateVoucher([FromBody] VoucherOrderRequest request)
         {
             await _voucherService.UpdateVoucherAsync(request);
@@ -57,7 +57,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpDelete("{voucherId}")]
-        //[Authorize(Roles = "Admin, ShopOwner")]
+        [Authorize(Roles = "Admin, ShopOwner")]
         public async Task<IActionResult> DeleteVoucher(int voucherId)
         {
             await _voucherService.DeleteVoucherAsync(voucherId);
