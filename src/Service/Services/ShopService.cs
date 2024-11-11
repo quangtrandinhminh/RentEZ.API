@@ -146,7 +146,7 @@ namespace Service.Services
             return _mapper.ShopToShopResponseDto(shop);
         }
 
-        // get all products
+        // get all shops
         public async Task<List<ShopResponse>> GetAllShops()
         {
             _logger.Information($"Get all shops");
