@@ -25,7 +25,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS policy
 const string myAllowSpecificOrigins = "http://localhost:5173";
-builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly(), true);
+builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly(), true).AddEnvironmentVariables();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(myAllowSpecificOrigins,
