@@ -5,6 +5,7 @@ namespace Service.ApiModels.User;
 
 public class UserUpdateRequest
 {
+    public int Id { get; set; }
     [Required(ErrorMessage = ResponseMessageIdentity.USERNAME_REQUIRED)]
     [MaxLength(100)]
     public string UserName { get; set; }

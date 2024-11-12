@@ -37,6 +37,8 @@ public partial class MapperlyMapper
     public partial IList<RoleResponse> Map(IList<RoleEntity> entity);
     public partial UserEntity Map(RegisterRequest request);
     public partial LoginResponse Map(UserEntity entity);
+    public partial UserEntity Map(UserCreateRequest request);
+    public partial void Map(UserUpdateRequest request, UserEntity entity);
 
     public partial IList<UserResponse> Map(IList<UserEntity> entity);
     public partial IQueryable<UserResponse> Map(IQueryable<UserEntity> entity);
@@ -59,7 +61,7 @@ public partial class MapperlyMapper
 
     // order
     public partial OrderResponse MapToOrderResponse(Order order);
-    public partial IList<OrderListResponse> MapToOrderListResponse(IList<Order> entity);
+    public partial PaginatedListResponse<OrderListResponse> MapToOrderListResponse(PaginatedList<Order> entity);
     public partial Order MapToOrder(OrderRequest request);
 
     // ordershop
@@ -81,12 +83,18 @@ public partial class MapperlyMapper
     public partial CartItem MapToCartItem(Product entity);
     public partial void MapRequestToCartItem(CartItemCalcRequest request, CartItem cartItem);
     public partial OrderRequest MapToOrderRequest(Cart cart);
+
+    public int? MapToVoucherId(int? voucherId)
+    {
+        return voucherId ?? null;
+    }
     public partial IList<OrderShopRequest> MapToOrderShopRequest(IList<CartShop> cartShops);
     public partial IList<OrderDetailRequest> MapToOrderDetailRequest(IList<CartItem> cartItems);
 
     // voucher
-    public partial Voucher MapToVoucher(VoucherRequest request);
+    public partial Voucher MapToVoucher(VoucherRequest orderRequest);
     public partial VoucherResponse MapToVoucherResponse(Voucher voucher);
+    public partial void MapToVoucher(VoucherOrderRequest request, Voucher entity);
     public partial IReadOnlyCollection<VoucherResponse> MapToVoucherResponse(IReadOnlyCollection<Voucher> vouchers);
     public partial PaginatedListResponse<VoucherResponse> MapToPaginatedListVoucherResponse(PaginatedList<Voucher> vouchers);
 

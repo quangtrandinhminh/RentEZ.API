@@ -5,7 +5,7 @@ namespace Repository.Extensions
 {
     public class PaginatedList<T>
     {
-        public IReadOnlyCollection<T> Items { get; }
+        public IReadOnlyCollection<T> Items { get; set; }
         public int PageNumber { get; }
         public int TotalPages { get; }
         public int TotalCount { get; }

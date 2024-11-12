@@ -8,4 +8,5 @@ public interface IPayOSService
     Task<CreatePaymentResult> CreatePaymentLinkAsync(PayOSRequest request);
     Task GetWebhookTypeAsync(WebhookType request);
     Task<PaymentLinkInformation> GetPaymentLinkInformationAsync(int orderId);
+    Task ConfirmPayment(int orderId, string paymentId);
 }
