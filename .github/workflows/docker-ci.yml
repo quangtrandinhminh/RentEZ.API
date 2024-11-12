@@ -45,3 +45,8 @@ jobs:
       # Step 5: Log out from Docker Hub
       - name: Log out from Docker Hub
         run: docker logout
+      
+      # Step 6: 
+      - name: Trigger Render Deploy
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
