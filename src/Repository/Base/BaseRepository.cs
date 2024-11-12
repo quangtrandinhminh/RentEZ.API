@@ -165,7 +165,6 @@ namespace Repository.Base
                     query = query.Include(includeProperty);
                 }
 
-
                 query = query.AsSplitQuery();
             }
             return await query.FirstOrDefaultAsync(predicate);

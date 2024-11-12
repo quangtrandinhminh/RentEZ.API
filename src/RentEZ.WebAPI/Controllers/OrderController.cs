@@ -21,11 +21,10 @@ namespace RentEZ.WebAPI.Controllers
             _orderService = orderService;
         }
 
-        [HttpGet("admin")]
-        [Authorize(Roles="Admin")]
-        public async Task<IActionResult> GetAllOrders()
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrders([FromQuery] OrderListRequest request)
         {
-            var response = await _orderService.GetAllOrdersAsync();
+            var response = await _orderService.GetAllOrdersAsync(request);
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
@@ -72,7 +71,7 @@ namespace RentEZ.WebAPI.Controllers
         [Authorize(Roles = "Customer, ShopOwner")]
         public async Task<IActionResult> ChangeOrderStatus([FromRoute] int orderShopId)
         {
-            await _orderService.ChangeOrderStatus(orderShopId);
+            await _orderService.ChangeOrderShopStatusAsync(orderShopId);
             return Ok(BaseResponse.OkResponseDto("Order status changed successfully"));
         }
 
