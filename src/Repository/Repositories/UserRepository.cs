@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Repository.Extensions;
 using Repository.Infrastructure;
 using Repository.Interfaces;
 using Repository.Models.Identity;
@@ -35,6 +36,36 @@ namespace Repository.Repositories
             }
 
             return predicate == null ? queryable : queryable.Where(predicate);
+        }
+
+        public async Task<PaginatedList<UserEntity>> GetAllPaginatedQueryable(
+            int pageNumber,
+            int pageSize,
+            Expression<Func<UserEntity, bool>> predicate = null,
+            Expression<Func<UserEntity, object>>? orderBy = null,
+            params Expression<Func<UserEntity, object>>[]? includeProperties
+        )
+        {
+            IQueryable<UserEntity> queryable = _context.Set<UserEntity>().AsNoTracking();
+            includeProperties = includeProperties?.Distinct().ToArray();
+
+            // Include related entities
+            if (includeProperties?.Any() ?? false)
+            {
+                foreach (var navigationPropertyPath in includeProperties)
+                {
+                    queryable = queryable.Include(navigationPropertyPath);
+                }
+            }
+
+            // Apply the predicate
+            queryable = predicate != null ? queryable.Where(predicate) : queryable;
+            queryable = orderBy != null ? queryable.OrderBy(orderBy) : queryable.OrderByDescending(p => p.CreatedTime);
+
+            // Create the paginated list with the projected query
+            var paginatedList = await PaginatedList<UserEntity>.CreateAsync(queryable, pageNumber, pageSize);
+            return paginatedList;
+
         }
 
         public override async Task<IdentityResult> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)

@@ -3,11 +3,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Extensions;
 using Repository.Interfaces;
+using Repository.Models;
 using Repository.Models.Identity;
 using Serilog;
 using Service.ApiModels.User;
 using Service.Interfaces;
 using Service.Mapper;
+using System.Linq.Expressions;
+using Service.ApiModels.PaginatedList;
+using Service.Helpers;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
@@ -22,25 +26,19 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
     private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
     private readonly ILogger _logger = Log.Logger;
 
-
-    public async Task<PaginatedList<UserResponse>> GetAllUsersAsync(UserRoleEnum? role, int pageNumber, int pageSize)
+    public async Task<PaginatedListResponse<UserResponse>> GetAllUsersAsync(UserRoleEnum? role, int pageNumber, int pageSize)
     {
         _logger.Information($"Get all users by role {role.ToString()}");
-        var users = _userRepository.GetAllWithCondition(
-            x => x.DeletedTime == null, x => x.UserRoles);
+        Expression<Func<UserEntity, bool>> predicate = v => v.DeletedTime == null;
         if (role != null)
         {
-            users = users.Where(x => x.UserRoles.Any(y => y.Role.Name == role.ToString()));
+            predicate = predicate.And(x => x.UserRoles.Any(y => y.Role.Name == role.ToString()));
         }
+        var users = await _userRepository.GetAllPaginatedQueryable(
+            pageNumber, pageSize,
+            predicate, null, e => e.UserRoles);
 
-        if (users.IsNullOrEmpty())
-        {
-            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsUser.USER_NOT_FOUND, StatusCodes.Status404NotFound);
-        }
-
-        var userResponses = _mapper.Map(users);
-        var response = await PaginatedList<UserResponse>.CreateAsync(userResponses, pageNumber, pageSize);
-        return response;
+        return _mapper.Map(users);
     }
 
     public async Task CreateUserAsync(UserCreateRequest request)
