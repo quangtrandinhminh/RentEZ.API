@@ -59,45 +59,37 @@ namespace Service.Services
                 .FirstOrDefaultAsync(o => o.Id == request.OrderId);
 
             if (order == null)
-                throw new AppException(ResponseCodeConstants.NOT_FOUND,
-                    ResponseMessageConstrantsOrder.NOT_FOUND,
-                    StatusCodes.Status404NotFound);
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsOrder.NOT_FOUND, StatusCodes.Status404NotFound);
 
             var admin = await _userRepository.GetSingleAsync(u => u.Id == request.UserId);
 
             if (admin == null)
-                throw new AppException(ResponseCodeConstants.NOT_FOUND,
-                    "Admin not found",
-                    StatusCodes.Status404NotFound);
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, "Admin not found", StatusCodes.Status404NotFound);
 
             var orderShopsToRefund = order.OrderShops.Where(os => os.Status == OrderShopStatusEnum.WaitingForRefund);
 
             if (!orderShopsToRefund.Any())
-                throw new AppException(ResponseCodeConstants.BAD_REQUEST,
-                    "There are no order shops in the 'Waiting for Refund' status",
-                    StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.BAD_REQUEST, "There are no order shops in the 'Waiting for Refund' status", StatusCodes.Status400BadRequest);
 
             if (order.PaymentMethod != PaymentMethodEnum.PayOS)
             {
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST, "Unsupported payment method", StatusCodes.Status400BadRequest);
             }
 
-            string customerRefundQR = await GenerateCustomerRefundQR(order);
-            string shopPaymentQR = await GenerateShopPaymentQR(order);
+            string customerRefundQR = await GenerateCustomerRefundUrl(order);
+            string shopPaymentQR = await GenerateShopPaymentUrl(order);
 
             await UpdateOrderStatusForRefund(order, request.UserId);
-            return (customerRefundQR, shopPaymentQR);
+            return (customerRefundQR: customerRefundQR, shopPaymentQR: shopPaymentQR);
         }
 
-        private async Task<string> GenerateCustomerRefundQR(Order order)
+        private async Task<string> GenerateCustomerRefundUrl(Order order)
         {
             if (!order.Customer.BankId.HasValue || string.IsNullOrEmpty(order.Customer.AccountNo))
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST, "Customer bank information is missing", StatusCodes.Status400BadRequest);
 
             if (order.TotalDeposit <= 0)
-                throw new AppException(ResponseCodeConstants.BAD_REQUEST,
-                    "No deposit amount to refund",
-                    StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.BAD_REQUEST, "No deposit amount to refund", StatusCodes.Status400BadRequest);
 
             var qrRequest = new VietQRRequest
             {
@@ -108,12 +100,12 @@ namespace Service.Services
                 Description = $"Refund order with id {order.Id}"
             };
 
-            return await GeneratePayOSQRCode(qrRequest);
+            return await GeneratePayOSPaymentUrl(qrRequest);
         }
 
-        private async Task<string> GenerateShopPaymentQR(Order order)
+        private async Task<string> GenerateShopPaymentUrl(Order order)
         {
-            var qrCodes = new List<string>();
+            var paymentUrls = new List<string>();
 
             foreach (var orderShop in order.OrderShops)
             {
@@ -131,14 +123,14 @@ namespace Service.Services
                     Description = $"Thanh toan tien thue don hang {orderShop.Id}"
                 };
 
-                var qrCode = await GeneratePayOSQRCode(qrRequest);
-                qrCodes.Add(qrCode);
+                var paymentUrl = await GeneratePayOSPaymentUrl(qrRequest);
+                paymentUrls.Add(paymentUrl);
             }
 
-            return string.Join(Environment.NewLine, qrCodes);
+            return string.Join(Environment.NewLine, paymentUrls);
         }
 
-        private async Task<string> GeneratePayOSQRCode(VietQRRequest request)
+        private async Task<string> GeneratePayOSPaymentUrl(VietQRRequest request)
         {
             try
             {
@@ -147,7 +139,7 @@ namespace Service.Services
                 var itemData = new ItemData(
                     truncatedDescription,
                     1,
-                    (int)(request.Amount / 1000)
+                    (int)(request.Amount)
                 );
 
                 var domain = SystemSettingModel.Instance.Domain ?? "http://localhost";
@@ -156,41 +148,45 @@ namespace Service.Services
 
                 var paymentData = new PaymentData(
                     orderCode: long.Parse(CoreHelper.SystemTimeNow.ToString("ffffff")),
-                    amount: (int)(request.Amount / 1000),
+                    amount: (int)(request.Amount),
                     description: truncatedDescription,
                     items: new List<ItemData> { itemData },
                     cancelUrl: dummyCancelUrl,
                     returnUrl: dummyReturnUrl,
                     signature: "",
-                    buyerName: "",  
-                    buyerEmail: "", 
-                    buyerPhone: "", 
+                    buyerName: "",
+                    buyerEmail: "",
+                    buyerPhone: "",
                     buyerAddress: "",
                     expiredAt: (int)CoreHelper.SystemTimeNow.AddMinutes(15).ToUnixTimeSeconds()
                 );
                 var result = await payOS.createPaymentLink(paymentData);
-                return result.qrCode;
+                return result.checkoutUrl;
             }
             catch (Exception)
             {
                 throw new AppException(
                     ResponseCodeConstants.INTERNAL_SERVER_ERROR,
-                    "Failed to generate payment QR code",
+                    "Failed to generate payment URL",
                     StatusCodes.Status500InternalServerError);
             }
         }
 
         private decimal CalculateShopPayment(OrderShop orderShop)
         {
-            decimal shopPayment = orderShop.TotalRentPrice;
-            shopPayment -= orderShop.Commission;
-            shopPayment -= orderShop.Tax;
+            var order = _orderRepository.GetAllWithCondition().Include(x => x.OrderShops).FirstOrDefault(o => o.Id == orderShop.OrderId);
+
+            if (order == null)
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsOrder.NOT_FOUND, StatusCodes.Status404NotFound);
+
+            decimal totalPayment = order.OrderShops.Sum(shop =>
+                shop.TotalRentPrice - shop.Commission - shop.Tax);
 
             if (orderShop.Status == OrderShopStatusEnum.ReturnedWithDamage)
             {
-                shopPayment += orderShop.TotalDeposit;
+                totalPayment += orderShop.TotalDeposit;
             }
-            return shopPayment;
+            return totalPayment;
         }
 
         private async Task UpdateOrderStatusForRefund(Order order, int adminId)
