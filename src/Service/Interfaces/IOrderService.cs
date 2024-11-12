@@ -1,4 +1,5 @@
-﻿using Repository.Models;
+﻿using Repository.Extensions;
+using Repository.Models;
 using Service.ApiModels.Order;
 using Service.ApiModels.OrderDetail;
 using Service.ApiModels.OrderShop;
@@ -12,8 +13,8 @@ public interface IOrderService
     // calculate total price of an order
     Task<OrderRequest> CalculateTotalPrice(CartCalcRequest request);
 
-    // get all orders for admin
-    Task<IList<OrderListResponse>> GetAllOrdersAsync();
+    // get all orders for all roles
+    Task<PaginatedListResponse<OrderListResponse>> GetAllOrdersAsync(OrderListRequest request);
 
     // get order include order details by id
     Task<OrderResponse> GetOrderByIdAsync(int orderId);
@@ -29,6 +30,5 @@ public interface IOrderService
     Task<OrderShopResponse> GetOrderShopsByIdAsync(int orderShopId);
 
     Task CancelOrderAsync(int orderId);
-    Task ChangeOrderStatus (int orderShopId);
-    Task ChangeToWaitingForRefund(int id);
+    Task ChangeOrderShopStatusAsync (int orderShopId);
 }

@@ -62,7 +62,7 @@ public partial class MapperlyMapper
 
     // order
     public partial OrderResponse MapToOrderResponse(Order order);
-    public partial IList<OrderListResponse> MapToOrderListResponse(IList<Order> entity);
+    public partial PaginatedListResponse<OrderListResponse> MapToOrderListResponse(PaginatedList<Order> entity);
     public partial Order MapToOrder(OrderRequest request);
 
     // ordershop
