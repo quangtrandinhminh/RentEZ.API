@@ -142,14 +142,14 @@ builder.Services.AddAuthentication(options =>
         options.UseSecurityTokenValidators = true;
         options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
     })
-    .AddGoogle(options =>
+    /*.AddGoogle(options =>
     {
        options.ClientId = googleSetting.ClientID;
        options.ClientSecret = googleSetting.ClientSecret;
        options.Scope.Add("email");
        options.Scope.Add("profile");
         options.SaveTokens = true;
-    });
+    })*/;
 
 
 // Add Authorization
