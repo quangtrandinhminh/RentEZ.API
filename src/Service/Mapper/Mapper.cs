@@ -42,6 +42,7 @@ public partial class MapperlyMapper
 
     public partial IList<UserResponse> Map(IList<UserEntity> entity);
     public partial IQueryable<UserResponse> Map(IQueryable<UserEntity> entity);
+    public partial PaginatedListResponse<UserResponse> Map(PaginatedList<UserEntity> entity);
     public partial void Map(RegisterRequest request, UserEntity entity);
 
     // shop
