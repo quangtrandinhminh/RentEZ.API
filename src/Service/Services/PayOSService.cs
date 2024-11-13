@@ -139,7 +139,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         // if status == "00" change status of order to success
         if (request.code == "00")
         {
-            await UpdateOrderPayment(order, data.orderCode.ToString());
+            await UpdateOrderPayment(order, data.orderCode);
         }
         else
         {
@@ -147,13 +147,13 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         }
     }
 
-    public async Task<PaymentLinkInformation> GetPaymentLinkInformationAsync(int orderId)
+    public async Task<PaymentLinkInformation> GetPaymentLinkInformationAsync(long orderCode)
     {
         var payOS = new PayOS(_payOSSetting.ClientID, _payOSSetting.ApiKey, _payOSSetting.ChecksumKey);
-        return await payOS.getPaymentLinkInformation(orderId);
+        return await payOS.getPaymentLinkInformation(orderCode);
     }
 
-    public async Task ConfirmPayment(int orderId, string paymentId)
+    public async Task ConfirmPayment(int orderId, long orderCode)
     {
         var order = await GetOrderById(orderId);
         if (order.PaymentStatus == PaymentStatusEnum.Paid)
@@ -162,7 +162,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
                                ResponseMessageConstrantsOrder.ALREADY_PAID, StatusCodes.Status400BadRequest);
         }
 
-        var payment = await GetPaymentLinkInformationAsync(orderId);
+        var payment = await GetPaymentLinkInformationAsync(orderCode);
         if (payment == null)
         {
             throw new AppException(ResponseCodeConstants.NOT_FOUND, 
@@ -175,16 +175,16 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
                                               ResponseMessageConstrantsOrder.NOT_PAID, StatusCodes.Status400BadRequest);
         }
 
-        await UpdateOrderPayment(order, paymentId);
+        await UpdateOrderPayment(order, orderCode);
     }
 
-    private async Task UpdateOrderPayment(Order order, string paymentId)
+    private async Task UpdateOrderPayment(Order order, long orderCode)
     {
         // update order
         order.PaymentStatus = PaymentStatusEnum.Paid;
         order.PaymentTime = CoreHelper.SystemTimeNow;
         order.PaymentMethod = PaymentMethodEnum.PayOS;
-        order.PaymentId = paymentId;
+        order.PaymentId = orderCode.ToString();
         _orderRepository.Update(order);
 
         // update order shop
@@ -208,5 +208,11 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
                                ResponseMessageConstrantsOrder.NOT_FOUND, StatusCodes.Status404NotFound);
         }
         return order;
+    }
+
+    public async Task<string> ConfirmWebhook (string webhookUrl)
+    {
+        var payOs = new PayOS(_payOSSetting.ClientID, _payOSSetting.ApiKey, _payOSSetting.ChecksumKey);
+        return await payOs.confirmWebhook(webhookUrl);
     }
 }

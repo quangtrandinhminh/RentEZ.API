@@ -56,16 +56,16 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpGet("payos/payment-info")]
-        public async Task<IActionResult> GetPayOSPaymentInfo([FromQuery] int orderId)
+        public async Task<IActionResult> GetPayOSPaymentInfo([FromQuery] long orderCode)
         {
-            var response = await _payosService.GetPaymentLinkInformationAsync(orderId);
+            var response = await _payosService.GetPaymentLinkInformationAsync(orderCode);
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
         [HttpGet("payos/confirmation")]
-        public async Task<IActionResult> PayOSConfirmPayment([FromQuery] int orderId, string paymentId)
+        public async Task<IActionResult> PayOSConfirmPayment([FromQuery] int orderId, long orderCode)
         {
-            await _payosService.ConfirmPayment(orderId, paymentId);
+            await _payosService.ConfirmPayment(orderId, orderCode);
             return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
@@ -82,6 +82,13 @@ namespace RentEZ.WebAPI.Controllers
             {
                 return StatusCode(ex.StatusCode, new { ex.Code, ex.Message });
             }
+        }
+
+        [HttpPost("payos/webhook/confirmation")]
+        public async Task<IActionResult> PayOSWebhookConfirmation(string webhookUrl)
+        {
+            await _payosService.ConfirmWebhook(webhookUrl);
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
     }
 }

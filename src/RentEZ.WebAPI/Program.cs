@@ -26,7 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));*/
 
 // Add CORS policy
-const string myAllowSpecificOrigins = "http://localhost:5173";
+const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly(), true);
 builder.Services.AddCors(options =>
 {
