@@ -49,7 +49,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("admin/users")]
         public async Task<IActionResult> GetAllUsers([FromQuery] UserRoleEnum? role, [FromQuery] int pageNumber = 1, int pageSize = 10)
         {
