@@ -30,11 +30,11 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponse.OkResponseDto(product));
         }
 
-        [HttpGet("category")]
+        [HttpGet("category/shop")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllProducts([FromQuery] int? categoryId = null)
+        public async Task<IActionResult> GetAllProducts([FromQuery] int? categoryId = null, [FromQuery] int? shopId = null)
         {
-            var products = await _productService.GetAllProducts(categoryId);
+            var products = await _productService.GetAllProducts(categoryId, shopId);
             return Ok(BaseResponse.OkResponseDto(products));
         }
 

@@ -12,6 +12,8 @@ using Repository.Models;
 using MapperlyMapper = Service.Mapper.MapperlyMapper;
 using System.Security.Claims;
 using Service.ApiModels.Shop;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Service.Services
 {
@@ -114,7 +116,7 @@ namespace Service.Services
             }
         }
 
-        // get all shops
+        // get all pending shops
         public async Task<List<ShopResponse>> GetPendingShopList()
         {
             _logger.Information($"Get all pending shops");
@@ -128,22 +130,55 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NO_INISACTIVE_SHOP_FOUND, StatusCodes.Status404NotFound);
             }
-            return _mapper.ShopToShopResponseDto(inActiveShop).ToList();
+            return _mapper.ShopsToShopsResponseDto(inActiveShop).ToList();
         }
 
-        // get all products
-        public async Task<List<ShopResponse>> GetAllShops()
+        // get shop by Id
+        public async Task<ShopResponse> GetShopById(int id)
         {
-            _logger.Information($"Get all shops");
-            var shops = await _shopRepository.GetAllWithCondition().Include(s => s.Owner).ToListAsync();
+            _logger.Information($"Get shop by id");
+            var shop = await _shopRepository.GetAllWithCondition()
+                                 .Include(s => s.Owner)
+                                 .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (shop == null)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND, StatusCodes.Status404NotFound);
+            }
+            return _mapper.ShopToShopResponseDto(shop);
+        }
+
+        // get all shops
+        public async Task<List<ShopResponse>> GetAllShops([FromQuery] ShopQueryParams queryParams)
+        {
+            _logger.Information($"Get all shops with params: {JsonSerializer.Serialize(queryParams)}");
+
+            var query = _shopRepository.GetAllWithCondition()
+                .Include(s => s.Owner)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(queryParams.SearchTerm))
+            {
+                var searchTerm = queryParams.SearchTerm.Trim().ToLower();
+                query = query.Where(s =>
+                    (s.ShopName != null && s.ShopName.ToLower().Contains(searchTerm)) ||
+                    (s.ShopEmail != null && s.ShopEmail.ToLower().Contains(searchTerm)) ||
+                    (s.ShopPhone != null && s.ShopPhone.Contains(searchTerm)) ||
+                    (s.ShopAddress != null && s.ShopAddress.ToLower().Contains(searchTerm)));
+            }
+
+            var shops = await query.ToListAsync();
+            if (queryParams.IsActive.HasValue)
+            {
+                shops = shops.Where(s => s.IsActive == queryParams.IsActive.Value).ToList();
+            }
+
             if (shops.IsNullOrEmpty())
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND, StatusCodes.Status404NotFound);
             }
-            var sortedShops = shops
-                .OrderByDescending(s => s.IsActive)
-                .ToList();
-            return _mapper.ShopToShopResponseDto(sortedShops).ToList();
+
+            return _mapper.ShopsToShopsResponseDto(shops).ToList();
         }
 
         // shop approval

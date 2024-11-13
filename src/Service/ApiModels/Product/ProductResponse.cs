@@ -6,8 +6,6 @@
         public string? ProductName { get; set; }
         public int? CategoryId { get; set; }
         public string? CategoryName { get; set; }
-        public int? ShopId { get; set; }
-        public string? ShopName { get; set; }
         public double? Size { get; set; }
         public double? Price { get; set; }
         public List<double>? RentPrices { get; set; }
@@ -24,5 +22,11 @@
         public double? Long { get; set; }
         public double? Width { get; set; }
         public double? Height { get; set; }
+        public int? ShopId { get; set; }
+        public string? ShopName { get; set; }
+        public string? ShopEmail { get; set; }
+        public string? ShopPhone { get; set; }
+        public string? ShopAddress { get; set; }
+        public string? ShopAvatar { get; set; }
     }
 }

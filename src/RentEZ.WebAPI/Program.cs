@@ -16,6 +16,8 @@ using Repository.Base;
 using MapperlyMapper = Service.Mapper.MapperlyMapper;
 using Repository.Models.Identity;
 using Utility.Helpers;
+using AngleSharp;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -193,6 +195,11 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IVoucherService, VoucherService>();
 builder.Services.AddScoped<IPayOSService, PayOSService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
+builder.Services.AddScoped<IRefundService, RefundService>();
+
+builder.Services.Configure<PayOSSetting>(builder.Configuration.GetSection("PayOS"));
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<PayOSSetting>>().Value);
+
 builder.Services.AddHttpContextAccessor();
 
 //-----------------------------------------------------------------------------------------------
