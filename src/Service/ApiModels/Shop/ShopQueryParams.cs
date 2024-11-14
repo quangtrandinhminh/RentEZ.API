@@ -9,6 +9,6 @@ namespace Service.ApiModels.Shop
     public class ShopQueryParams
     {
         public string? SearchTerm { get; set; }
-        public bool? IsActive { get; set; }
+        public bool? IsVerified { get; set; }
     }
 }

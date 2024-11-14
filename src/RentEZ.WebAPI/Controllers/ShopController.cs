@@ -51,9 +51,9 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllShops([FromQuery] ShopQueryParams queryParams)
+        public async Task<IActionResult> GetAllShops([FromQuery] ShopQueryParams queryParams, [FromQuery] int pageNumber = 1, int pageSize = 10)
         {
-            var shops = await _shopService.GetAllShops(queryParams);
+            var shops = await _shopService.GetAllShops(queryParams, pageNumber, pageSize);
             return Ok(BaseResponse.OkResponseDto(shops));
         }
 
