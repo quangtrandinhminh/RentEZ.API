@@ -13,6 +13,9 @@ using Repository.Models;
 using System.Security.Claims;
 using Service.ApiModels.Product;
 using Newtonsoft.Json;
+using System.Linq.Expressions;
+using Service.Helpers;
+using Service.ApiModels.PaginatedList;
 
 namespace Service.Services
 {
@@ -27,9 +30,10 @@ namespace Service.Services
         private readonly IHttpContextAccessor _httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
         // get all products
-        public async Task<List<ProductListResponse>> GetAllProducts(int? categoryId = null, int? shopId = null)
+        public async Task<PaginatedListResponse<ProductListResponse>> GetAllProducts(int pageNumber, int pageSize, int? categoryId = null, int? shopId = null)
         {
             _logger.Information($"Get all products");
+            Expression<Func<Product, bool>> predicate = v => v.DeletedTime == null;
             if (categoryId.HasValue)
             {
                 var categoryExists = await _categoryRepository.GetSingleAsync(c => c.Id == categoryId.Value);
@@ -37,6 +41,7 @@ namespace Service.Services
                 {
                     throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NONEXISTENT_CATEGORY, StatusCodes.Status404NotFound);
                 }
+                predicate = predicate.And(p => p.CategoryId == categoryId.Value);
             }
 
             if (shopId.HasValue)
@@ -46,30 +51,27 @@ namespace Service.Services
                 {
                     throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND, StatusCodes.Status404NotFound);
                 }
+                predicate = predicate.And(p => p.ShopId == shopId.Value);
             }
 
-            var productsWithCategory = _productRepository.GetAllWithCondition();
-            productsWithCategory = productsWithCategory.Include(x => x.Category).Include(x => x.Shop);
+            var products = await _productRepository.GetAllPaginatedQueryable(
+                pageNumber,
+                pageSize,
+                predicate,
+                p => p.Id,
+                p => p.Category,
+                p => p.Shop
+            );
 
-            if (categoryId.HasValue)
-            {
-                productsWithCategory = productsWithCategory.Where(p => p.CategoryId == categoryId.Value);
-            }
-            if (shopId.HasValue)
-            {
-                productsWithCategory = productsWithCategory.Where(p => p.ShopId == shopId.Value);
-            }
-
-            var products = await productsWithCategory.ToListAsync();
-            if (products.IsNullOrEmpty())
+            if (products.Items == null || !products.Items.Any())
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
             }
 
-            var productDtos = _mapper.ProductsToProductsResponseDto(products);
+            var productDtos = _mapper.ProductsToProductsResponseDto(products.Items.ToList());
             foreach (var dto in productDtos)
             {
-                var product = products.FirstOrDefault(p => p.Id == dto.Id);
+                var product = products.Items.FirstOrDefault(p => p.Id == dto.Id);
 
                 if (product != null)
                 {
@@ -89,7 +91,13 @@ namespace Service.Services
                     }
                 }
             }
-            return (List<ProductListResponse>)productDtos;
+            return new PaginatedListResponse<ProductListResponse>
+            {
+                Items = (IReadOnlyCollection<ProductListResponse>)productDtos,
+                PageNumber = products.PageNumber,
+                TotalPages = products.TotalPages,
+                TotalCount = products.TotalCount
+            };
         }
 
         // get product by Id
@@ -221,7 +229,6 @@ namespace Service.Services
         }
 
         // update product
-
         public async Task UpdateProductAsync(ProductCreateRequest productRequest, int id)
         {
             _logger.Information("Update product");
@@ -327,17 +334,30 @@ namespace Service.Services
             await _unitOfWork.SaveChangeAsync();
             _logger.Information("Deleted product successfully");
         }
-        //public static class ObjectHelper
-        //{
-        //    public static string ConvertToJson(List<double> rentPrices)
-        //    {
-        //        return JsonConvert.SerializeObject(rentPrices);
-        //    }
 
-        //    public static List<double> ConvertFromJson(string rentPricesJson)
-        //    {
-        //        return JsonConvert.DeserializeObject<List<double>>(rentPricesJson);
-        //    }
-        //}
+        public async Task<List<ProductListResponse>> GetOwnProductAsync()
+        {
+            _logger.Information("Get own products");
+            var currentOwnerIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid);
+            if (currentOwnerIdClaim == null)
+            {
+                throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsProduct.UNAUTHORIZED, StatusCodes.Status401Unauthorized);
+            }
+            var loggedInOwnerId = int.Parse(currentOwnerIdClaim.Value);
+            var existShop = await _shopRepository.GetSingleAsync(s => s.OwnerId == loggedInOwnerId);
+            if (existShop == null)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.SHOP_NOTFOUND, StatusCodes.Status404NotFound);
+            }
+            var listProduct = _productRepository.GetAllWithCondition();
+            listProduct = listProduct.Include(x => x.Shop).ThenInclude(x => x.Owner).Where(x => x.ShopId == existShop.Id && x.Shop.OwnerId == loggedInOwnerId);
+            if (listProduct == null)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
+            }
+            var products = listProduct.ToList();
+            var productDtos = _mapper.ProductsToProductsResponseDto(products);
+            return (List<ProductListResponse>)productDtos;
+        }
     }
 }

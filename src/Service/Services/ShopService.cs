@@ -14,6 +14,9 @@ using System.Security.Claims;
 using Service.ApiModels.Shop;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using System.Linq.Expressions;
+using Service.Helpers;
+using Service.ApiModels.PaginatedList;
 
 namespace Service.Services
 {
@@ -149,36 +152,58 @@ namespace Service.Services
         }
 
         // get all shops
-        public async Task<List<ShopResponse>> GetAllShops([FromQuery] ShopQueryParams queryParams)
+        public async Task<PaginatedListResponse<ShopResponse>> GetAllShops(ShopQueryParams queryParams, int pageNumber, int pageSize)
         {
             _logger.Information($"Get all shops with params: {JsonSerializer.Serialize(queryParams)}");
-
-            var query = _shopRepository.GetAllWithCondition()
-                .Include(s => s.Owner)
-                .AsQueryable();
-
+            Expression<Func<Shop, bool>> predicate = v => v.DeletedTime == null;
+            if (queryParams.IsVerified.HasValue)
+            {
+                if (queryParams.IsVerified.Value)
+                {
+                    predicate = predicate.And(x => x.Verified.HasValue);
+                }
+                else
+                {
+                    predicate = predicate.And(x => !x.Verified.HasValue);
+                }
+            }
             if (!string.IsNullOrWhiteSpace(queryParams.SearchTerm))
             {
                 var searchTerm = queryParams.SearchTerm.Trim().ToLower();
-                query = query.Where(s =>
+                predicate = predicate.And(s =>
                     (s.ShopName != null && s.ShopName.ToLower().Contains(searchTerm)) ||
                     (s.ShopEmail != null && s.ShopEmail.ToLower().Contains(searchTerm)) ||
                     (s.ShopPhone != null && s.ShopPhone.Contains(searchTerm)) ||
                     (s.ShopAddress != null && s.ShopAddress.ToLower().Contains(searchTerm)));
             }
 
-            var shops = await query.ToListAsync();
-            if (queryParams.IsActive.HasValue)
+            var shops = await _shopRepository.GetAllPaginatedQueryable(
+                pageNumber,
+                pageSize,
+                predicate,
+                s => s.Id,
+                s => s.Owner);
+
+            bool hasVerifiedShops = await _shopRepository.GetAllWithCondition(s => s.Verified.HasValue).CountAsync() > 0;
+            if (queryParams.IsVerified == false && !shops.Items.Any() && hasVerifiedShops)
             {
-                shops = shops.Where(s => s.IsActive == queryParams.IsActive.Value).ToList();
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NO_INISACTIVE_SHOP_FOUND, StatusCodes.Status404NotFound);
             }
 
-            if (shops.IsNullOrEmpty())
+            if (shops.Items == null || !shops.Items.Any())
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND, StatusCodes.Status404NotFound);
             }
 
-            return _mapper.ShopsToShopsResponseDto(shops).ToList();
+            var shopsList = shops.Items.ToList();
+
+            return new PaginatedListResponse<ShopResponse>
+            {
+                Items = (IReadOnlyCollection<ShopResponse>)_mapper.ShopsToShopsResponseDto(shopsList),
+                PageNumber = shops.PageNumber,
+                TotalPages = shops.TotalPages,
+                TotalCount = shops.TotalCount
+            };
         }
 
         // shop approval
