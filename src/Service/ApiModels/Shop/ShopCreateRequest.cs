@@ -14,7 +14,7 @@ namespace Service.ApiModels.Shop
         [RegularExpression("^[^0-9]+$", ErrorMessage = "Name cannot contain number")]
         public string ShopName { get; set; }
         [Required]
-        [MaxLength(6)]
+        [Range(1, 999999, ErrorMessage = "Bank Id must be a positive number with up to 6 digits.")]
         public int BankId { get; set; }
         [Required]
         [MaxLength(19)]
