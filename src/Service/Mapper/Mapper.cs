@@ -36,6 +36,8 @@ public partial class MapperlyMapper
     // user
     public partial IList<RoleResponse> Map(IList<RoleEntity> entity);
     public partial UserEntity Map(RegisterRequest request);
+
+    [MapProperty(nameof(UserEntity.ManagedShop.Id), nameof(LoginResponse.ShopId))]
     public partial LoginResponse Map(UserEntity entity);
     public partial UserEntity Map(UserCreateRequest request);
     public partial void Map(UserUpdateRequest request, UserEntity entity);
@@ -65,6 +67,7 @@ public partial class MapperlyMapper
     public partial OrderResponse MapToOrderResponse(Order order);
     public partial PaginatedListResponse<OrderListResponse> MapToOrderListResponse(PaginatedList<Order> entity);
     public partial Order MapToOrder(OrderRequest request);
+    public partial CustomerResponse MapTCustomerResponse(UserEntity entity);
 
     // ordershop
     public partial OrderShop MapToOrderShop(OrderShopRequest request);

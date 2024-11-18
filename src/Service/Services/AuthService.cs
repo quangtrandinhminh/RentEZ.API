@@ -220,7 +220,7 @@ namespace Service.Services
 
         public async Task<LoginResponse> Authenticate(LoginRequest dto)
         {
-            _logger.Information("Authenticate user: {@dto}", dto);
+            _logger.Information("Authenticate user: {@dto}", dto.Username);
             var account = await GetUserByUserName(dto.Username);
             if (account == null || account.DeletedTime != null)
                 throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
