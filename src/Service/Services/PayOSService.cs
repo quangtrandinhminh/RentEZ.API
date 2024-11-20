@@ -114,14 +114,14 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
     // Wait for WebhookType response from server
     public async Task GetWebhookTypeAsync(WebhookType request)
     {
+        _logger.Information("Get webhook type {@request}", request.data);
         var orderCode = request.data.orderCode;
         _logger.Information($"Get webhook signature {orderCode}");
         var payOs = new PayOS(_payOSSetting.ClientID, _payOSSetting.ApiKey, _payOSSetting.ChecksumKey);
         WebhookData data = payOs.verifyPaymentWebhookData(request);
         if (data == null)
         {
-            throw new AppException(ResponseCodeConstants.BAD_REQUEST, 
-                ResponseMessageConstrantsOrder.INVALID_DATA, StatusCodes.Status400BadRequest);
+            _logger.Information("Webhook data not found");
         }
 
         // orderId is the last part of the description
@@ -132,8 +132,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
             false, o => o.OrderShops);
         if (order == null)
         {
-            throw new AppException(ResponseCodeConstants.NOT_FOUND, 
-                ResponseMessageConstrantsOrder.NOT_FOUND, StatusCodes.Status404NotFound);
+            _logger.Information($"Order {orderId} not found");
         }
 
         // if status == "00" change status of order to success
@@ -143,18 +142,20 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         }
         else
         {
-            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsOrder.INVALID_DATA, StatusCodes.Status400BadRequest);
+            _logger.Information($"Request failed for order {orderId}");
         }
     }
 
     public async Task<PaymentLinkInformation> GetPaymentLinkInformationAsync(long orderCode)
     {
+        _logger.Information($"Get payment link information for orderCode {orderCode}");
         var payOS = new PayOS(_payOSSetting.ClientID, _payOSSetting.ApiKey, _payOSSetting.ChecksumKey);
         return await payOS.getPaymentLinkInformation(orderCode);
     }
 
     public async Task ConfirmPayment(int orderId, long orderCode)
     {
+        _logger.Information($"Confirm payment for order {orderId} with orderCode {orderCode}");
         var order = await GetOrderById(orderId);
         if (order.PaymentStatus == PaymentStatusEnum.Paid)
         {
@@ -169,7 +170,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
                                               ResponseMessageConstrantsOrder.NOT_FOUND, StatusCodes.Status404NotFound);
         }
 
-        if (payment.status != "00")
+        if (payment.status != "PAID")
         {
             throw new AppException(ResponseCodeConstants.BAD_REQUEST, 
                                               ResponseMessageConstrantsOrder.NOT_PAID, StatusCodes.Status400BadRequest);
