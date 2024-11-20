@@ -191,33 +191,33 @@ namespace Repository.Migrations
                         {
                             Id = 1,
                             CategoryName = "Handbag",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7864), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 20, 9, 40, 6, 776, DateTimeKind.Unspecified).AddTicks(5657), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Túi xách",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7864), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 20, 9, 40, 6, 776, DateTimeKind.Unspecified).AddTicks(5657), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2,
                             CategoryName = "SetOfClothes",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7914), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 20, 9, 40, 6, 776, DateTimeKind.Unspecified).AddTicks(5882), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Bộ quần áo",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7914), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 20, 9, 40, 6, 776, DateTimeKind.Unspecified).AddTicks(5882), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3,
                             CategoryName = "Dress",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7919), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 20, 9, 40, 6, 776, DateTimeKind.Unspecified).AddTicks(5884), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Váy",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7919), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 20, 9, 40, 6, 776, DateTimeKind.Unspecified).AddTicks(5884), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 4,
                             CategoryName = "Shoes",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7922), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 20, 9, 40, 6, 776, DateTimeKind.Unspecified).AddTicks(5886), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Giày dép",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(7922), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 20, 9, 40, 6, 776, DateTimeKind.Unspecified).AddTicks(5886), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -443,19 +443,19 @@ namespace Repository.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Avatar = "https://via.placeholder.com/150",
-                            ConcurrencyStamp = "3d356c88-e133-4215-b1be-b7c0715146be",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 33, DateTimeKind.Unspecified).AddTicks(7470), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "2000fb9c-e042-445c-b7ad-5c45553e8660",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 20, 9, 40, 6, 604, DateTimeKind.Unspecified).AddTicks(2256), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin User",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 33, DateTimeKind.Unspecified).AddTicks(7470), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 20, 9, 40, 6, 604, DateTimeKind.Unspecified).AddTicks(2256), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$oviM/kFz/dTg0IOP8SdIdeNlhxZyhAI1mXW0gIcE9iMAjOFIMZFC.",
+                            PasswordHash = "$2a$11$F4KTGaUFeL4RQDiGmsm46uTy0s6LNmyorXv9Ku3crg/ndAMGGacLe",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "admin",
-                            Verified = new DateTimeOffset(new DateTime(2024, 11, 4, 16, 24, 52, 176, DateTimeKind.Unspecified).AddTicks(6953), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 11, 20, 9, 40, 6, 776, DateTimeKind.Unspecified).AddTicks(4767), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -591,6 +591,8 @@ namespace Repository.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrderShopId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("OrderDetail");
                 });
@@ -861,8 +863,7 @@ namespace Repository.Migrations
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("OwnerId")
-                        .IsRequired()
+                    b.Property<int>("OwnerId")
                         .HasColumnType("integer");
 
                     b.Property<string>("ShopAddress")
@@ -1083,7 +1084,15 @@ namespace Repository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Repository.Models.Product", "Product")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("OrderShop");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Repository.Models.OrderShop", b =>
@@ -1224,6 +1233,11 @@ namespace Repository.Migrations
                     b.Navigation("OrderDetails");
 
                     b.Navigation("OrderTrackings");
+                });
+
+            modelBuilder.Entity("Repository.Models.Product", b =>
+                {
+                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("Repository.Models.Shop", b =>
