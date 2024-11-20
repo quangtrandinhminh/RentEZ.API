@@ -122,6 +122,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         if (data == null)
         {
             _logger.Information("Webhook data not found");
+            return;
         }
 
         // orderId is the last part of the description
@@ -133,6 +134,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         if (order == null)
         {
             _logger.Information($"Order {orderId} not found");
+            return;
         }
 
         // if status == "00" change status of order to success
