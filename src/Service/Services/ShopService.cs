@@ -12,6 +12,11 @@ using Repository.Models;
 using MapperlyMapper = Service.Mapper.MapperlyMapper;
 using System.Security.Claims;
 using Service.ApiModels.Shop;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Linq.Expressions;
+using Service.Helpers;
+using Service.ApiModels.PaginatedList;
 
 namespace Service.Services
 {
@@ -114,7 +119,7 @@ namespace Service.Services
             }
         }
 
-        // get all shops
+        // get all pending shops
         public async Task<List<ShopResponse>> GetPendingShopList()
         {
             _logger.Information($"Get all pending shops");
@@ -128,22 +133,77 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NO_INISACTIVE_SHOP_FOUND, StatusCodes.Status404NotFound);
             }
-            return _mapper.ShopToShopResponseDto(inActiveShop).ToList();
+            return _mapper.ShopsToShopsResponseDto(inActiveShop).ToList();
         }
 
-        // get all products
-        public async Task<List<ShopResponse>> GetAllShops()
+        // get shop by Id
+        public async Task<ShopResponse> GetShopById(int id)
         {
-            _logger.Information($"Get all shops");
-            var shops = await _shopRepository.GetAllWithCondition().Include(s => s.Owner).ToListAsync();
-            if (shops.IsNullOrEmpty())
+            _logger.Information($"Get shop by id");
+            var shop = await _shopRepository.GetAllWithCondition()
+                                 .Include(s => s.Owner)
+                                 .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (shop == null)
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND, StatusCodes.Status404NotFound);
             }
-            var sortedShops = shops
-                .OrderByDescending(s => s.IsActive)
-                .ToList();
-            return _mapper.ShopToShopResponseDto(sortedShops).ToList();
+            return _mapper.ShopToShopResponseDto(shop);
+        }
+
+        // get all shops
+        public async Task<PaginatedListResponse<ShopResponse>> GetAllShops(ShopQueryParams queryParams, int pageNumber, int pageSize)
+        {
+            _logger.Information($"Get all shops with params: {JsonSerializer.Serialize(queryParams)}");
+            Expression<Func<Shop, bool>> predicate = v => v.DeletedTime == null;
+            if (queryParams.IsVerified.HasValue)
+            {
+                if (queryParams.IsVerified.Value)
+                {
+                    predicate = predicate.And(x => x.Verified.HasValue);
+                }
+                else
+                {
+                    predicate = predicate.And(x => !x.Verified.HasValue);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(queryParams.SearchTerm))
+            {
+                var searchTerm = queryParams.SearchTerm.Trim().ToLower();
+                predicate = predicate.And(s =>
+                    (s.ShopName != null && s.ShopName.ToLower().Contains(searchTerm)) ||
+                    (s.ShopEmail != null && s.ShopEmail.ToLower().Contains(searchTerm)) ||
+                    (s.ShopPhone != null && s.ShopPhone.Contains(searchTerm)) ||
+                    (s.ShopAddress != null && s.ShopAddress.ToLower().Contains(searchTerm)));
+            }
+
+            var shops = await _shopRepository.GetAllPaginatedQueryable(
+                pageNumber,
+                pageSize,
+                predicate,
+                s => s.Id,
+                s => s.Owner);
+
+            bool hasVerifiedShops = await _shopRepository.GetAllWithCondition(s => s.Verified.HasValue).CountAsync() > 0;
+            if (queryParams.IsVerified == false && !shops.Items.Any() && hasVerifiedShops)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NO_INISACTIVE_SHOP_FOUND, StatusCodes.Status404NotFound);
+            }
+
+            if (shops.Items == null || !shops.Items.Any())
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND, StatusCodes.Status404NotFound);
+            }
+
+            var shopsList = shops.Items.ToList();
+
+            return new PaginatedListResponse<ShopResponse>
+            {
+                Items = (IReadOnlyCollection<ShopResponse>)_mapper.ShopsToShopsResponseDto(shopsList),
+                PageNumber = shops.PageNumber,
+                TotalPages = shops.TotalPages,
+                TotalCount = shops.TotalCount
+            };
         }
 
         // shop approval

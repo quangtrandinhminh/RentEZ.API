@@ -1,11 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Net.payOS.Types;
 using Service.ApiModels.VNPay;
 using Service.ApiModels;
 using Service.ApiModels.PayOS;
 using Service.Interfaces;
 using Utility.Constants;
+using Service.ApiModels.Refund;
+using Service.Services;
+using Utility.Exceptions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Swashbuckle.Swagger.Annotations;
 
 namespace RentEZ.WebAPI.Controllers
 {
@@ -15,11 +20,12 @@ namespace RentEZ.WebAPI.Controllers
     {
         private readonly IVnPayService _vnPayService;
         private readonly IPayOSService _payosService;
-
-        public PaymentController(IVnPayService vnPayService, IPayOSService payosService)
+        private readonly IRefundService _refundService;
+        public PaymentController(IVnPayService vnPayService, IPayOSService payosService, IRefundService refundService)
         {
             _vnPayService = vnPayService;
             _payosService = payosService;
+            _refundService = refundService;
         }
 
         [HttpPost("vnpay/payment-url")]
@@ -36,7 +42,8 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
-        [HttpPost("payos/payment-url")]
+        [Authorize(Roles = "Customer")]
+        [HttpPost("payos/customer/payment-url")]
         public async Task<IActionResult> GetPayOSPaymentUrl([FromBody] PayOSRequest request)
         {
             var response = await _payosService.CreatePaymentLinkAsync(request);
@@ -44,23 +51,48 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpPost("payos/transfer-handler")]
-        public async Task<IActionResult> PayOSPaymentExecute(WebhookType request)
+        public IActionResult PayOSPaymentExecute([FromBody] WebhookType request)
         {
-            await _payosService.GetWebhookTypeAsync(request);
+            _payosService.GetWebhookTypeAsync(request);
             return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
 
-        [HttpGet("payos/payment-info")]
-        public async Task<IActionResult> GetPayOSPaymentInfo([FromQuery] int orderId)
+        [Authorize(Roles = "Admin")]
+        [HttpGet("payos/admin/payment-info/{orderCode}")]
+        public async Task<IActionResult> GetPayOSPaymentInfo([FromRoute] long orderCode)
         {
-            var response = await _payosService.GetPaymentLinkInformationAsync(orderId);
+            var response = await _payosService.GetPaymentLinkInformationAsync(orderCode);
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
-        [HttpGet("payos/confirmation")]
-        public async Task<IActionResult> PayOSConfirmPayment([FromQuery] int orderId, string paymentId)
+        [Authorize(Roles = "Customer")]
+        [HttpGet("payos/customer/confirmation/{orderId}/{orderCode}")]
+        public async Task<IActionResult> PayOSConfirmPayment([FromRoute] int orderId, long orderCode)
         {
-            await _payosService.ConfirmPayment(orderId, paymentId);
+            await _payosService.ConfirmPayment(orderId, orderCode);
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+        }
+
+        [HttpPost("refund")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ProcessRefund([FromBody] RefundRequest request)
+        {
+            try
+            {
+                var (customerQR, shopQR) = await _refundService.ProcessRefundAsync(request);
+                return Ok(new { CustomerRefundQR = customerQR, ShopPaymentQR = shopQR });
+            }
+            catch (AppException ex)
+            {
+                return StatusCode(ex.StatusCode, new { ex.Code, ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("payos/admin/webhook/confirmation")]
+        public async Task<IActionResult> PayOSWebhookConfirmation([FromBody] ConfirmWebhook request)
+        {
+            await _payosService.ConfirmWebhook(request.webhook_url);
             return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
     }

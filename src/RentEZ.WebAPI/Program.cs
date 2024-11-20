@@ -16,6 +16,8 @@ using Repository.Base;
 using MapperlyMapper = Service.Mapper.MapperlyMapper;
 using Repository.Models.Identity;
 using Utility.Helpers;
+using AngleSharp;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));*/
 
 // Add CORS policy
-const string myAllowSpecificOrigins = "http://localhost:5173";
+const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly(), true).AddEnvironmentVariables();
 builder.Services.AddCors(options =>
 {
@@ -185,6 +187,7 @@ builder.Services.AddScoped<IShopRepository, ShopRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderShopRepository, OrderShopRepository>();
 
 // Service
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -197,6 +200,11 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IVoucherService, VoucherService>();
 builder.Services.AddScoped<IPayOSService, PayOSService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
+builder.Services.AddScoped<IRefundService, RefundService>();
+
+builder.Services.Configure<PayOSSetting>(builder.Configuration.GetSection("PayOS"));
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<PayOSSetting>>().Value);
+
 builder.Services.AddHttpContextAccessor();
 
 //-----------------------------------------------------------------------------------------------

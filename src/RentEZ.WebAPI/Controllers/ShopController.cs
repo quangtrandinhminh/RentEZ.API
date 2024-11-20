@@ -41,10 +41,19 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpGet]
+        [Route("{id}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllShops()
+        public async Task<IActionResult> GetShopById([FromRoute]int id)
         {
-            var shops = await _shopService.GetAllShops();
+            var shop = await _shopService.GetShopById(id);
+            return Ok(BaseResponse.OkResponseDto(shop));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllShops([FromQuery] ShopQueryParams queryParams, [FromQuery] int pageNumber = 1, int pageSize = 10)
+        {
+            var shops = await _shopService.GetAllShops(queryParams, pageNumber, pageSize);
             return Ok(BaseResponse.OkResponseDto(shops));
         }
 

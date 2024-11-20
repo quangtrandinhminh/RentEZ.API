@@ -7,6 +7,7 @@ public class OrderDetail
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public int ProductId { get; set; }
+    public int OrderShopId { get; set; }
     public int RentQuantity { get; set; }
     public DateTimeOffset RentDateTime { get; set; }
     public DateTimeOffset ReturnDateTime { get; set; }
@@ -24,6 +25,6 @@ public class OrderDetail
     [ForeignKey("OrderShopId")]
     public virtual OrderShop OrderShop { get; set; }
 
-    /*[ForeignKey("ProductId")]
-    public virtual Product Product { get; set; }*/
+    [ForeignKey("ProductId")]
+    public virtual Product Product { get; set; }
 }

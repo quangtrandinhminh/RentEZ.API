@@ -6,7 +6,7 @@ namespace Repository.Interfaces;
 
 public interface IOrderRepository : IBaseRepository<Order>
 {
-    Task<Order> GetOrderAsyncById(Expression<Func<Order, bool>>? predicate = null,
+    Task<Order> GetOrderByIdAsync(Expression<Func<Order, bool>>? predicate = null,
         bool isIncludeDeleted = false,
         bool isIncludeTracking = false,
         bool isIncludeOrderDetails = false,

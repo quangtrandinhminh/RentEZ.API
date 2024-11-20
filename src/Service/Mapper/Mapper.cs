@@ -42,16 +42,18 @@ public partial class MapperlyMapper
 
     public partial IList<UserResponse> Map(IList<UserEntity> entity);
     public partial IQueryable<UserResponse> Map(IQueryable<UserEntity> entity);
+    public partial PaginatedListResponse<UserResponse> Map(PaginatedList<UserEntity> entity);
     public partial void Map(RegisterRequest request, UserEntity entity);
 
     // shop
     public partial void ShopToCreateShop(ShopCreateRequest request, Shop entity);
     public partial Shop MapShopToCreateShop(ShopCreateRequest request);
-    public partial IList<ShopResponse> ShopToShopResponseDto(IList<Shop> entity);
+    public partial IList<ShopResponse> ShopsToShopsResponseDto(IList<Shop> entity);
+    public partial ShopResponse ShopToShopResponseDto(Shop entity);
 
     // product
     public partial void ProductToCreateProduct(ProductCreateRequest request, Product entity);
-    public partial IList<ProductResponse> ProductsToProductsResponseDto(IList<Product> entity);
+    public partial IList<ProductListResponse> ProductsToProductsResponseDto(IList<Product> entity);
     public partial ProductResponse ProductToProductResponseDto(Product entity);
 
     // category
@@ -63,19 +65,20 @@ public partial class MapperlyMapper
     public partial OrderResponse MapToOrderResponse(Order order);
     public partial PaginatedListResponse<OrderListResponse> MapToOrderListResponse(PaginatedList<Order> entity);
     public partial Order MapToOrder(OrderRequest request);
+    public partial CustomerResponse MapTCustomerResponse(UserEntity entity);
 
     // ordershop
     public partial OrderShop MapToOrderShop(OrderShopRequest request);
     public partial IList<OrderShopResponse> MapToOrderShopListResponse(List<OrderShop> entity);
     public partial PaginatedListResponse<OrderShopListResponse> MapToPaginatedListOrderShopListResponse(PaginatedList<OrderShop> entity);
     public partial OrderShopResponse MapToOrderShopResponse(OrderShop entity);
-
-
+    public partial OsShopResponse MapToOsShopResponse(Shop shop);
     // order detail
     public partial IList<OrderDetailListResponse> MapToOrderDetailListResponse(IList<OrderShop> entity);
     public partial OrderDetailResponse MapToOrderDetailResponse(OrderShop entity);
     public partial void Map(OrderDetailRequest request, OrderShop entity);
     public partial OrderDetail MapToOrderShop(OrderDetailRequest request);
+    public partial OdProductResponse MapToOdProductResponse(Product product);
 
     // cart
     public partial List<CartItem> MapToCartItems(List<Product> entity);
