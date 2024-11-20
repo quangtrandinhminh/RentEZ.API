@@ -183,6 +183,7 @@ builder.Services.AddScoped<IShopRepository, ShopRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderShopRepository, OrderShopRepository>();
 
 // Service
 builder.Services.AddScoped<IAuthService, AuthService>();

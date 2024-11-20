@@ -13,7 +13,7 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository
     {
     }
 
-    public async Task<Order> GetOrderAsyncById(Expression<Func<Order, bool>>? predicate = null, 
+    public async Task<Order> GetOrderByIdAsync(Expression<Func<Order, bool>>? predicate = null, 
         bool isIncludeDeleted = false,
         bool isIncludeTracking = false,
         bool isIncludeOrderDetails = false,
@@ -37,7 +37,8 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository
                 {
                     if (isIncludeOrderDetails)
                     {
-                        query = query.Include(e => e.OrderShops).ThenInclude(os => os.OrderDetails);
+                        query = query.Include(e => e.OrderShops).ThenInclude(os => os.OrderDetails)
+                            .ThenInclude(od => od.Product);
                     }
 
                     if (isIncludeVoucher)

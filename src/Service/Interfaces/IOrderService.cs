@@ -22,14 +22,15 @@ public interface IOrderService
     // user create order
     Task<int> CreateOrderAsync(OrderRequest request, CancellationToken cancellationToken = default);
 
+    OrderShopStatusEnumResponse GetAllOrderShopStatusEnum();
     // get all order details for shop owner, user, support query
     Task<PaginatedListResponse<OrderShopListResponse>> GetAllOrderShopsAsync(
         OrderShopListRequest request);
 
     // get order detail by id, include order
-    Task<OrderShopResponse> GetOrderShopsByIdAsync(int orderShopId);
+    Task<OrderShopResponse> GetOrderShopsByIdAsync(int orderShopId, bool isShop);
 
     Task CancelOrderAsync(int orderId);
-    Task ChangeOrderShopStatusAsync (int orderShopId);
+    Task ChangeOrderShopStatusAsync (int orderShopId, bool isShop);
     Task ChangeToWaitingForRefund(int id);
 }
