@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Net.payOS;
 using Net.payOS.Types;
+using Newtonsoft.Json;
 using Repository.Base;
 using Repository.Infrastructure;
 using Repository.Models;
@@ -149,8 +150,23 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
     public async Task<PaymentLinkInformation> GetPaymentLinkInformationAsync(long orderCode)
     {
         _logger.Information($"Get payment link information for orderCode {orderCode}");
-        var payOS = new PayOS(_payOSSetting.ClientID, _payOSSetting.ApiKey, _payOSSetting.ChecksumKey);
-        return await payOS.getPaymentLinkInformation(orderCode);
+        /*var payOS = new PayOS(_payOSSetting.ClientID, _payOSSetting.ApiKey, _payOSSetting.ChecksumKey);
+        return await payOS.getPaymentLinkInformation(orderCode);*/
+
+        // fetch api from payOS https://api-merchant.payos.vn/v2/payment-requests/{orderCode} with header x-client-id, x-api-key
+
+        var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("x-client-id", _payOSSetting.ClientID);
+        client.DefaultRequestHeaders.Add("x-api-key", _payOSSetting.ApiKey);
+        var response = await client.GetAsync($"https://api-merchant.payos.vn/v2/payment-requests/{orderCode}");
+        if (response.IsSuccessStatusCode)
+        {
+            string content = await response.Content.ReadAsStringAsync();
+            var payOsResponse = JsonConvert.DeserializeObject<PayOSResponse>(content);
+            return payOsResponse.Data;
+        }
+
+        throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsOrder.NOT_FOUND, StatusCodes.Status404NotFound);
     }
 
     public async Task ConfirmPayment(int orderId, long orderCode)
