@@ -63,7 +63,7 @@ namespace RentEZ.WebAPI.Controllers
         [HttpGet("order-shops/enums")]
         public IActionResult GetAllOrderShopsEnum()
         {
-            var response = _orderService.GetAllOrderShopStatusEnumV2();
+            var response = _orderService.GetAllOrderShopStatusEnum();
             return Ok(BaseResponse.OkResponseDto(response));
         }
 

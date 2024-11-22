@@ -246,7 +246,7 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         // Map order request to order entity
         var order = _mapper.MapToOrder(request);
         order.CustomerId = JwtClaimUltils.GetUserId(JwtClaimUltils.GetLoginedUser(_httpContextAccessor));
-        var shop = _shopRepository.GetSingleAsync(x => x.OwnerId == order.CustomerId);
+        var shop = await _shopRepository.GetSingleAsync(x => x.OwnerId == order.CustomerId);
 
         // check if orderShop contains shopId, not allow to order own shop
         if (shop != null && order.OrderShops.Any(x => x.ShopId == shop.Id))
