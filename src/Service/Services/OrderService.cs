@@ -23,6 +23,7 @@ using Repository.Extensions;
 using Service.ApiModels.OrderShop;
 using System.Linq.Expressions;
 using Flurl.Util;
+using Service.ApiModels;
 using Utility.Helpers;
 using Service.Helpers;
 using Service.ApiModels.PaginatedList;
@@ -59,6 +60,13 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
     private const decimal PlatformRate = 0.15m;
     private const decimal ShipFee = 30000;
     private const decimal TaxRate = 0;
+
+    public IList<EnumResponse> GetAllPaymentEnum()
+    {
+        _logger.Information("Get all payment enum");
+        var paymentEnum = EnumHelper.GetEnumList<PaymentMethodEnum>();
+        return paymentEnum;
+    }
 
     public async Task<OrderRequest> CalculateTotalPrice(CartCalcRequest request)
     {
@@ -238,13 +246,13 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         // Map order request to order entity
         var order = _mapper.MapToOrder(request);
         order.CustomerId = JwtClaimUltils.GetUserId(JwtClaimUltils.GetLoginedUser(_httpContextAccessor));
-        var shopId = await _shopRepository.GetSingleAsync(x => x.OwnerId == order.CustomerId);
+        var shop = _shopRepository.GetSingleAsync(x => x.OwnerId == order.CustomerId);
 
-        // check if orderShop contains shopId
-        if (order.OrderShops.Any(x => x.ShopId != shopId.Id))
+        // check if orderShop contains shopId, not allow to order own shop
+        if (shop != null && order.OrderShops.Any(x => x.ShopId == shop.Id))
         {
             throw new AppException(ResponseCodeConstants.BAD_REQUEST, 
-                ResponseMessageConstrantsOrder.CUSTOMER_NOTALLOWED_ORDER + $" ShopId: {shopId}",
+                ResponseMessageConstrantsOrder.CUSTOMER_NOTALLOWED_ORDER + $" ShopId: {shop.Id}",
                                StatusCodes.Status400BadRequest);
         }
 
@@ -300,14 +308,18 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         return order.Id;
     }
 
-    public OrderShopStatusEnumResponse GetAllOrderShopStatusEnum()
+    public IDictionary<int, string> GetAllOrderShopStatusEnum()
     {
         _logger.Information("Get all order shop status enum");
         var orderShopStatusEnum = EnumHelper.GetEnumDictionary<OrderShopStatusEnum>();
-        return new OrderShopStatusEnumResponse
-        {
-            OrderShopStatusEnums = orderShopStatusEnum
-        };
+        return orderShopStatusEnum;
+    }
+
+    public IList<EnumResponse> GetAllOrderShopStatusEnumV2()
+    {
+        _logger.Information("Get all order shop status enum");
+        var orderShopStatusEnum = EnumHelper.GetEnumList<OrderShopStatusEnum>();
+        return orderShopStatusEnum;
     }
 
     public async Task<PaginatedListResponse<OrderShopListResponse>> GetAllOrderShopsAsync(OrderShopListRequest request)
@@ -447,7 +459,7 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         await _unitOfWork.SaveChangeAsync();
     }
 
-    public async Task ChangeOrderShopStatusAsync(int orderShopId, bool isShop)
+    public async Task<string> ChangeOrderShopStatusAsync(int orderShopId, bool isShop)
     {
         _logger.Information("Change order status by id {@orderShopId}", orderShopId);
         var loginedUser = JwtClaimUltils.GetLoginedUser(_httpContextAccessor);
@@ -476,10 +488,11 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         }
 
         var processor = new OrderShopProcessor(orderShop);
-        processor.ChangeNextStatus();
+        var status = processor.ChangeNextStatus();
         _orderShopRepository.Update(orderShop);
 
         await _unitOfWork.SaveChangeAsync(_httpContextAccessor);
+        return status;
     }
 
     public async Task CancelOrderShopAsync(int orderShopId)

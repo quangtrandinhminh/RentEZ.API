@@ -78,6 +78,8 @@ public partial class MapperlyMapper
     public partial OrderDetailResponse MapToOrderDetailResponse(OrderShop entity);
     public partial void Map(OrderDetailRequest request, OrderShop entity);
     public partial OrderDetail MapToOrderShop(OrderDetailRequest request);
+
+    [MapProperty(nameof(Product.Image), nameof(OdProductResponse.ProductImage))]
     public partial OdProductResponse MapToOdProductResponse(Product product);
 
     // cart

@@ -21,6 +21,13 @@ namespace RentEZ.WebAPI.Controllers
             _orderService = orderService;
         }
 
+        [HttpGet("payment-methods")]
+        public IActionResult GetAllPaymentEnum()
+        {
+            var response = _orderService.GetAllPaymentEnum();
+            return Ok(BaseResponse.OkResponseDto(response));
+        }
+
         [HttpGet]
         [Authorize(Roles = "Admin, Customer")]
         public async Task<IActionResult> GetAllOrders([FromQuery] OrderListRequest request)
@@ -56,7 +63,14 @@ namespace RentEZ.WebAPI.Controllers
         [HttpGet("order-shops/enums")]
         public IActionResult GetAllOrderShopsEnum()
         {
-            var response = _orderService.GetAllOrderShopStatusEnum();
+            var response = _orderService.GetAllOrderShopStatusEnumV2();
+            return Ok(BaseResponse.OkResponseDto(response));
+        }
+
+        [HttpGet("v2/order-shops/enums")]
+        public IActionResult GetAllOrderShopsEnumV2()
+        {
+            var response = _orderService.GetAllOrderShopStatusEnumV2();
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
@@ -78,8 +92,8 @@ namespace RentEZ.WebAPI.Controllers
         [Authorize(Roles = "Customer, ShopOwner")]
         public async Task<IActionResult> ChangeOrderStatus([FromRoute] int orderShopId, [FromQuery] bool isShop = false)
         {
-            await _orderService.ChangeOrderShopStatusAsync(orderShopId, isShop);
-            return Ok(BaseResponse.OkResponseDto("Order status changed successfully"));
+            var status = await _orderService.ChangeOrderShopStatusAsync(orderShopId, isShop);
+            return Ok(BaseResponse.OkResponseDto($"Order status changed into status [{status}] successfully"));
         }
 
         [HttpDelete("{orderId}")]

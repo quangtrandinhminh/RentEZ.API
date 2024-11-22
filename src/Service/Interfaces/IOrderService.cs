@@ -1,5 +1,6 @@
 ﻿using Repository.Extensions;
 using Repository.Models;
+using Service.ApiModels;
 using Service.ApiModels.Order;
 using Service.ApiModels.OrderDetail;
 using Service.ApiModels.OrderShop;
@@ -10,6 +11,8 @@ namespace Service.Interfaces;
 
 public interface IOrderService
 {
+    IList<EnumResponse> GetAllPaymentEnum();
+
     // calculate total price of an order
     Task<OrderRequest> CalculateTotalPrice(CartCalcRequest request);
 
@@ -21,8 +24,8 @@ public interface IOrderService
 
     // user create order
     Task<int> CreateOrderAsync(OrderRequest request, CancellationToken cancellationToken = default);
-
-    OrderShopStatusEnumResponse GetAllOrderShopStatusEnum();
+    IDictionary<int, string> GetAllOrderShopStatusEnum();
+    IList<EnumResponse> GetAllOrderShopStatusEnumV2();
     // get all order details for shop owner, user, support query
     Task<PaginatedListResponse<OrderShopListResponse>> GetAllOrderShopsAsync(
         OrderShopListRequest request);
@@ -31,6 +34,6 @@ public interface IOrderService
     Task<OrderShopResponse> GetOrderShopsByIdAsync(int orderShopId, bool isShop);
 
     Task CancelOrderAsync(int orderId);
-    Task ChangeOrderShopStatusAsync (int orderShopId, bool isShop);
+    Task<string> ChangeOrderShopStatusAsync(int orderShopId, bool isShop);
     Task ChangeToWaitingForRefund(int id);
 }

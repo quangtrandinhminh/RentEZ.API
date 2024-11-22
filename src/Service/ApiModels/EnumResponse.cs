@@ -1,7 +1,8 @@
 ﻿namespace Service.ApiModels;
 
-public class EnumResponseDto
+public class EnumResponse
 {
     public int Id { get; set; }
-    public string Value { get; set; }
+    public string? Value { get; set; }
+    public string? Description { get; set; }
 }
