@@ -146,7 +146,7 @@
         public const string INVALID_DATA = "Dữ liệu không hợp lệ";
         public const string NOTALLOWED = "Bạn không được phép xem đơn hàng này";
         public const string CUSTOMER_NOTALLOWED = "You are only allowed to see your orders";
-        public const string CUSTOMER_NOTALLOWED_ORDER = "You are not allowed to order from this shop";
+        public const string CUSTOMER_NOTALLOWED_ORDER = "You are not allowed to order from your own shop";
         public const string SHOPOWNER_NOTALLOWED = "You are only allowed to see your shop's orders";
         public const string STATUS_CHANGE_NOTALLOWED = "Bạn chưa thể thay đổi trạng thái của đơn hàng này";
         public const string ALREADY_PAID = "Đơn hàng đã được thanh toán";
