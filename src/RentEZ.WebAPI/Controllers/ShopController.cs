@@ -25,7 +25,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpPost()]
-        [Authorize(Roles = "ShopOwner")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> CreateNewShop([FromBody] ShopCreateRequest request)
         {
             await _shopService.CreateShop(request);
@@ -51,9 +51,9 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllShops([FromQuery] ShopQueryParams queryParams, [FromQuery] int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllShops([FromQuery] ShopQueryParams queryParams)
         {
-            var shops = await _shopService.GetAllShops(queryParams, pageNumber, pageSize);
+            var shops = await _shopService.GetAllShops(queryParams);
             return Ok(BaseResponse.OkResponseDto(shops));
         }
 

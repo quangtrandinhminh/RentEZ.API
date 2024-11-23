@@ -533,17 +533,4 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
     {
         return await _orderShopRepository.IsExistAsync(x => x.Id == orderShopId);
     }
-    
-    public async Task ChangeToWaitingForRefund(int id)
-    {
-        var orderShop = await _orderShopRepository.GetByIdAsync(id);
-        if (orderShop == null)
-        {
-            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsOrder.NOT_FOUND, StatusCodes.Status404NotFound);
-        }
-
-        orderShop.Status = OrderShopStatusEnum.WaitingForRefund;
-        _orderShopRepository.Update(orderShop);
-        await _unitOfWork.SaveChangeAsync();
-    }
 }
