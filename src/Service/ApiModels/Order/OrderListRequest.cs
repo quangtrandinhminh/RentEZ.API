@@ -4,5 +4,4 @@ namespace Service.ApiModels.Order;
 
 public class OrderListRequest : PaginatedListRequest
 {
-
 }

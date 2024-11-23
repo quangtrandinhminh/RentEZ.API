@@ -71,9 +71,7 @@ namespace Repository.Base
             queryable = orderBy != null ? queryable.OrderBy(orderBy) : queryable.OrderByDescending(p => p.CreatedTime);
 
             // Create the paginated list with the projected query
-            var paginatedList = await PaginatedList<T>.CreateAsync(queryable, pageNumber, pageSize);
-            return paginatedList;
-
+            return await PaginatedList<T>.CreateAsync(queryable, pageNumber, pageSize);
         }
 
         public IQueryable<T> GetAllWithCondition(Expression<Func<T, bool>> predicate = null,

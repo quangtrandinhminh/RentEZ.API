@@ -66,19 +66,22 @@ public partial class MapperlyMapper
     public partial OrderResponse MapToOrderResponse(Order order);
     public partial PaginatedListResponse<OrderListResponse> MapToOrderListResponse(PaginatedList<Order> entity);
     public partial Order MapToOrder(OrderRequest request);
+    public partial CustomerResponse MapTCustomerResponse(UserEntity entity);
 
     // ordershop
     public partial OrderShop MapToOrderShop(OrderShopRequest request);
     public partial IList<OrderShopResponse> MapToOrderShopListResponse(List<OrderShop> entity);
     public partial PaginatedListResponse<OrderShopListResponse> MapToPaginatedListOrderShopListResponse(PaginatedList<OrderShop> entity);
     public partial OrderShopResponse MapToOrderShopResponse(OrderShop entity);
-
-
+    public partial OsShopResponse MapToOsShopResponse(Shop shop);
     // order detail
     public partial IList<OrderDetailListResponse> MapToOrderDetailListResponse(IList<OrderShop> entity);
     public partial OrderDetailResponse MapToOrderDetailResponse(OrderShop entity);
     public partial void Map(OrderDetailRequest request, OrderShop entity);
     public partial OrderDetail MapToOrderShop(OrderDetailRequest request);
+
+    [MapProperty(nameof(Product.Image), nameof(OdProductResponse.ProductImage))]
+    public partial OdProductResponse MapToOdProductResponse(Product product);
 
     // cart
     public partial List<CartItem> MapToCartItems(List<Product> entity);

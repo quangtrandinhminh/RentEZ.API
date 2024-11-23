@@ -22,6 +22,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Repository.Extensions;
 using Service.ApiModels.OrderShop;
 using System.Linq.Expressions;
+using Flurl.Util;
+using Service.ApiModels;
 using Utility.Helpers;
 using Service.Helpers;
 using Service.ApiModels.PaginatedList;
@@ -34,8 +36,8 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
 {
     private readonly IOrderRepository _orderRepository =
         serviceProvider.GetRequiredService<IOrderRepository>();
-    private readonly IBaseRepository<OrderShop> _orderShopRepository =
-        serviceProvider.GetRequiredService<IBaseRepository<OrderShop>>();
+    private readonly IOrderShopRepository _orderShopRepository =
+        serviceProvider.GetRequiredService<IOrderShopRepository>();
     private readonly IBaseRepository<Voucher> _voucherRepository =
         serviceProvider.GetRequiredService<IBaseRepository<Voucher>>();
     private readonly IBaseRepository<Product> _productRepository =
@@ -58,6 +60,13 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
     private const decimal PlatformRate = 0.15m;
     private const decimal ShipFee = 30000;
     private const decimal TaxRate = 0;
+
+    public IList<EnumResponse> GetAllPaymentEnum()
+    {
+        _logger.Information("Get all payment enum");
+        var paymentEnum = EnumHelper.GetEnumList<PaymentMethodEnum>();
+        return paymentEnum;
+    }
 
     public async Task<OrderRequest> CalculateTotalPrice(CartCalcRequest request)
     {
@@ -186,15 +195,12 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
             predicate = x => x.CustomerId == userId;
         }
 
-        if (role.Contains(UserRoleEnum.ShopOwner.ToString()))
-        {
-            predicate = x => x.OrderShops.Any(x => x.Shop.OwnerId == userId);
-        }
-
         var orders = await _orderRepository.GetAllPaginatedQueryable(
                        request.PageNumber, request.PageSize,
                                   predicate,
-                                  x => x.CreatedTime);
+                                  x => x.CreatedTime,
+                       x => x.Customer
+                       );
 
         return _mapper.MapToOrderListResponse(orders);
     }
@@ -202,8 +208,10 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
     public async Task<OrderResponse> GetOrderByIdAsync(int orderId)
     {
         _logger.Information("Get order by id {@orderId}", orderId);
+        var user = JwtClaimUltils.GetLoginedUser(_httpContextAccessor);
+        var role = JwtClaimUltils.GetUserRole(user);
         var loginUserId = JwtClaimUltils.GetUserId(JwtClaimUltils.GetLoginedUser(_httpContextAccessor));
-        var order = await _orderRepository.GetOrderAsyncById(
+        var order = await _orderRepository.GetOrderByIdAsync(
             x => x.Id == orderId,
             false,
             false,
@@ -220,11 +228,13 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
                 StatusCodes.Status404NotFound);
         }
 
-        if (order.CustomerId != loginUserId)
+        if (role.Contains(UserRoleEnum.Admin.ToString()))
         {
-            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseCodeConstants.FORBIDDEN,
-                               StatusCodes.Status403Forbidden);
+            return _mapper.MapToOrderResponse(order);
         }
+
+        // only customer can view their own order
+        ValidateCustomerOrder(role, order.CustomerId, loginUserId);
 
         return _mapper.MapToOrderResponse(order);
     }
@@ -236,6 +246,15 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         // Map order request to order entity
         var order = _mapper.MapToOrder(request);
         order.CustomerId = JwtClaimUltils.GetUserId(JwtClaimUltils.GetLoginedUser(_httpContextAccessor));
+        var shop = await _shopRepository.GetSingleAsync(x => x.OwnerId == order.CustomerId);
+
+        // check if orderShop contains shopId, not allow to order own shop
+        if (shop != null && order.OrderShops.Any(x => x.ShopId == shop.Id))
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, 
+                ResponseMessageConstrantsOrder.CUSTOMER_NOTALLOWED_ORDER + $" ShopId: {shop.Id}",
+                               StatusCodes.Status400BadRequest);
+        }
 
         // Combine all voucher IDs (platform vouchers + shop vouchers), excluding null or zero values
         var allVoucherIds = order.PlatformVouchers.Select(x => x.Id)
@@ -289,6 +308,19 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         return order.Id;
     }
 
+    public IDictionary<int, string> GetAllOrderShopStatusEnum()
+    {
+        _logger.Information("Get all order shop status enum");
+        var orderShopStatusEnum = EnumHelper.GetEnumDictionary<OrderShopStatusEnum>();
+        return orderShopStatusEnum;
+    }
+
+    public IList<EnumResponse> GetAllOrderShopStatusEnumV2()
+    {
+        _logger.Information("Get all order shop status enum");
+        var orderShopStatusEnum = EnumHelper.GetEnumList<OrderShopStatusEnum>();
+        return orderShopStatusEnum;
+    }
 
     public async Task<PaginatedListResponse<OrderShopListResponse>> GetAllOrderShopsAsync(OrderShopListRequest request)
     {
@@ -298,36 +330,41 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         var role = JwtClaimUltils.GetUserRole(loginUser);
         var userId = JwtClaimUltils.GetUserId(loginUser);
         Expression<Func<OrderShop, bool>> predicate = null;
-        if (request.IsShop)
+
+        // if user is not admin, check if user is shop owner or customer and get ordershop by shop id or customer id
+        if (!role.Contains(UserRoleEnum.Admin.ToString()))
         {
-            // if request is shop but user is not shop owner, not allowed
-            if (!role.Contains(UserRoleEnum.ShopOwner.ToString()))
+            if (request.IsShop)
             {
-                throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.NOTALLOWED,
-                    StatusCodes.Status403Forbidden);
-            }
+                // if request is shop but user is not shop owner, not allowed
+                if (!role.Contains(UserRoleEnum.ShopOwner.ToString()))
+                {
+                    throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.NOTALLOWED,
+                        StatusCodes.Status403Forbidden);
+                }
 
-            // get ordershop by shop id
-            var shop = await _shopRepository.GetSingleAsync(x => x.OwnerId == userId);
-            if (shop == null)
+                // get ordershop by shop id
+                var shop = await _shopRepository.GetSingleAsync(x => x.OwnerId == userId);
+                if (shop == null)
+                {
+                    throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND,
+                        StatusCodes.Status404NotFound);
+                }
+
+                predicate = x => x.ShopId == shop.Id;
+            }
+            else
             {
-                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND,
-                                       StatusCodes.Status404NotFound);
-            }
+                // if request is not shop but user is shop owner, not allowed
+                if (!role.Contains(UserRoleEnum.Customer.ToString()))
+                {
+                    throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsShop.NOTALLOWED,
+                        StatusCodes.Status403Forbidden);
+                }
 
-            predicate = x => x.ShopId == shop.Id;
-        }
-        else
-        {
-            // if request is not shop but user is shop owner, not allowed
-            if (!role.Equals(UserRoleEnum.Customer.ToString()))
-            {
-                throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsShop.NOTALLOWED,
-                    StatusCodes.Status403Forbidden);
+                // get ordershop by customer id
+                predicate = x => x.Order.CustomerId == userId;
             }
-
-            // get ordershop by customer id
-            predicate = x => x.Order.CustomerId == userId;
         }
 
         // check if status is valid enum value then add to predicate
@@ -339,16 +376,17 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
             predicate = predicate.And(x => x.Status == parsedStatus);
         }
 
-        var orderShop = await _orderShopRepository.GetAllPaginatedQueryable(
+        var orderShop = await _orderShopRepository.GetAllOrderShopsAsync(
             request.PageNumber, request.PageSize,
-            predicate,
+            predicate, false, true,
             x => x.CreatedTime,
             x => x.Order,
+            x =>x.Shop,
             x => x.OrderDetails);
         return _mapper.MapToPaginatedListOrderShopListResponse(orderShop);
     }
 
-    public async Task<OrderShopResponse> GetOrderShopsByIdAsync(int orderShopId)
+    public async Task<OrderShopResponse> GetOrderShopsByIdAsync(int orderShopId, bool isShop)
     {
         _logger.Information("Get order shop by id {@orderShopId}", orderShopId);
 
@@ -356,25 +394,25 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         var role = JwtClaimUltils.GetUserRole(loginUser);
         var userId = JwtClaimUltils.GetUserId(loginUser);
 
-        var orderShop = await _orderShopRepository.GetSingleAsync(x => x.Id == orderShopId,
-            false,
+        var orderShop = await _orderShopRepository.GetOrderShopByIdAsync(x => x.Id == orderShopId,
+            false, true,
             x => x.Order,
             x => x.Order.Customer,
             x => x.Shop,
             x => x.OrderDetails);
 
-        if (role.Contains(UserRoleEnum.ShopOwner.ToString()) &&
-            orderShop.Shop.OwnerId != userId)
+        if (role.Contains(UserRoleEnum.Admin.ToString()))
         {
-            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsShop.NOTALLOWED,
-                                              StatusCodes.Status403Forbidden);
+            return _mapper.MapToOrderShopResponse(orderShop);
         }
 
-        if (role.Contains(UserRoleEnum.Customer.ToString()) &&
-            orderShop.Order.CustomerId != userId)
+        if (isShop)
         {
-            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.NOTALLOWED,
-                                                             StatusCodes.Status403Forbidden);
+            ValidateShopOwnerOrderShop(role, orderShop, userId, MethodEnum.GET);
+        }
+        else
+        {
+            ValidateCustomerOrderShop(role, orderShop, userId, MethodEnum.GET);
         }
 
         return _mapper.MapToOrderShopResponse(orderShop);
@@ -399,7 +437,7 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         // customer can only cancel their own order
         if (order.CustomerId != userId)
         {
-            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.NOTALLOWED,
+            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.CUSTOMER_NOTALLOWED,
                                               StatusCodes.Status403Forbidden);
         }
 
@@ -421,7 +459,7 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         await _unitOfWork.SaveChangeAsync();
     }
 
-    public async Task ChangeOrderShopStatusAsync(int orderShopId)
+    public async Task<string> ChangeOrderShopStatusAsync(int orderShopId, bool isShop)
     {
         _logger.Information("Change order status by id {@orderShopId}", orderShopId);
         var loginedUser = JwtClaimUltils.GetLoginedUser(_httpContextAccessor);
@@ -440,34 +478,21 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
                                                                                                         StatusCodes.Status404NotFound);
         }
 
-        // order must be in Shipping or Received status
-        if (orderShop.Status is not (OrderShopStatusEnum.Shipping or OrderShopStatusEnum.Received))
+        if (isShop)
         {
-            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsOrder.STATUS_CHANGE_NOTALLOWED,
-                                                                                                                         StatusCodes.Status400BadRequest);
+            ValidateShopOwnerOrderShop(role, orderShop, userId, MethodEnum.PUT);
         }
-
-        // customer can only change status of their own order
-        if (role.Contains(UserRoleEnum.Customer.ToString())
-           && orderShop.Order.CustomerId != userId)
+        else
         {
-            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.NOTALLOWED,
-                                                                            StatusCodes.Status403Forbidden);
-        }
-
-        // shop owner can only change status of their own order
-        if (role.Contains(UserRoleEnum.ShopOwner.ToString())
-            && orderShop.Shop.OwnerId != userId)
-        {
-            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.NOTALLOWED,
-                                                                                           StatusCodes.Status403Forbidden);
+            ValidateCustomerOrderShop(role, orderShop, userId, MethodEnum.PUT);
         }
 
         var processor = new OrderShopProcessor(orderShop);
-        processor.ChangeNextStatus();
+        var status = processor.ChangeNextStatus();
         _orderShopRepository.Update(orderShop);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangeAsync(_httpContextAccessor);
+        return status;
     }
 
     public async Task CancelOrderShopAsync(int orderShopId)
@@ -498,21 +523,12 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
                 StatusCodes.Status400BadRequest);
         }
 
-        // customer can only cancel their own order
-        if (role.Contains(UserRoleEnum.Customer.ToString())
-            && orderShop.Order.CustomerId != userId)
-        {
-            throw new AppException(ResponseCodeConstants.FORBIDDEN, 
-                ResponseMessageConstrantsOrder.NOTALLOWED,
-                StatusCodes.Status403Forbidden);
-        }
-
-        // shop owner can only cancel their own order
+        
         if (role.Contains(UserRoleEnum.ShopOwner.ToString())
             && orderShop.Shop.OwnerId != userId)
         {
             throw new AppException(ResponseCodeConstants.FORBIDDEN, 
-                ResponseMessageConstrantsOrder.NOTALLOWED,
+                ResponseMessageConstrantsOrder.SHOPOWNER_NOTALLOWED,
                 StatusCodes.Status403Forbidden);
         }
 
@@ -521,7 +537,7 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         orderShop.CancelBy = userId;
         _orderShopRepository.Update(orderShop);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangeAsync(_httpContextAccessor);
     }
 
     private async Task<bool> IsOrderExist(int orderId)
@@ -532,5 +548,83 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
     private async Task<bool> IsOrderShopExist(int orderShopId)
     {
         return await _orderShopRepository.IsExistAsync(x => x.Id == orderShopId);
+    }
+    
+    public async Task ChangeToWaitingForRefund(int id)
+    {
+        var orderShop = await _orderShopRepository.GetByIdAsync(id);
+        if (orderShop == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsOrder.NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        orderShop.Status = OrderShopStatusEnum.WaitingForRefund;
+        _orderShopRepository.Update(orderShop);
+        await _unitOfWork.SaveChangeAsync();
+    }
+
+    private void ValidateCustomerOrderShop(IList<string> role, OrderShop orderShop, int userId, MethodEnum method)
+    {
+        // customer can only update their own order
+        if (role.Contains(UserRoleEnum.Customer.ToString()) && orderShop.Order.CustomerId != userId)
+        {
+            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.CUSTOMER_NOTALLOWED,
+                StatusCodes.Status403Forbidden);
+        }
+
+        // customer can only update when ordershop status is Shipping or Received
+        if (method == MethodEnum.PUT &&
+            orderShop.Status is not (OrderShopStatusEnum.Shipping or OrderShopStatusEnum.Received))
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsOrder.STATUS_CHANGE_NOTALLOWED,
+                StatusCodes.Status400BadRequest);
+        }
+
+        // customer can only cancel when ordershop status is WaitForPayment
+        if (method == MethodEnum.DELETE &&
+            orderShop.Status != OrderShopStatusEnum.WaitForPayment)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsOrder.STATUS_CHANGE_NOTALLOWED,
+                               StatusCodes.Status400BadRequest);
+        }
+    }
+
+    private void ValidateShopOwnerOrderShop(IList<string> role, OrderShop orderShop, int userId, MethodEnum method)
+    {
+        // shop owner can only update their own order
+        if (role.Contains(UserRoleEnum.ShopOwner.ToString()) && orderShop.Shop.OwnerId != userId)
+        {
+            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.SHOPOWNER_NOTALLOWED,
+                               StatusCodes.Status403Forbidden);
+        }
+
+        // shop owner can only update when ordershop status is Pending or Approved or Returning or Returned
+        if (method == MethodEnum.PUT &&
+            orderShop.Status is not (OrderShopStatusEnum.Pending or OrderShopStatusEnum.Approved
+                or OrderShopStatusEnum.Returning or OrderShopStatusEnum.Returned))
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsOrder.STATUS_CHANGE_NOTALLOWED,
+                                              StatusCodes.Status400BadRequest);
+        }
+    }
+
+    private void ValidateCustomerOrder(IList<string> role, int customerId, int userId)
+    {
+        // customer can only update their own order
+        if (role.Contains(UserRoleEnum.Customer.ToString()) && customerId != userId)
+        {
+            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.CUSTOMER_NOTALLOWED,
+                               StatusCodes.Status403Forbidden);
+        }
+    }
+
+    private void ValidateShopOwnerOrder(IList<string> role, int shopOwnerId, int userId)
+    {
+        // shop owner can only update their own order
+        if (role.Contains(UserRoleEnum.ShopOwner.ToString()) && shopOwnerId != userId)
+        {
+            throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsOrder.SHOPOWNER_NOTALLOWED,
+                                              StatusCodes.Status403Forbidden);
+        }
     }
 }

@@ -12,7 +12,8 @@ public class UserResponse
     public string? Address { get; set; } = string.Empty;
     public string? Avatar { get; set; } = string.Empty;
     public IList<string?> Role { get; set; } = new List<string?>();
-    public DateTimeOffset? BirthDate { get; set; }
+    public DateOnly? BirthDate { get; set; }
+    public int? ShopId { get; set; }
     public int? BankId { get; set; }
     public String? AccountNo { get; set; }
     public String? AccountName { get; set; }

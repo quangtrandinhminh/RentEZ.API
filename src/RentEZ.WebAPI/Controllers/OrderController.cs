@@ -21,7 +21,15 @@ namespace RentEZ.WebAPI.Controllers
             _orderService = orderService;
         }
 
+        [HttpGet("payment-methods")]
+        public IActionResult GetAllPaymentEnum()
+        {
+            var response = _orderService.GetAllPaymentEnum();
+            return Ok(BaseResponse.OkResponseDto(response));
+        }
+
         [HttpGet]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<IActionResult> GetAllOrders([FromQuery] OrderListRequest request)
         {
             var response = await _orderService.GetAllOrdersAsync(request);
@@ -29,6 +37,7 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<IActionResult> GetOrderById(int id)
         {
             var response = await _orderService.GetOrderByIdAsync(id);
@@ -51,8 +60,21 @@ namespace RentEZ.WebAPI.Controllers
             return Created(nameof(CreateOrder), BaseResponse.OkResponseDto("OrderId: " +response));
         }
 
+        [HttpGet("order-shops/enums")]
+        public IActionResult GetAllOrderShopsEnum()
+        {
+            var response = _orderService.GetAllOrderShopStatusEnum();
+            return Ok(BaseResponse.OkResponseDto(response));
+        }
+
+        [HttpGet("v2/order-shops/enums")]
+        public IActionResult GetAllOrderShopsEnumV2()
+        {
+            var response = _orderService.GetAllOrderShopStatusEnumV2();
+            return Ok(BaseResponse.OkResponseDto(response));
+        }
+
         [HttpGet("order-shops")]
-        [Authorize(Roles="Customer, ShopOwner")]
         public async Task<IActionResult> GetAllOrderShops([FromQuery] OrderShopListRequest request)
         {
             var response = await _orderService.GetAllOrderShopsAsync(request);
@@ -60,19 +82,18 @@ namespace RentEZ.WebAPI.Controllers
         }
 
         [HttpGet("order-shops/{orderShopId}")]
-        [Authorize(Roles="Customer, ShopOwner")]
-        public async Task<IActionResult> GetOrderShopById([FromRoute] int orderShopId)
+        public async Task<IActionResult> GetOrderShopById([FromRoute] int orderShopId, [FromQuery] bool isShop = false)
         {
-            var response = await _orderService.GetOrderShopsByIdAsync(orderShopId);
+            var response = await _orderService.GetOrderShopsByIdAsync(orderShopId, isShop);
             return Ok(BaseResponse.OkResponseDto(response));
         }
 
         [HttpPut("order-shops/{orderShopId}/status")]
         [Authorize(Roles = "Customer, ShopOwner")]
-        public async Task<IActionResult> ChangeOrderStatus([FromRoute] int orderShopId)
+        public async Task<IActionResult> ChangeOrderStatus([FromRoute] int orderShopId, [FromQuery] bool isShop = false)
         {
-            await _orderService.ChangeOrderShopStatusAsync(orderShopId);
-            return Ok(BaseResponse.OkResponseDto("Order status changed successfully"));
+            var status = await _orderService.ChangeOrderShopStatusAsync(orderShopId, isShop);
+            return Ok(BaseResponse.OkResponseDto($"Order status changed into status [{status}] successfully"));
         }
 
         [HttpDelete("{orderId}")]

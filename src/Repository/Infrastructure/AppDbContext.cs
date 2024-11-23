@@ -173,6 +173,7 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
         modelBuilder.Entity<UserRoleEntity>().HasData(
             new UserRoleEntity { UserId = 1, RoleId = 1 },
             new UserRoleEntity { UserId = 2, RoleId = 2 },
+            new UserRoleEntity { UserId = 2, RoleId = 3 },
             new UserRoleEntity { UserId = 3, RoleId = 3 },
             new UserRoleEntity { UserId = 3, RoleId = 2 }
         );

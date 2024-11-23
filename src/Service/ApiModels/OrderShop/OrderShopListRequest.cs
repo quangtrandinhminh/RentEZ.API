@@ -6,6 +6,6 @@ namespace Service.ApiModels.OrderShop;
 
 public class OrderShopListRequest : PaginatedListRequest
 {
-    public bool IsShop { get; set; }
+    public bool IsShop { get; set; } = false;
     public OrderShopStatusEnum? Status { get; set; }
 }

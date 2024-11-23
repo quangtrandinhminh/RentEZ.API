@@ -17,9 +17,9 @@ namespace Repository.Models
 
         // Is Active if Owner is Active and Shop is Verified
         public bool IsActive => Owner?.IsActive == true && IsVerified;
-        public int? OwnerId { get; set; }
+        public int OwnerId { get; set; }
         [ForeignKey(nameof(OwnerId))]
-        public UserEntity? Owner { get; set; }
+        public virtual UserEntity Owner { get; set; }
         public virtual ICollection<Product> ProductEntities { get; set; } = new List<Product>();
 
         [MaxLength(6)]

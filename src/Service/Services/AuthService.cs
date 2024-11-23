@@ -220,7 +220,7 @@ namespace Service.Services
 
         public async Task<LoginResponse> Authenticate(LoginRequest dto)
         {
-            _logger.Information("Authenticate user: {@dto}", dto);
+            _logger.Information("Authenticate user: {@dto}", dto.Username);
             var account = await GetUserByUserName(dto.Username);
             if (account == null || account.DeletedTime != null)
                 throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
@@ -246,6 +246,7 @@ namespace Service.Services
                 response.RefreshToken = refreshToken.Token;
                 response.RefreshTokenExpiredTime = refreshToken.Expires;
                 response.Role = roles;
+                response.ShopId = account.ManagedShop is not null ? account.ManagedShop.Id : null;
                 return response;
             }
             catch (Exception e)
@@ -515,7 +516,9 @@ namespace Service.Services
 
         private async Task<UserEntity?> GetUserByUserName(string userName, CancellationToken cancellationToken = default)
         {
-            var user = await _userRepository.GetSingleAsync(_ => _.UserName == userName, x => x.RefreshTokens);
+            var user = await _userRepository.GetSingleAsync(_ => _.UserName == userName, 
+                x => x.RefreshTokens,
+                x => x.ManagedShop);
 
             if (user != null && user.DeletedTime != null)
             {

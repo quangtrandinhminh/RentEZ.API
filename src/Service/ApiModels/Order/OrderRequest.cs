@@ -1,4 +1,5 @@
-﻿using Service.ApiModels.OrderShop;
+﻿using System.ComponentModel.DataAnnotations;
+using Service.ApiModels.OrderShop;
 using Service.ApiModels.Voucher;
 using Utility.Enum;
 
@@ -18,7 +19,7 @@ public class OrderRequest
     public decimal TotalDiscount { get; set; }
     public decimal Total { get; set; }
     public string? Note { get; set; }
-    public PaymentMethodEnum? PaymentMethod { get; set; }
+    public PaymentMethodEnum? PaymentMethod { get; set; } = PaymentMethodEnum.PayOS;
     public IList<VoucherOrderRequest?> PlatformVouchers { get; set; }
     public IList<OrderShopRequest> OrderShops { get; set; }
     public int ShopCount => OrderShops.Count;
