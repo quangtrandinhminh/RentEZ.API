@@ -49,15 +49,16 @@ namespace Service.Services
 
         public async Task<(string customerRefundQR, string shopPaymentQR)> ProcessRefundAsync(RefundRequest request)
         {
-            var order = await _orderRepository.GetAllWithCondition()
-                .Include(x => x.Customer)
-                .Include(x => x.OrderShops)
-                    .ThenInclude(x => x.Shop)
-                .FirstOrDefaultAsync(o => o.Id == request.OrderId);
+            var orderShop = await _orderShopRepository.GetAllWithCondition()
+                .Include(x => x.Order)
+                    .ThenInclude(x => x.Customer)
+                .Include(x => x.Shop)
+                .Include(x => x.OrderTrackings)
+                .FirstOrDefaultAsync(os => os.Id == request.OrderShopId);
 
-            if (order == null)
+            if (orderShop == null)
                 throw new AppException(ResponseCodeConstants.NOT_FOUND,
-                    ResponseMessageConstrantsOrder.NOT_FOUND,
+                    "OrderShop not found",
                     StatusCodes.Status404NotFound);
 
             var admin = await _userRepository.GetSingleAsync(u => u.Id == request.UserId);
@@ -66,32 +67,21 @@ namespace Service.Services
                     "Admin not found",
                     StatusCodes.Status404NotFound);
 
-            var orderShop = order.OrderShops
-                .FirstOrDefault(os => os.ShopId == request.ShopId);
-
-            if (orderShop == null)
-                throw new AppException(ResponseCodeConstants.NOT_FOUND,
-                    "Shop not found in this order",
-                    StatusCodes.Status404NotFound);
-
-            // check OrderShop status
             if (orderShop.Status != OrderShopStatusEnum.WaitingForRefund)
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST,
-                    "This shop's order is not in 'Waiting for Refund' status",
+                    "This order is not in 'Waiting for Refund' status",
                     StatusCodes.Status400BadRequest);
 
-            // create QR for customer refund
-            string customerQrUrl = GetCustomerRefundQRUrl(order.Customer, orderShop);
+            string customerQrUrl = GetCustomerRefundQR(orderShop);
 
-            // create QR for shop payment
             string shopQrUrl = string.Empty;
             if (orderShop.Shop.BankId.HasValue && !string.IsNullOrEmpty(orderShop.Shop.AccountNo))
             {
                 decimal shopPayment = CalculateShopPayment(orderShop);
-                shopQrUrl = GetShopQRUrl(orderShop, shopPayment);
+                shopQrUrl = GetShopQR(orderShop, shopPayment);
             }
 
-            await UpdateOrderShopStatusForRefund(order, orderShop, request.UserId);
+            await UpdateOrderShopStatusForRefund(orderShop, request.UserId);
 
             return (
                 customerRefundQR: customerQrUrl,
@@ -99,8 +89,9 @@ namespace Service.Services
             );
         }
 
-        private string GetCustomerRefundQRUrl(UserEntity customer, OrderShop orderShop)
+        private string GetCustomerRefundQR(OrderShop orderShop)
         {
+            var customer = orderShop.Order.Customer;
             if (!customer.BankId.HasValue || string.IsNullOrEmpty(customer.AccountNo))
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST,
                     "Customer bank information is missing",
@@ -112,29 +103,31 @@ namespace Service.Services
                     StatusCodes.Status400BadRequest);
 
             var parameters = new List<string>
-        {
-            $"amount={orderShop.TotalDeposit}",
-            $"addInfo={Uri.EscapeDataString($"Refund order {orderShop.OrderId} - shop {orderShop.ShopId}")}"
-        };
+    {
+        $"amount={orderShop.TotalDeposit}",
+        $"addInfo={Uri.EscapeDataString($"Refund OrderShop {orderShop.Id}")}"
+    };
 
             return $"https://img.vietqr.io/image/{customer.BankId}-{customer.AccountNo}-compact.png?{string.Join("&", parameters)}";
         }
 
-        private string GetShopQRUrl(OrderShop orderShop, decimal amount)
+        private string GetShopQR(OrderShop orderShop, decimal amount)
         {
             var parameters = new List<string>
-        {
-            $"amount={amount}",
-            $"addInfo={Uri.EscapeDataString($"Thanh toan don hang {orderShop.Id}")}"
-        };
+    {
+        $"amount={amount}",
+        $"addInfo={Uri.EscapeDataString($"Thanh toan OrderShop {orderShop.Id}")}"
+    };
 
             return $"https://img.vietqr.io/image/{orderShop.Shop.BankId}-{orderShop.Shop.AccountNo}-compact.png?{string.Join("&", parameters)}";
         }
 
         private decimal CalculateShopPayment(OrderShop orderShop)
         {
+            // TotalRentPrice - Commission - Tax
             decimal totalPayment = orderShop.TotalRentPrice - orderShop.Commission - orderShop.Tax;
 
+            // Nếu có damage, shop được giữ lại tiền deposit
             if (orderShop.Status == OrderShopStatusEnum.ReturnedWithDamage)
             {
                 totalPayment += orderShop.TotalDeposit;
@@ -142,9 +135,8 @@ namespace Service.Services
             return totalPayment;
         }
 
-        private async Task UpdateOrderShopStatusForRefund(Order order, OrderShop orderShop, int adminId)
+        private async Task UpdateOrderShopStatusForRefund(OrderShop orderShop, int adminId)
         {
-            // Update OrderShop status
             orderShop.OrderTrackings.Add(new OrderTracking
             {
                 OrderShopId = orderShop.Id,
@@ -159,15 +151,17 @@ namespace Service.Services
 
             _orderShopRepository.Update(orderShop);
 
-            bool hasRemainingRefunds = order.OrderShops
-                .Any(os => os.Id != orderShop.Id &&
-                          os.Status == OrderShopStatusEnum.WaitingForRefund);
+            bool hasRemainingRefunds = await _orderShopRepository
+                .GetAllWithCondition()
+                .AnyAsync(os => os.OrderId == orderShop.OrderId &&
+                               os.Id != orderShop.Id &&
+                               os.Status == OrderShopStatusEnum.WaitingForRefund);
 
             if (!hasRemainingRefunds)
             {
-                order.LastUpdatedBy = adminId;
-                order.LastUpdatedTime = CoreHelper.SystemTimeNow;
-                _orderRepository.Update(order);
+                orderShop.Order.LastUpdatedBy = adminId;
+                orderShop.Order.LastUpdatedTime = CoreHelper.SystemTimeNow;
+                _orderRepository.Update(orderShop.Order);
             }
 
             await _unitOfWork.SaveChangeAsync();

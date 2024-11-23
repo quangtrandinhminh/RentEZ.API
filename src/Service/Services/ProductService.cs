@@ -279,7 +279,21 @@ namespace Service.Services
                 }
             }
 
-            if (existingProduct.ProductName == productRequest.ProductName && existingProduct.Image == existingProduct.Image && existingProduct.RentPrice == rentPricesJson && existingProduct.Id == id)
+            if (existingProduct.ProductName == productRequest.ProductName && 
+                existingProduct.Image == existingProduct.Image && 
+                existingProduct.RentPrice == rentPricesJson && 
+                existingProduct.CategoryId == productRequest.CategoryId && 
+                existingProduct.Quantity == productRequest.Quantity && 
+                existingProduct.AllowRentBeforeDays == productRequest.AllowRentBeforeDays && 
+                existingProduct.Size == productRequest.Size &&
+                existingProduct.Price == productRequest.Price &&
+                existingProduct.DepositRate == productRequest.DepositRate &&
+                existingProduct.Description == productRequest.Description &&
+                existingProduct.Mass == productRequest.Mass &&
+                existingProduct.Long == productRequest.Long &&
+                existingProduct.Width == productRequest.Width &&
+                existingProduct.Height == productRequest.Height &&
+                existingProduct.Id == id)
             {
 
                 throw new AppException(ResponseCodeConstants.NOTHINGCHANGED, ResponseMessageConstrantsProduct.NOTHING_CHANGED, StatusCodes.Status400BadRequest);
