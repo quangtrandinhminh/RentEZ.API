@@ -53,6 +53,7 @@ public partial class MapperlyMapper
 
     // product
     public partial void ProductToCreateProduct(ProductCreateRequest request, Product entity);
+    public partial Product MapProductToCreateProduct(ProductCreateRequest request);
     public partial IList<ProductListResponse> ProductsToProductsResponseDto(IList<Product> entity);
     public partial ProductResponse ProductToProductResponseDto(Product entity);
 

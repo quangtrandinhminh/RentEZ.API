@@ -9,6 +9,7 @@ namespace Service.ApiModels.Refund
     public class RefundRequest
     {
         public int OrderId { get; set; }
+        public int ShopId { get; set; }
         public int UserId { get; set; }
     }
 }

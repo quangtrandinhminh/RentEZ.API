@@ -103,13 +103,5 @@ namespace RentEZ.WebAPI.Controllers
             await _orderService.CancelOrderAsync(orderId);
             return Ok(BaseResponse.OkResponseDto("Order canceled successfully"));
         }
-
-        [HttpPut("order-shops/{orderShopId}/refund-status")]
-        [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> ChangeToWaitingToRefund([FromRoute] int orderShopId)
-        {
-            await _orderService.ChangeToWaitingForRefund(orderShopId);
-            return Ok(BaseResponse.OkResponseDto("Order status changed successfully"));
-        }
     }
 }

@@ -119,6 +119,7 @@
     {
         public const string NUll = "Có trường hợp bị null.";
         public const string RENTPRICE_EXACT_VALUE = "Giá cho thuê phải có 7 giá trị";
+        public const string UNAUTHORIZED_UPDATE_PRODUCT = "Không thể cập nhật sản phẩm thuộc sở hữu của một cửa hàng khác";
         public const string RENTPRICE_INVALID = "Giá cho thuê không được quá 30% so với giá sản phẩm";
         public const string RENTPRICE_NOT_ASCENDING = "Giá cho thuê của ngày hôm sau phải cao hơn giá thuê của ngày hôm trước";
         public const string INVALID_ALLOWRENTBEFOREDAYS = "Ngày cho thuê phải từ 2 đến 5 ngày.";
