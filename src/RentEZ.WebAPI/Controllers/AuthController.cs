@@ -30,15 +30,6 @@ namespace RentEZ.WebAPI.Controllers
             return Ok("Hello");
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
-        {
-            await _authService.Register(request);
-            return Ok(BaseResponse.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
-        }
-
         [HttpGet]
         [Authorize(Roles = "Admin")]
         [Route("admin/roles")]
@@ -48,13 +39,13 @@ namespace RentEZ.WebAPI.Controllers
             return Ok(BaseResponse.OkResponseDto(roles));
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        [Route("admin/users")]
-        public async Task<IActionResult> GetAllUsers([FromQuery] UserRoleEnum? role, [FromQuery] int pageNumber = 1, int pageSize = 10)
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            var users = await _userService.GetAllUsersAsync(role, pageNumber, pageSize);
-            return Ok(BaseResponse.OkResponseDto(users));
+            await _authService.Register(request);
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         }
 
         [HttpPost]

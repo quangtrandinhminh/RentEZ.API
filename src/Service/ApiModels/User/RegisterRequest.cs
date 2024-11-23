@@ -3,7 +3,7 @@ using Utility.Constants;
 
 namespace Service.ApiModels.User
 {
-    public class RegisterRequest
+    public class RegisterRequest : BankInfoRequest
     {
         [Required(ErrorMessage = ResponseMessageIdentity.USERNAME_REQUIRED)]
         [MaxLength(100)]
@@ -37,14 +37,5 @@ namespace Service.ApiModels.User
         public string? Address { get; set; }
         public string? Avatar { get; set; }
         public DateOnly? BirthDate { get; set; }
-
-        [MaxLength(6)]
-        public int? BankId { get; set; }
-
-        [MaxLength(19)]
-        public String? AccountNo { get; set; }
-
-        [MaxLength(255)]
-        public String? AccountName { get; set; }
     }
 }
