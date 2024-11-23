@@ -17,6 +17,7 @@ public interface IOrderShopRepository : IBaseRepository<OrderShop>
         Expression<Func<OrderShop, bool>>? predicate = null,
         bool isIncludeDeleted = false,
         bool isIncludeProducts = false,
+        bool isIncludeCustomer = false,
         Expression<Func<OrderShop, object>>? orderBy = null,
         params Expression<Func<OrderShop, object>>[] includeProperties);
 }

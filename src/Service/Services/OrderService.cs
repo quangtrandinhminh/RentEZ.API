@@ -365,20 +365,27 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
                 // get ordershop by customer id
                 predicate = x => x.Order.CustomerId == userId;
             }
+
+            if (request.Status != null
+                && Enum.TryParse(request.Status.ToString(), out OrderShopStatusEnum parsedStatus)
+                && Enum.IsDefined(typeof(OrderShopStatusEnum), parsedStatus))
+            {
+                // Combine the predicates using And with Helper.PredicateBuilder
+                predicate = predicate.And(x => x.Status == parsedStatus);
+            }
         }
 
-        // check if status is valid enum value then add to predicate
-        if (request.Status != null
-            && Enum.TryParse(request.Status.ToString(), out OrderShopStatusEnum parsedStatus)
-            && Enum.IsDefined(typeof(OrderShopStatusEnum), parsedStatus))
+        // if user is admin, get all ordershop, filter by status if needed
+        else if (request.Status != null
+                 && Enum.TryParse(request.Status.ToString(), out OrderShopStatusEnum parsedStatus)
+                 && Enum.IsDefined(typeof(OrderShopStatusEnum), parsedStatus))
         {
-            // Combine the predicates using And with Helper.PredicateBuilder
-            predicate = predicate.And(x => x.Status == parsedStatus);
+            predicate = x => x.Status == parsedStatus;
         }
-
+        
         var orderShop = await _orderShopRepository.GetAllOrderShopsAsync(
             request.PageNumber, request.PageSize,
-            predicate, false, true,
+            predicate, false, true, true,
             x => x.CreatedTime,
             x => x.Order,
             x =>x.Shop,

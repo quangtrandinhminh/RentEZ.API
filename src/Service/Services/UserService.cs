@@ -16,6 +16,9 @@ using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
 using Utility.Helpers;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Repository.Infrastructure;
 
 namespace Service.Services;
 
@@ -24,7 +27,9 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
     private readonly IUserRepository _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
     private readonly IShopRepository _shopRepository = serviceProvider.GetRequiredService<IShopRepository>();
     private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
-    private readonly ILogger _logger = Log.Logger;
+    private readonly ILogger _logger = serviceProvider.GetRequiredService<ILogger>();
+    private readonly UserManager<UserEntity> _userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
+    private readonly IUnitOfWork _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
 
     public async Task<PaginatedListResponse<UserResponse>> GetAllUsersAsync(UserRoleEnum? role, int pageNumber, int pageSize)
     {
@@ -38,7 +43,7 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
             pageNumber, pageSize,
             predicate, null, e => e.UserRoles);
 
-        return _mapper.Map(users);
+        return _mapper.Map(users); 
     }
 
     public async Task CreateUserAsync(UserCreateRequest request)
@@ -53,13 +58,24 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
         _logger.Information("Update user {@request}", request);
         var user = await GetUserById(request.Id);
         _mapper.Map(request, user);
+
+        await _userRepository.UpdateAsync(user);
+        await _unitOfWork.SaveChangeAsync();
     }
 
     public async Task<UserResponse> GetByIdAsync(int id)
     {
         _logger.Information($"Get user by id {id}");
-        var user = await GetUserById(id);
-        return _mapper.Map(user);
+        var user = await _userRepository.GetSingleAsync(e => e.Id == id, x => x.UserRoles);
+        if (user == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsUser.USER_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        var response = _mapper.MapToUserResponse(user);
+        var roles = await _userManager.GetRolesAsync(user);
+        response.Role = roles;
+        return response;
     }
 
     public async Task DeleteUserAsync(int id)

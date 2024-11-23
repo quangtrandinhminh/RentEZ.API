@@ -2,7 +2,7 @@
 
 namespace Service.ApiModels.User;
 
-public class UserResponse
+public class UserResponse : BankInfoRequest
 {
     public int Id { get; set; }
     public string? UserName { get; set; }
@@ -14,7 +14,4 @@ public class UserResponse
     public IList<string?> Role { get; set; } = new List<string?>();
     public DateOnly? BirthDate { get; set; }
     public int? ShopId { get; set; }
-    public int? BankId { get; set; }
-    public String? AccountNo { get; set; }
-    public String? AccountName { get; set; }
 }
