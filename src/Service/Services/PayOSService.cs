@@ -42,7 +42,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         var payOS = new PayOS(_payOSSetting.ClientID, _payOSSetting.ApiKey, _payOSSetting.ChecksumKey);
         // Create an item with the order ID and customer name
         ItemData item = new ItemData($"{PAYMENT_DESCRIPTION} {order.Id} cho khach hang {order.Customer.FullName}",
-            1, (int) /*order.Total/100000*/ 2000);
+            1, (int) order.Total);
         List<ItemData> items = new List<ItemData>();
         items.Add(item);
 
@@ -51,7 +51,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         int orderCode = int.Parse(CoreHelper.SystemTimeNow.ToString("ffffff"));
 
         // Create a PaymentData object
-        PaymentData paymentData = new PaymentData(orderCode, (int) /*order.Total/100000*/ 2000, $"{PAYMENT_DESCRIPTION} {order.Id}",
+        PaymentData paymentData = new PaymentData(orderCode, (int) order.Total, $"{PAYMENT_DESCRIPTION} {order.Id}",
             items, request.CancelUrl, request.ReturnUrl, expiredAt: expiredAt);
 
         // Create a signature for the payment data
