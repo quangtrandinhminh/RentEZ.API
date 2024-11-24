@@ -13,5 +13,6 @@ public class OrderShopListResponse
     public decimal TotalRentPrice { get; set; }
     public decimal Total { get; set; }
     public string Status { get; set; }
-    public virtual IList<OrderDetailListResponse> OrderDetails { get; set; } = new List<OrderDetailListResponse>();
+    public IList<OrderDetailListResponse> OrderDetails { get; set; } = new List<OrderDetailListResponse>();
+    public OsOrderResponse Order { get; set; }
 }

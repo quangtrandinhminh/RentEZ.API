@@ -5,7 +5,7 @@ namespace Service.Interfaces
 {
     public interface IProductService
     {
-        Task<PaginatedListResponse<ProductListResponse>> GetAllProducts(int pageNumber, int pageSize, int? categoryId = null, int? shopId = null);
+        Task<PaginatedListResponse<ProductListResponse>> GetAllProducts(ProductListRequest request);
         Task<ProductResponse> GetProductById(int id);
         Task CreateProduct(ProductCreateRequest productRequest, CancellationToken cancellationToken = default);
         Task UpdateProductAsync(ProductCreateRequest productRequest, int id);

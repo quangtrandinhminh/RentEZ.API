@@ -3,7 +3,7 @@ using Utility.Constants;
 
 namespace Service.ApiModels.User;
 
-public class UserCreateRequest
+public class UserCreateRequest : BankInfoRequest
 {
     [Required(ErrorMessage = ResponseMessageIdentity.USERNAME_REQUIRED)]
     [MaxLength(100)]

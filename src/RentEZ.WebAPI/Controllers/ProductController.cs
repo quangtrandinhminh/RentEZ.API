@@ -32,10 +32,10 @@ namespace RentEZ.WebAPI.Controllers
 
         [HttpGet("category/shop")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllProducts([FromQuery] int pageNumber = 1, int pageSize = 10, [FromQuery] int? categoryId = null, [FromQuery] int? shopId = null)
+        public async Task<IActionResult> GetAllProducts([FromQuery] ProductListRequest request)
         {
-            var products = await _productService.GetAllProducts(pageNumber, pageSize, categoryId, shopId);
-            return Ok(BaseResponse.OkResponseDto(products));
+            var response = await _productService.GetAllProducts(request);
+            return Ok(BaseResponse.OkResponseDto(response));
         }
 
         [HttpPost()]

@@ -48,6 +48,7 @@ public class OrderShopRepository : BaseRepository<OrderShop>, IOrderShopReposito
         Expression<Func<OrderShop, bool>>? predicate = null,
         bool isIncludeDeleted = false,
         bool isIncludeProducts = false,
+        bool isIncludeCustomer = false,
         Expression<Func<OrderShop, object>>? orderBy = null,
         params Expression<Func<OrderShop, object>>[] includeProperties)
     {
@@ -65,6 +66,11 @@ public class OrderShopRepository : BaseRepository<OrderShop>, IOrderShopReposito
                 if (isIncludeProducts)
                 {
                     query = query.Include(e => e.OrderDetails).ThenInclude(os => os.Product);
+                }
+
+                if (isIncludeCustomer)
+                {
+                    query = query.Include(e => e.Order).ThenInclude(os => os.Customer);
                 }
 
                 query = query.Include(includeProperty);

@@ -9,7 +9,7 @@ public class Order : BaseEntity
 {
     public Order()
     {
-        PaymentMethod = PaymentMethodEnum.Cash;
+        PaymentStatus = PaymentStatusEnum.Pending;
     }
     public int CustomerId { get; set; }
     public string? OrderAddress { get; set; }

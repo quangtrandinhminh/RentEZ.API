@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Service.ApiModels;
 
 namespace Service.Helpers;
 
@@ -28,5 +29,36 @@ public class EnumHelper
         }
 
         return dictionary;
+    }
+
+    public static IList<EnumResponse> GetEnumList<T>()
+    {
+        var enumType = typeof(T);
+        if (!enumType.IsEnum)
+        {
+            throw new ArgumentException("T must be an enumerated type");
+        }
+
+        var list = new List<EnumResponse>();
+        foreach (var value in Enum.GetValues(enumType))
+        {
+            var name = Enum.GetName(enumType, value);
+            if (name != null)
+            {
+                var field = enumType.GetField(name);
+                if (field != null)
+                {
+                    var attr = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
+                    list.Add(new EnumResponse
+                    {
+                        Id = (int)value,
+                        Value = name,
+                        Description = attr?.Description
+                    });
+                }
+            }
+        }
+
+        return list;
     }
 }

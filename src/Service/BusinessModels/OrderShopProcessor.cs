@@ -9,7 +9,7 @@ namespace Service.BusinessModels;
 
 public class OrderShopProcessor(OrderShop orderShop)
 {
-    public void ChangeNextStatus()
+    public string ChangeNextStatus()
     {
         switch (orderShop.Status)
         {
@@ -57,13 +57,12 @@ public class OrderShopProcessor(OrderShop orderShop)
         }
 
         AddOrderTracking();
+        return orderShop.Status.ToString();
     }
 
     public void Reject()
     {
-        if (orderShop.Status != OrderShopStatusEnum.Pending)
-            throw new AppException(ResponseCodeConstants.BAD_REQUEST,
-                ResponseMessageConstrantsOrder.STATUS_CHANGE_NOTALLOWED, StatusCodes.Status400BadRequest);
+        checkStatus(OrderShopStatusEnum.Pending, OrderShopStatusEnum.Rejected);
 
         orderShop.Status = OrderShopStatusEnum.Rejected;
         AddOrderTracking();
@@ -71,9 +70,7 @@ public class OrderShopProcessor(OrderShop orderShop)
 
     public void Cancel()
     {
-        if (orderShop.Status != OrderShopStatusEnum.WaitForPayment)
-            throw new AppException(ResponseCodeConstants.BAD_REQUEST,
-                ResponseMessageConstrantsOrder.STATUS_CHANGE_NOTALLOWED, StatusCodes.Status400BadRequest);
+        checkStatus(OrderShopStatusEnum.WaitForPayment, OrderShopStatusEnum.Cancelled);
 
         orderShop.Status = OrderShopStatusEnum.Cancelled;
         AddOrderTracking();
@@ -81,9 +78,7 @@ public class OrderShopProcessor(OrderShop orderShop)
 
     private void ReturnedWithDamage()
     {
-        if (orderShop.Status != OrderShopStatusEnum.Returned)
-            throw new AppException(ResponseCodeConstants.BAD_REQUEST,
-                ResponseMessageConstrantsOrder.STATUS_CHANGE_NOTALLOWED, StatusCodes.Status400BadRequest);
+        checkStatus(OrderShopStatusEnum.Returned, OrderShopStatusEnum.ReturnedWithDamage);
 
         orderShop.Status = OrderShopStatusEnum.ReturnedWithDamage;
         AddOrderTracking();
@@ -135,5 +130,14 @@ public class OrderShopProcessor(OrderShop orderShop)
             Status = orderShop.Status.ToString(),
             OrderShopId = orderShop.Id,
         });
+    }
+
+    private void checkStatus(OrderShopStatusEnum statusCurrent, OrderShopStatusEnum statusTarget)
+    {
+        if (orderShop.Status != statusCurrent)
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST,
+                               ResponseMessageConstrantsOrder.STATUS_CHANGE_NOTALLOWED + 
+                               $" ,Status [{statusCurrent}] Required before to become [{statusTarget}]", 
+                               StatusCodes.Status400BadRequest);
     }
 }

@@ -28,8 +28,8 @@ namespace Service.ApiModels.Product
         [MaxLength(7)]
         public List<double> RentPrices { get; set; }
         [Required]
-        [RegularExpression(@"^[+]?[1-9]\d*$", ErrorMessage = "Only positive integers greater than 0 are allowed")]
-        public int DepositRate { get; set; }
+        [RegularExpression(@"^[+]?(0|[1-9]\d*)(\.\d+)?$", ErrorMessage = "Only numbers greater than 0 are allowed")]
+        public double DepositRate { get; set; }
         [Required]
         public string Description { get; set; }
         [Required]

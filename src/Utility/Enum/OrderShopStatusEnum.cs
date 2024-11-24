@@ -4,39 +4,39 @@ namespace Utility.Enum;
 
 public enum OrderShopStatusEnum
 {
-    [Description("WaitForPayment")]
+    [Description("SystemChanged at first - Core")]
     WaitForPayment = 1,
 
-    [Description("Pending")]
+    [Description("SystemChanged after payment successfully - Core")]
     Pending,
 
-    [Description("Approved")]
+    [Description("Approved - ShopChanged after Pending - Core")]
     Approved,
 
-    [Description("Shipping")]
+    [Description("Shipping - ShopChanged after Approved - Core")]
     Shipping,
 
-    [Description("Received")]
+    [Description("Received - CustomerChanged after Shipping - Core")]
     Received,
 
-    [Description("Returning")]
+    [Description("Returning - CustomerChanged after Received - Core")]
     Returning,
 
-    [Description("Returned")]
+    [Description("Returned - ShopChanged after Returning - Core")]
     Returned,
 
-    [Description("Returned with damage")]
+    [Description("Returned with damage - ShopChanged after Returned - Sub")]
     ReturnedWithDamage,
 
-    [Description("Waiting for refund")]
+    [Description("Waiting for refund - ShopChanged after Returned - Core")]
     WaitingForRefund,
 
-    [Description("Completed")]
+    [Description("Completed - AdminChanged after WaitingForRefund - Core")]
     Completed,
 
-    [Description("Rejected")]
+    [Description("Rejected - ShopChanged after Pending - Sub")]
     Rejected,
 
-    [Description("Cancelled")]
+    [Description("Cancelled - CustomerChanged after WaitForPayment - Sub")]
     Cancelled
 }

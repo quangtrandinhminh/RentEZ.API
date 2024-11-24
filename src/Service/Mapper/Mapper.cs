@@ -37,12 +37,15 @@ public partial class MapperlyMapper
     public partial IList<RoleResponse> Map(IList<RoleEntity> entity);
     public partial UserEntity Map(RegisterRequest request);
     public partial LoginResponse Map(UserEntity entity);
+
+
     public partial UserEntity Map(UserCreateRequest request);
     public partial void Map(UserUpdateRequest request, UserEntity entity);
 
     public partial IList<UserResponse> Map(IList<UserEntity> entity);
     public partial IQueryable<UserResponse> Map(IQueryable<UserEntity> entity);
     public partial PaginatedListResponse<UserResponse> Map(PaginatedList<UserEntity> entity);
+    public partial UserResponse MapToUserResponse(UserEntity entity);
     public partial void Map(RegisterRequest request, UserEntity entity);
 
     // shop
@@ -53,6 +56,7 @@ public partial class MapperlyMapper
 
     // product
     public partial void ProductToCreateProduct(ProductCreateRequest request, Product entity);
+    public partial Product MapProductToCreateProduct(ProductCreateRequest request);
     public partial IList<ProductListResponse> ProductsToProductsResponseDto(IList<Product> entity);
     public partial ProductResponse ProductToProductResponseDto(Product entity);
 
@@ -73,11 +77,14 @@ public partial class MapperlyMapper
     public partial PaginatedListResponse<OrderShopListResponse> MapToPaginatedListOrderShopListResponse(PaginatedList<OrderShop> entity);
     public partial OrderShopResponse MapToOrderShopResponse(OrderShop entity);
     public partial OsShopResponse MapToOsShopResponse(Shop shop);
+    public partial OsOrderResponse MapToOsOrderResponse(Order order);
     // order detail
     public partial IList<OrderDetailListResponse> MapToOrderDetailListResponse(IList<OrderShop> entity);
     public partial OrderDetailResponse MapToOrderDetailResponse(OrderShop entity);
     public partial void Map(OrderDetailRequest request, OrderShop entity);
     public partial OrderDetail MapToOrderShop(OrderDetailRequest request);
+
+    [MapProperty(nameof(Product.Image), nameof(OdProductResponse.ProductImage))]
     public partial OdProductResponse MapToOdProductResponse(Product product);
 
     // cart

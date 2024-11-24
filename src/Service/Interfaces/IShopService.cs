@@ -9,7 +9,7 @@ namespace Service.Interfaces
         Task CreateShop(ShopCreateRequest shopRequest, CancellationToken cancellationToken = default);
         Task<ShopResponse> GetShopById(int id);
         Task<List<ShopResponse>> GetPendingShopList();
-        Task<PaginatedListResponse<ShopResponse>> GetAllShops([FromQuery] ShopQueryParams queryParams, int pageNumber, int pageSize);
+        Task<PaginatedListResponse<ShopResponse>> GetAllShops(ShopQueryParams queryParams);
         Task ShopToApprove(int id);
     }
 }

@@ -30,33 +30,34 @@ namespace Service.Services
         private readonly IHttpContextAccessor _httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
         // get all products
-        public async Task<PaginatedListResponse<ProductListResponse>> GetAllProducts(int pageNumber, int pageSize, int? categoryId = null, int? shopId = null)
+        public async Task<PaginatedListResponse<ProductListResponse>> GetAllProducts(ProductListRequest request)
         {
             _logger.Information($"Get all products");
             Expression<Func<Product, bool>> predicate = v => v.DeletedTime == null;
-            if (categoryId.HasValue)
+
+            if (request.categoryId.HasValue)
             {
-                var categoryExists = await _categoryRepository.GetSingleAsync(c => c.Id == categoryId.Value);
+                var categoryExists = await _categoryRepository.GetSingleAsync(c => c.Id == request.categoryId.Value);
                 if (categoryExists == null)
                 {
                     throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NONEXISTENT_CATEGORY, StatusCodes.Status404NotFound);
                 }
-                predicate = predicate.And(p => p.CategoryId == categoryId.Value);
+                predicate = predicate.And(p => p.CategoryId == request.categoryId.Value);
             }
 
-            if (shopId.HasValue)
+            if (request.shopId.HasValue)
             {
-                var shopExists = await _shopRepository.GetSingleAsync(s => s.Id == shopId.Value);
+                var shopExists = await _shopRepository.GetSingleAsync(s => s.Id == request.shopId.Value);
                 if (shopExists == null)
                 {
                     throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND, StatusCodes.Status404NotFound);
                 }
-                predicate = predicate.And(p => p.ShopId == shopId.Value);
+                predicate = predicate.And(p => p.ShopId == request.shopId.Value);
             }
 
             var products = await _productRepository.GetAllPaginatedQueryable(
-                pageNumber,
-                pageSize,
+                request.PageNumber,
+                request.PageSize,
                 predicate,
                 p => p.Id,
                 p => p.Category,
@@ -72,7 +73,6 @@ namespace Service.Services
             foreach (var dto in productDtos)
             {
                 var product = products.Items.FirstOrDefault(p => p.Id == dto.Id);
-
                 if (product != null)
                 {
                     dto.CategoryName = product.Category?.CategoryName;
@@ -91,6 +91,7 @@ namespace Service.Services
                     }
                 }
             }
+
             return new PaginatedListResponse<ProductListResponse>
             {
                 Items = (IReadOnlyCollection<ProductListResponse>)productDtos,
@@ -194,29 +195,15 @@ namespace Service.Services
             }
             try
             {
-                var newProduct = new Product
-                {
-                    ProductName = productRequest.ProductName,
-                    CategoryId = productRequest.CategoryId,
-                    Size = productRequest.Size,
-                    LastUpdatedTime = DateTimeOffset.UtcNow,
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    ShopId = existShop.Id,
-                    Price = productRequest.Price,
-                    Quantity = productRequest.Quantity,
-                    AllowRentBeforeDays = productRequest.AllowRentBeforeDays,
-                    Construction = productRequest.Construction,
-                    RentPrice = rentPricesJson,
-                    DepositRate = productRequest.DepositRate,
-                    Description = productRequest.Description,
-                    Image = productRequest.Image,
-                    Mass = productRequest.Mass,
-                    Long = productRequest.Long,
-                    Width = productRequest.Width,
-                    Height = productRequest.Height,
-                    CreatedBy = loggedInOwnerId
-                };
-                _mapper.ProductToCreateProduct(productRequest, newProduct);
+                var newProduct = _mapper.MapProductToCreateProduct(productRequest);
+
+                newProduct.LastUpdatedTime = DateTimeOffset.UtcNow;
+                newProduct.LastUpdatedTime = DateTimeOffset.UtcNow;
+                newProduct.ShopId = existShop.Id;
+                newProduct.RentPrice = rentPricesJson;
+                newProduct.CreatedBy = loggedInOwnerId;
+                newProduct.LastUpdatedBy = loggedInOwnerId;
+
 
                 await _productRepository.AddAsync(newProduct, cancellationToken);
                 await _unitOfWork.SaveChangeAsync();
@@ -232,8 +219,22 @@ namespace Service.Services
         public async Task UpdateProductAsync(ProductCreateRequest productRequest, int id)
         {
             _logger.Information("Update product");
-
+            var currentOwnerIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid);
+            if (currentOwnerIdClaim == null)
+            {
+                throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsProduct.UNAUTHORIZED, StatusCodes.Status401Unauthorized);
+            }
+            var loggedInOwnerId = int.Parse(currentOwnerIdClaim.Value);
+            var existShop = await _shopRepository.GetSingleAsync(s => s.OwnerId == loggedInOwnerId);
+            if (existShop == null)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.SHOP_NOTFOUND, StatusCodes.Status404NotFound);
+            }
             var existingProduct = await _productRepository.GetSingleAsync(x => x.Id == id);
+            if (existingProduct.ShopId != existShop.Id)
+            {
+                throw new AppException(ResponseCodeConstants.FORBIDDEN, ResponseMessageConstrantsProduct.UNAUTHORIZED_UPDATE_PRODUCT, StatusCodes.Status403Forbidden);
+            }
             if (existingProduct == null)
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
@@ -278,7 +279,21 @@ namespace Service.Services
                 }
             }
 
-            if (existingProduct.ProductName == productRequest.ProductName && existingProduct.Image == existingProduct.Image && existingProduct.RentPrice == rentPricesJson && existingProduct.Id == id)
+            if (existingProduct.ProductName == productRequest.ProductName && 
+                existingProduct.Image == existingProduct.Image && 
+                existingProduct.RentPrice == rentPricesJson && 
+                existingProduct.CategoryId == productRequest.CategoryId && 
+                existingProduct.Quantity == productRequest.Quantity && 
+                existingProduct.AllowRentBeforeDays == productRequest.AllowRentBeforeDays && 
+                existingProduct.Size == productRequest.Size &&
+                existingProduct.Price == productRequest.Price &&
+                existingProduct.DepositRate == productRequest.DepositRate &&
+                existingProduct.Description == productRequest.Description &&
+                existingProduct.Mass == productRequest.Mass &&
+                existingProduct.Long == productRequest.Long &&
+                existingProduct.Width == productRequest.Width &&
+                existingProduct.Height == productRequest.Height &&
+                existingProduct.Id == id)
             {
 
                 throw new AppException(ResponseCodeConstants.NOTHINGCHANGED, ResponseMessageConstrantsProduct.NOTHING_CHANGED, StatusCodes.Status400BadRequest);
@@ -294,24 +309,10 @@ namespace Service.Services
 
             try
             {
-                existingProduct.ProductName = productRequest.ProductName;
-                existingProduct.CategoryId = productRequest.CategoryId;
-                existingProduct.Size = productRequest.Size;
-                existingProduct.LastUpdatedTime = DateTimeOffset.UtcNow;
-                existingProduct.Price = productRequest.Price;
-                existingProduct.Quantity = productRequest.Quantity;
-                existingProduct.AllowRentBeforeDays = productRequest.AllowRentBeforeDays;
-                existingProduct.Construction = productRequest.Construction;
-                existingProduct.RentPrice = rentPricesJson;
-                existingProduct.DepositRate = productRequest.DepositRate;
-                existingProduct.Description = productRequest.Description;
-                existingProduct.Image = productRequest.Image;
-                existingProduct.Mass = productRequest.Mass;
-                existingProduct.Long = productRequest.Long;
-                existingProduct.Width = productRequest.Width;
-                existingProduct.Height = productRequest.Height;
-
                 _mapper.ProductToCreateProduct(productRequest, existingProduct);
+                existingProduct.LastUpdatedTime = DateTimeOffset.UtcNow;
+                existingProduct.RentPrice = rentPricesJson;
+
                 _productRepository.Update(existingProduct);
                 await _unitOfWork.SaveChangeAsync();
                 _logger.Information("Updated product successfully");

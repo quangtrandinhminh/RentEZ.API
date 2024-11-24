@@ -17,6 +17,8 @@ using System.Text.Json;
 using System.Linq.Expressions;
 using Service.Helpers;
 using Service.ApiModels.PaginatedList;
+using Microsoft.AspNetCore.Identity;
+using Repository.Models.Identity;
 
 namespace Service.Services
 {
@@ -25,6 +27,8 @@ namespace Service.Services
         private readonly IShopRepository _shopRepository = serviceProvider.GetRequiredService<IShopRepository>();
         private readonly IUserRepository _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
         private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
+        private readonly RoleManager<RoleEntity> _roleManager = serviceProvider.GetRequiredService<RoleManager<RoleEntity>>();
+        private readonly UserManager<UserEntity> _userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
         private readonly ILogger _logger = serviceProvider.GetRequiredService<ILogger>();
         private readonly IUnitOfWork _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
         private readonly IHttpContextAccessor _httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
@@ -84,34 +88,47 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstrantsShop.OWNER_NOTFOUND, StatusCodes.Status400BadRequest);
             }
-            if(existShopOwner.Verified == null)
+            if (existShopOwner.Verified == null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.IS_INACTIVE_OWNER, StatusCodes.Status400BadRequest);
             }
-            
 
             try
             {
-                var newShop = new Shop
-                {
-                    OwnerId = shopRequest.OwnerId,
-                    ShopAddress = shopRequest.ShopAddress,
-                    ShopName = shopRequest.ShopName,
-                    LastUpdatedTime = DateTimeOffset.UtcNow,
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    ShopAvatar = shopRequest.ShopAvatar,
-                    ShopEmail = shopRequest.ShopEmail,
-                    BankId = shopRequest.BankId,
-                    AccountNo = shopRequest.AccountNo,
-                    AccountName = shopRequest.AccountName,
-                    ShopPhone = shopRequest.ShopPhone,
-                    CreatedBy = loggedInOwnerId,
-                };
-                _mapper.ShopToCreateShop(shopRequest, newShop);
+                var newShop = _mapper.MapShopToCreateShop(shopRequest);
 
+                newShop.CreatedTime = DateTimeOffset.UtcNow;
+                newShop.LastUpdatedTime = DateTimeOffset.UtcNow;
+                newShop.CreatedBy = loggedInOwnerId;
+
+                // Add new shop
                 await _shopRepository.AddAsync(newShop, cancellationToken);
-                await _unitOfWork.SaveChangeAsync();
-                _logger.Information("New shop created successfully");
+
+                // Update user role to ShopOwner
+                var user = await _userManager.FindByIdAsync(shopRequest.OwnerId.ToString());
+                if (user == null)
+                {
+                    throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstrantsShop.OWNER_NOTFOUND, StatusCodes.Status400BadRequest);
+                }
+
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                if (!currentRoles.Contains("ShopOwner"))
+                {
+                    if (string.IsNullOrEmpty(user.SecurityStamp))
+                    {
+                        await _userManager.UpdateSecurityStampAsync(user);
+                    }
+
+                    // Add ShopOwner role while keeping existing roles
+                    var addRoleResult = await _userManager.AddToRoleAsync(user, "ShopOwner");
+                    if (!addRoleResult.Succeeded)
+                    {
+                        throw new AppException(ResponseCodeConstants.FAILED, "Failed to add ShopOwner role", StatusCodes.Status400BadRequest);
+                    }
+                }
+                await _unitOfWork.SaveChangeAsync(_httpContextAccessor);
+
+                _logger.Information($"New shop created with ID: {newShop.Id} and user {user.Id} role updated to ShopOwner successfully");
             }
             catch (Exception ex)
             {
@@ -123,12 +140,8 @@ namespace Service.Services
         public async Task<List<ShopResponse>> GetPendingShopList()
         {
             _logger.Information($"Get all pending shops");
-            var shops = await _shopRepository.GetAllWithCondition()
-                .Include(x => x.Owner)
-                .ToListAsync();
-            var inActiveShop = shops
-                .Where(x => !x.IsActive)
-                .ToList();
+            var shops = await _shopRepository.GetAllWithCondition().Include(x => x.Owner).ToListAsync();
+            var inActiveShop = shops.Where(x => !x.IsActive).ToList();
             if (inActiveShop.IsNullOrEmpty())
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NO_INISACTIVE_SHOP_FOUND, StatusCodes.Status404NotFound);
@@ -140,9 +153,7 @@ namespace Service.Services
         public async Task<ShopResponse> GetShopById(int id)
         {
             _logger.Information($"Get shop by id");
-            var shop = await _shopRepository.GetAllWithCondition()
-                                 .Include(s => s.Owner)
-                                 .FirstOrDefaultAsync(x => x.Id == id);
+            var shop = await _shopRepository.GetAllWithCondition().Include(s => s.Owner).FirstOrDefaultAsync(x => x.Id == id);
 
             if (shop == null)
             {
@@ -152,7 +163,7 @@ namespace Service.Services
         }
 
         // get all shops
-        public async Task<PaginatedListResponse<ShopResponse>> GetAllShops(ShopQueryParams queryParams, int pageNumber, int pageSize)
+        public async Task<PaginatedListResponse<ShopResponse>> GetAllShops(ShopQueryParams queryParams)
         {
             _logger.Information($"Get all shops with params: {JsonSerializer.Serialize(queryParams)}");
             Expression<Func<Shop, bool>> predicate = v => v.DeletedTime == null;
@@ -178,8 +189,8 @@ namespace Service.Services
             }
 
             var shops = await _shopRepository.GetAllPaginatedQueryable(
-                pageNumber,
-                pageSize,
+                queryParams.PageNumber,
+                queryParams.PageSize,
                 predicate,
                 s => s.Id,
                 s => s.Owner);
