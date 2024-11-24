@@ -23,6 +23,7 @@ namespace Repository.Models
         public double? Long { get; set; }
         public double? Width { get; set; }
         public double? Height { get; set; }
+        public decimal Rating => (decimal)(OrderDetails.Count == 0 ? 0 : OrderDetails.Average(x => x.Rating));
 
         [Range(0,1)]
         public double? DepositRate { get; set; }
