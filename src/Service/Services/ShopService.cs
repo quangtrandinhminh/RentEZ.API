@@ -111,27 +111,20 @@ namespace Service.Services
                     throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstrantsShop.OWNER_NOTFOUND, StatusCodes.Status400BadRequest);
                 }
 
-                // Remove existing roles if any
                 var currentRoles = await _userManager.GetRolesAsync(user);
-                if (string.IsNullOrEmpty(user.SecurityStamp))
+                if (!currentRoles.Contains("ShopOwner"))
                 {
-                    await _userManager.UpdateSecurityStampAsync(user);
-                }
-
-                if (currentRoles.Any())
-                {
-                    var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
-                    if (!removeResult.Succeeded)
+                    if (string.IsNullOrEmpty(user.SecurityStamp))
                     {
-                        throw new AppException(ResponseCodeConstants.FAILED, "Failed to remove existing roles", StatusCodes.Status400BadRequest);
+                        await _userManager.UpdateSecurityStampAsync(user);
                     }
-                }
 
-                // Add ShopOwner role
-                var addRoleResult = await _userManager.AddToRoleAsync(user, "ShopOwner");
-                if (!addRoleResult.Succeeded)
-                {
-                    throw new AppException(ResponseCodeConstants.FAILED, "Failed to add ShopOwner role", StatusCodes.Status400BadRequest);
+                    // Add ShopOwner role while keeping existing roles
+                    var addRoleResult = await _userManager.AddToRoleAsync(user, "ShopOwner");
+                    if (!addRoleResult.Succeeded)
+                    {
+                        throw new AppException(ResponseCodeConstants.FAILED, "Failed to add ShopOwner role", StatusCodes.Status400BadRequest);
+                    }
                 }
                 await _unitOfWork.SaveChangeAsync(_httpContextAccessor);
 
