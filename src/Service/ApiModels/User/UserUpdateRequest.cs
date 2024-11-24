@@ -3,7 +3,7 @@ using Utility.Constants;
 
 namespace Service.ApiModels.User;
 
-public class UserUpdateRequest
+public class UserUpdateRequest : BankInfoRequest
 {
     public int Id { get; set; }
     [Required(ErrorMessage = ResponseMessageIdentity.USERNAME_REQUIRED)]

@@ -54,6 +54,13 @@ namespace Repository.Repositories
             {
                 foreach (var navigationPropertyPath in includeProperties)
                 {
+                    // if x => x.UserRoles, then include Roles
+                    if (navigationPropertyPath.Body is MemberExpression memberExpression &&
+                        memberExpression.Member.Name == "UserRoles")
+                    {
+                        queryable = queryable.Include("UserRoles.Role");
+                    }
+
                     queryable = queryable.Include(navigationPropertyPath);
                 }
             }
