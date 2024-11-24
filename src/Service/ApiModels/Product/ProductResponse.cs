@@ -13,6 +13,7 @@
         public double? Deposit { get; set; }
         public int? RentedCount { get; set; }
         public int? RatingCount { get; set; }
+        public decimal Rating { get; set; }
         public int? Quantity { get; set; } 
         public int? AllowRentBeforeDays { get; set; } 
         public int? Construction { get; set; }

@@ -22,6 +22,8 @@ namespace Repository.Models
         public virtual UserEntity Owner { get; set; }
         public virtual ICollection<Product> ProductEntities { get; set; } = new List<Product>();
 
+        public decimal Rating => ProductEntities.Count == 0 ? 0 : ProductEntities.Average(x => x.Rating);
+
         [MaxLength(6)]
         public int? BankId { get; set; }
 
