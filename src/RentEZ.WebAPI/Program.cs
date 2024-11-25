@@ -18,6 +18,7 @@ using Repository.Models.Identity;
 using Utility.Helpers;
 using AngleSharp;
 using Microsoft.Extensions.Options;
+using CloudinaryDotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,6 +69,10 @@ GoogleSetting.Instance = googleSetting;
 var payOSSetting = new PayOSSetting();
 builder.Configuration.GetSection("PayOS").Bind(payOSSetting);
 PayOSSetting.Instance = payOSSetting;
+
+var cloudinarySetting = new CloudinarySetting();
+builder.Configuration.GetSection("Cloudinary").Bind(cloudinarySetting);
+CloudinarySetting.Instance = cloudinarySetting;
 
 // Add Identity Core
 builder.Services.AddIdentityCore<UserEntity>()
@@ -200,6 +205,7 @@ builder.Services.AddScoped<IPayOSService, PayOSService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<IRefundService, RefundService>();
 builder.Services.AddScoped<IStatisticService, StatisticServices>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
 builder.Services.Configure<PayOSSetting>(builder.Configuration.GetSection("PayOS"));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<PayOSSetting>>().Value);

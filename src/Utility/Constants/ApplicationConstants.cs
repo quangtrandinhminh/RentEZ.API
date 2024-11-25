@@ -165,4 +165,12 @@
         public const string MIN_RENTVALUE_INVALID = "Giá trị tối thiểu không hợp lệ";
         public const string MAX_DISVALUE_INVALID = "Giá trị tối đa không hợp lệ";
     }
+
+    public class ResponseMessageImage
+    {
+        public const string INVALID_IMAGE = "Hình ảnh không hợp lệ. ";
+        public const string INVALID_SIZE = "Kích thước hình ảnh không hợp lệ. ";
+        public const string INVALID_FORMAT = "Định dạng hình ảnh không hợp lệ. ";
+        public const string INVALID_URL = "Đường dẫn hình ảnh không hợp lệ. ";
+    }
 }

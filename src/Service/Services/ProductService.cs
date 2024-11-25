@@ -139,21 +139,21 @@ namespace Service.Services
         {
             _logger.Information("Creating new product");
             var currentOwnerIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid);
-            if (currentOwnerIdClaim == null)
+            /*if (currentOwnerIdClaim == null)
             {
                 throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsProduct.UNAUTHORIZED, StatusCodes.Status401Unauthorized);
-            }
+            }*/
             var loggedInOwnerId = int.Parse(currentOwnerIdClaim.Value);
             var existShop = await _shopRepository.GetSingleAsync(s => s.OwnerId == loggedInOwnerId);
             if (existShop == null)
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.SHOP_NOTFOUND, StatusCodes.Status404NotFound);
             }
-            var existProductName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName);
+            /*var existProductName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName);
             if (existProductName != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_PRODUCTNAME, StatusCodes.Status400BadRequest);
-            }
+            }*/
 
             var existCategory = await _categoryRepository.GetSingleAsync(x => x.Id == productRequest.CategoryId);
             if (existCategory == null)
