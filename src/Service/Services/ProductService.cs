@@ -139,26 +139,21 @@ namespace Service.Services
         {
             _logger.Information("Creating new product");
             var currentOwnerIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid);
-            if (currentOwnerIdClaim == null)
+            /*if (currentOwnerIdClaim == null)
             {
                 throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsProduct.UNAUTHORIZED, StatusCodes.Status401Unauthorized);
-            }
+            }*/
             var loggedInOwnerId = int.Parse(currentOwnerIdClaim.Value);
             var existShop = await _shopRepository.GetSingleAsync(s => s.OwnerId == loggedInOwnerId);
             if (existShop == null)
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.SHOP_NOTFOUND, StatusCodes.Status404NotFound);
             }
-            var existProductName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName);
+            /*var existProductName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName);
             if (existProductName != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_PRODUCTNAME, StatusCodes.Status400BadRequest);
-            }
-            var existProductImage = await _productRepository.GetSingleAsync(x => x.Image == productRequest.Image);
-            if (existProductImage != null)
-            {
-                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_IMAGE, StatusCodes.Status400BadRequest);
-            }
+            }*/
 
             var existCategory = await _categoryRepository.GetSingleAsync(x => x.Id == productRequest.CategoryId);
             if (existCategory == null)
@@ -171,9 +166,13 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.INVALID_ALLOWRENTBEFOREDAYS, StatusCodes.Status400BadRequest);
             }
-            if (productRequest.RentPrices == null || productRequest.RentPrices.Count != 7)
+            if (productRequest.RentPrices == null || !productRequest.RentPrices.Any())
             {
-                throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_EXACT_VALUE, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.BAD_REQUEST, "Phải có ít nhất 1 ngày thuê", StatusCodes.Status400BadRequest);
+            }
+            if (productRequest.RentPrices.Count > 7)
+            {
+                throw new AppException(ResponseCodeConstants.BAD_REQUEST, "Số ngày thuê không được vượt quá 7 ngày", StatusCodes.Status400BadRequest);
             }
             string rentPricesJson = JsonConvert.SerializeObject(productRequest.RentPrices);
             List<double> rentPrices = JsonConvert.DeserializeObject<List<double>>(rentPricesJson);
@@ -181,6 +180,10 @@ namespace Service.Services
             //each RentPrice is not more than 30% of the Price
             foreach (var rentPrice in rentPrices)
             {
+                if (rentPrice <= 0)
+                {
+                    throw new AppException(ResponseCodeConstants.BAD_REQUEST, "Giá thuê phải lớn hơn 0", StatusCodes.Status400BadRequest);
+                }
                 if (rentPrice > productRequest.Price * 0.30)
                 {
                     throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_INVALID, StatusCodes.Status400BadRequest);
@@ -264,15 +267,23 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.INVALID_ALLOWRENTBEFOREDAYS, StatusCodes.Status400BadRequest);
             }
 
-            if (productRequest.RentPrices == null || productRequest.RentPrices.Count != 7)
+            if (productRequest.RentPrices == null || !productRequest.RentPrices.Any())
             {
-                throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_EXACT_VALUE, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.BAD_REQUEST, "Phải có ít nhất 1 ngày thuê", StatusCodes.Status400BadRequest);
+            }
+            if (productRequest.RentPrices.Count > 7)
+            {
+                throw new AppException(ResponseCodeConstants.BAD_REQUEST, "Số ngày thuê không được vượt quá 7 ngày", StatusCodes.Status400BadRequest);
             }
             string rentPricesJson = JsonConvert.SerializeObject(productRequest.RentPrices);
             List<double> rentPrices = JsonConvert.DeserializeObject<List<double>>(rentPricesJson);
             // Validate each RentPrice is not more than 30% of the Price
             foreach (var rentPrice in rentPrices)
             {
+                if (rentPrice <= 0)
+                {
+                    throw new AppException(ResponseCodeConstants.BAD_REQUEST, "Giá thuê phải lớn hơn 0", StatusCodes.Status400BadRequest);
+                }
                 if (rentPrice > productRequest.Price * 0.30)
                 {
                     throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.RENTPRICE_INVALID, StatusCodes.Status400BadRequest);
@@ -350,14 +361,38 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.SHOP_NOTFOUND, StatusCodes.Status404NotFound);
             }
-            var listProduct = _productRepository.GetAllWithCondition();
-            listProduct = listProduct.Include(x => x.Shop).ThenInclude(x => x.Owner).Where(x => x.ShopId == existShop.Id && x.Shop.OwnerId == loggedInOwnerId);
-            if (listProduct == null)
-            {
-                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
-            }
-            var products = listProduct.ToList();
+            var listProduct = _productRepository.GetAllWithCondition()
+                .Include(x => x.Category)
+                .Include(x => x.Shop)
+                .ThenInclude(x => x.Owner)
+                .Where(x => x.ShopId == existShop.Id && x.Shop.OwnerId == loggedInOwnerId);
+
+            var products = await listProduct.ToListAsync();
             var productDtos = _mapper.ProductsToProductsResponseDto(products);
+
+            // Manually set additional properties
+            foreach (var dto in productDtos)
+            {
+                var product = products.FirstOrDefault(p => p.Id == dto.Id);
+                if (product != null)
+                {
+                    dto.CategoryName = product.Category?.CategoryName;
+                    dto.ShopName = product.Shop?.ShopName;
+                    if (!string.IsNullOrEmpty(product.RentPrice))
+                    {
+                        try
+                        {
+                            dto.RentPrices = JsonConvert.DeserializeObject<List<double>>(product.RentPrice);
+                        }
+                        catch (JsonException)
+                        {
+                            dto.RentPrices = new List<double>();
+                            _logger.Warning("Failed to deserialize RentPrice for product ID {ProductId}", product.Id);
+                        }
+                    }
+                }
+            }
+
             return (List<ProductListResponse>)productDtos;
         }
     }

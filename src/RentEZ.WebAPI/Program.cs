@@ -18,6 +18,7 @@ using Repository.Models.Identity;
 using Utility.Helpers;
 using AngleSharp;
 using Microsoft.Extensions.Options;
+using CloudinaryDotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,10 @@ PayOSSetting.Instance = payOSSetting;
 var admin = new AdminSetting();
 builder.Configuration.GetSection("AdminUser").Bind(admin);
 AdminSetting.Instance = admin;
+
+var cloudinarySetting = new CloudinarySetting();
+builder.Configuration.GetSection("Cloudinary").Bind(cloudinarySetting);
+CloudinarySetting.Instance = cloudinarySetting;
 
 // Add Identity Core
 builder.Services.AddIdentityCore<UserEntity>()
@@ -178,6 +183,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
     options.UseNpgsql(connectionString);
 });
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
@@ -188,6 +194,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderShopRepository, OrderShopRepository>();
+builder.Services.AddScoped<IStatisticRepository, StatisticRepository>();
 
 // Service
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -201,6 +208,8 @@ builder.Services.AddScoped<IVoucherService, VoucherService>();
 builder.Services.AddScoped<IPayOSService, PayOSService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<IRefundService, RefundService>();
+builder.Services.AddScoped<IStatisticService, StatisticServices>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
 builder.Services.Configure<PayOSSetting>(builder.Configuration.GetSection("PayOS"));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<PayOSSetting>>().Value);

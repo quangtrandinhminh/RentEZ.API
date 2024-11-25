@@ -88,4 +88,10 @@ namespace Utility.Config
         public string Username { get; set; }
         public string Password { get; set; }
     }
+
+    public class CloudinarySetting
+    {
+        public static CloudinarySetting Instance { get; set; }
+        public string CloudinaryUrl { get; set; }
+    }
 }
