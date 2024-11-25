@@ -63,11 +63,11 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_NAME, StatusCodes.Status400BadRequest);
             }
-            var existShopAddress = await _shopRepository.GetSingleAsync(x => x.ShopAddress == shopRequest.ShopAddress);
+            /*var existShopAddress = await _shopRepository.GetSingleAsync(x => x.ShopAddress == shopRequest.ShopAddress);
             if (existShopAddress != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_ADDRESS, StatusCodes.Status400BadRequest);
-            }
+            }*/
             var existShopPhone = await _shopRepository.GetSingleAsync(x => x.ShopPhone == shopRequest.ShopPhone);
             if (existShopPhone != null)
             {
