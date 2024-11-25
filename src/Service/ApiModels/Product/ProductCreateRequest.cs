@@ -24,8 +24,6 @@ namespace Service.ApiModels.Product
         [RegularExpression(@"^[+]?[0]*[1-9]\d*(\.\d+)?$", ErrorMessage = "Only natural numbers or real numbers greater than 0 are allowed")]
         public double Price { get; set; }
         [Required]
-        [MinLength(7)]
-        [MaxLength(7)]
         public List<double> RentPrices { get; set; }
         [Required]
         [RegularExpression(@"^[+]?(0|[1-9]\d*)(\.\d+)?$", ErrorMessage = "Only numbers greater than 0 are allowed")]
