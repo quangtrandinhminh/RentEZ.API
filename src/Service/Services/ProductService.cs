@@ -361,14 +361,38 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.SHOP_NOTFOUND, StatusCodes.Status404NotFound);
             }
-            var listProduct = _productRepository.GetAllWithCondition();
-            listProduct = listProduct.Include(x => x.Shop).ThenInclude(x => x.Owner).Where(x => x.ShopId == existShop.Id && x.Shop.OwnerId == loggedInOwnerId);
-            if (listProduct == null)
-            {
-                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
-            }
-            var products = listProduct.ToList();
+            var listProduct = _productRepository.GetAllWithCondition()
+                .Include(x => x.Category)
+                .Include(x => x.Shop)
+                .ThenInclude(x => x.Owner)
+                .Where(x => x.ShopId == existShop.Id && x.Shop.OwnerId == loggedInOwnerId);
+
+            var products = await listProduct.ToListAsync();
             var productDtos = _mapper.ProductsToProductsResponseDto(products);
+
+            // Manually set additional properties
+            foreach (var dto in productDtos)
+            {
+                var product = products.FirstOrDefault(p => p.Id == dto.Id);
+                if (product != null)
+                {
+                    dto.CategoryName = product.Category?.CategoryName;
+                    dto.ShopName = product.Shop?.ShopName;
+                    if (!string.IsNullOrEmpty(product.RentPrice))
+                    {
+                        try
+                        {
+                            dto.RentPrices = JsonConvert.DeserializeObject<List<double>>(product.RentPrice);
+                        }
+                        catch (JsonException)
+                        {
+                            dto.RentPrices = new List<double>();
+                            _logger.Warning("Failed to deserialize RentPrice for product ID {ProductId}", product.Id);
+                        }
+                    }
+                }
+            }
+
             return (List<ProductListResponse>)productDtos;
         }
     }
