@@ -82,6 +82,12 @@ namespace Utility.Config
         public string ChecksumKey { get; set; }
     }
 
+    public class CloudinarySetting
+    {
+        public static CloudinarySetting Instance { get; set; }
+        public string CloudinaryUrl { get; set; }
+    }
+
     /*public class AppConfig
     {
         public static AppConfig Instance { get; set; }
