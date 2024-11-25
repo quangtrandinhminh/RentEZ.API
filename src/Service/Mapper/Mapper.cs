@@ -96,7 +96,19 @@ public partial class MapperlyMapper
 
     public int? MapToVoucherId(int? voucherId)
     {
-        return voucherId ?? null;
+        // if voucherId is null, return null
+        if (voucherId == null)
+        {
+            return null;
+        }
+
+        // if voucherId is 0, return null
+        if (voucherId == 0)
+        {
+            return null;
+        }
+
+        return voucherId;
     }
     public partial IList<OrderShopRequest> MapToOrderShopRequest(IList<CartShop> cartShops);
     public partial IList<OrderDetailRequest> MapToOrderDetailRequest(IList<CartItem> cartItems);
