@@ -55,6 +55,14 @@ namespace Service.Services
                 predicate = predicate.And(p => p.ShopId == request.shopId.Value);
             }
 
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var searchTerm = request.SearchTerm.Trim().ToLower();
+                predicate = predicate.And(s =>
+                    (s.ProductName != null && s.ProductName.ToLower().Contains(searchTerm)) ||
+                    (s.Description != null && s.Description.ToLower().Contains(searchTerm)));
+            }
+
             var products = await _productRepository.GetAllPaginatedQueryable(
                 request.PageNumber,
                 request.PageSize,
@@ -149,12 +157,17 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.SHOP_NOTFOUND, StatusCodes.Status404NotFound);
             }
+            if (existShop != null && existShop.Verified == null)
+            {
+                throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsProduct.SHOP_UNVERIFIED, StatusCodes.Status401Unauthorized);
+            }
             /*var existProductName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName);
+
+            var existProductName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName);
             if (existProductName != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_PRODUCTNAME, StatusCodes.Status400BadRequest);
             }*/
-
             var existCategory = await _categoryRepository.GetSingleAsync(x => x.Id == productRequest.CategoryId);
             if (existCategory == null)
             {
@@ -246,8 +259,8 @@ namespace Service.Services
             var productWithSameName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName && x.Id != id);
             if (productWithSameName != null)
             {
-                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_PRODUCTNAME, StatusCodes.Status400BadRequest);
-            }
+                    throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_PRODUCTNAME, StatusCodes.Status400BadRequest);
+                }
 
             var productWithSameImage = await _productRepository.GetSingleAsync(x => x.Image == productRequest.Image && x.Id != id);
             if (productWithSameImage != null)
