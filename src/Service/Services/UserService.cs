@@ -66,7 +66,10 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
     public async Task<UserResponse> GetByIdAsync(int id)
     {
         _logger.Information($"Get user by id {id}");
-        var user = await _userRepository.GetSingleAsync(e => e.Id == id, x => x.UserRoles);
+        var user = await _userRepository.GetSingleAsync(e => e.Id == id, 
+            x => x.UserRoles,
+            x => x.ManagedShop
+            );
         if (user == null)
         {
             throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsUser.USER_NOT_FOUND, StatusCodes.Status404NotFound);
@@ -75,6 +78,7 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
         var response = _mapper.MapToUserResponse(user);
         var roles = await _userManager.GetRolesAsync(user);
         response.Role = roles;
+        response.ShopId = user.ManagedShop?.Id;
         return response;
     }
 
