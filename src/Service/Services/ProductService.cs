@@ -55,6 +55,14 @@ namespace Service.Services
                 predicate = predicate.And(p => p.ShopId == request.shopId.Value);
             }
 
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var searchTerm = request.SearchTerm.Trim().ToLower();
+                predicate = predicate.And(s =>
+                    (s.ProductName != null && s.ProductName.ToLower().Contains(searchTerm)) ||
+                    (s.Description != null && s.Description.ToLower().Contains(searchTerm)));
+            }
+
             var products = await _productRepository.GetAllPaginatedQueryable(
                 request.PageNumber,
                 request.PageSize,
@@ -148,6 +156,10 @@ namespace Service.Services
             if (existShop == null)
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.SHOP_NOTFOUND, StatusCodes.Status404NotFound);
+            }
+            if(existShop != null && existShop.Verified == null)
+            {
+                throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsProduct.SHOP_UNVERIFIED, StatusCodes.Status401Unauthorized);
             }
             var existProductName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName);
             if (existProductName != null)

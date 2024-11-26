@@ -125,6 +125,7 @@
         public const string INVALID_ALLOWRENTBEFOREDAYS = "Ngày cho thuê phải từ 2 đến 5 ngày.";
         public const string UNAUTHORIZED = "Người dùng này chưa được phép để tạo sản phẩm.";
         public const string SHOP_NOTFOUND = "Cửa hàng chưa tồn tại.";
+        public const string SHOP_UNVERIFIED = "Cửa hàng chưa được xác thực.";
         public const string EXISTED_PRODUCTNAME = "Ten san pham da ton tai.";
         public const string NOTFOUND = "San pham khong ton tai.";
         public const string EXISTED_IMAGE = "Hình ảnh của sản phẩm đã được sử dụng.";
