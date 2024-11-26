@@ -6,7 +6,6 @@ using Service.ApiModels.RefreshToken;
 using Service.ApiModels.User;
 using Service.Interfaces;
 using Utility.Constants;
-using Utility.Enum;
 
 namespace RentEZ.WebAPI.Controllers
 {

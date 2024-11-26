@@ -1,6 +1,5 @@
 ﻿using Repository.Models;
 using Service.Helpers;
-using Utility.Enum;
 
 namespace Service.BusinessModels;
 

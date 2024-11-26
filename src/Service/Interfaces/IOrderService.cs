@@ -1,11 +1,9 @@
 ﻿using Repository.Extensions;
-using Repository.Models;
 using Service.ApiModels;
 using Service.ApiModels.Order;
 using Service.ApiModels.OrderDetail;
 using Service.ApiModels.OrderShop;
 using Service.ApiModels.PaginatedList;
-using Utility.Enum;
 
 namespace Service.Interfaces;
 
@@ -32,7 +30,9 @@ public interface IOrderService
 
     // get order detail by id, include order
     Task<OrderShopResponse> GetOrderShopsByIdAsync(int orderShopId, bool isShop);
-
     Task CancelOrderAsync(int orderId);
     Task<string> ChangeOrderShopStatusAsync(int orderShopId, bool isShop);
+    Task CreateFeedback(FeedbackRequest request);
+    Task EditFeedback(FeedbackRequest request);
+    Task<PaginatedListResponse<FeedbackResponse>> GetFeedbackList(FeedbackListRequest request);
 }

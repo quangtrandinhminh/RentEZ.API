@@ -1,5 +1,4 @@
 ﻿using Service.ApiModels.OrderDetail;
-using Utility.Enum;
 
 namespace Service.ApiModels.OrderShop;
 

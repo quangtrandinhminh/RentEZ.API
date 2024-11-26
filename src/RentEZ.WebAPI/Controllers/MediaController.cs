@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.ApiModels;
 using Service.Interfaces;
@@ -8,6 +8,7 @@ namespace RentEZ.WebAPI.Controllers
 {
     [Route("api/media")]
     [ApiController]
+    [Authorize]
     public class MediaController(IServiceProvider serviceProvider) : ControllerBase
     {
         private readonly ICloudinaryService _cloudinaryService = serviceProvider.GetRequiredService<ICloudinaryService>();

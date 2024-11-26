@@ -14,7 +14,6 @@ using Service.ApiModels.OrderDetail;
 using Service.ApiModels.OrderShop;
 using Service.ApiModels.Voucher;
 using Service.ApiModels.PaginatedList;
-using Utility.Helpers;
 
 namespace Service.Mapper;
 
@@ -59,6 +58,9 @@ public partial class MapperlyMapper
     public partial Product MapProductToCreateProduct(ProductCreateRequest request);
     public partial IList<ProductListResponse> ProductsToProductsResponseDto(IList<Product> entity);
     public partial ProductResponse ProductToProductResponseDto(Product entity);
+    //public partial ProductListResponse ProductToProductListResponse(Product entity);
+    public partial PaginatedListResponse<ProductListResponse> MapToPaginatedListProductResponse(
+        PaginatedList<Product> products);
 
     // category
     public partial void CategoryToCreateCategory(CategoryCreateRequest request, Category entity);
@@ -83,9 +85,11 @@ public partial class MapperlyMapper
     public partial OrderDetailResponse MapToOrderDetailResponse(OrderShop entity);
     public partial void Map(OrderDetailRequest request, OrderShop entity);
     public partial OrderDetail MapToOrderShop(OrderDetailRequest request);
+    public partial void Map(FeedbackRequest request, OrderDetail entity);
 
     [MapProperty(nameof(Product.Image), nameof(OdProductResponse.ProductImage))]
     public partial OdProductResponse MapToOdProductResponse(Product product);
+    public partial PaginatedListResponse<FeedbackResponse> MapToFeedbackListResponse(PaginatedList<FeedbackResponse> entity);
 
     // cart
     public partial List<CartItem> MapToCartItems(List<Product> entity);

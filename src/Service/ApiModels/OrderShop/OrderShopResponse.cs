@@ -1,8 +1,5 @@
 ﻿using Repository.Models;
-using System.ComponentModel.DataAnnotations.Schema;
-using Service.ApiModels.OrderDetail;
 using Service.ApiModels.Voucher;
-using Utility.Enum;
 
 namespace Service.ApiModels.OrderShop;
 

@@ -4,7 +4,6 @@ using Service.ApiModels;
 using Service.ApiModels.Voucher;
 using Service.Interfaces;
 using Utility.Constants;
-using Utility.Enum;
 
 namespace RentEZ.WebAPI.Controllers
 {

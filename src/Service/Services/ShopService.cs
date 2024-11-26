@@ -12,7 +12,6 @@ using Repository.Models;
 using MapperlyMapper = Service.Mapper.MapperlyMapper;
 using System.Security.Claims;
 using Service.ApiModels.Shop;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Linq.Expressions;
 using Service.Helpers;
