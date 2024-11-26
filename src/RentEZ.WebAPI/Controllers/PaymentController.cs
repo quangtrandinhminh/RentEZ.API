@@ -6,11 +6,8 @@ using Service.ApiModels.PayOS;
 using Service.Interfaces;
 using Utility.Constants;
 using Service.ApiModels.Refund;
-using Service.Services;
 using Utility.Exceptions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Swashbuckle.Swagger.Annotations;
 
 namespace RentEZ.WebAPI.Controllers
 {

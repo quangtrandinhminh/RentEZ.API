@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using Repository.Extensions;
 using Repository.Interfaces;
-using Repository.Models;
 using Repository.Models.Identity;
 using Serilog;
 using Service.ApiModels.User;
@@ -17,7 +14,6 @@ using Utility.Enum;
 using Utility.Exceptions;
 using Utility.Helpers;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Repository.Infrastructure;
 
 namespace Service.Services;

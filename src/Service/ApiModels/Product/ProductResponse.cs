@@ -1,8 +1,8 @@
 ﻿namespace Service.ApiModels.Product
 {
-    public class ProductResponse
+    public class ProductResponse : ProductListResponse
     {
-        public int Id { get; set; }
+        /*public int Id { get; set; }
         public string? ProductName { get; set; }
         public int? CategoryId { get; set; }
         public string? CategoryName { get; set; }
@@ -24,7 +24,7 @@
         public double? Width { get; set; }
         public double? Height { get; set; }
         public int? ShopId { get; set; }
-        public string? ShopName { get; set; }
+        public string? ShopName { get; set; }*/
         public string? ShopEmail { get; set; }
         public string? ShopPhone { get; set; }
         public string? ShopAddress { get; set; }

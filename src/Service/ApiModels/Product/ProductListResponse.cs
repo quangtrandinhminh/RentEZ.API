@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Service.ApiModels.Product
+﻿namespace Service.ApiModels.Product
 {
     public class ProductListResponse
     {
@@ -21,6 +15,7 @@ namespace Service.ApiModels.Product
         public double? Deposit { get; set; }
         public int? RentedCount { get; set; }
         public int? RatingCount { get; set; }
+        public decimal Rating { get; set; }
         public int? Quantity { get; set; }
         public int? AllowRentBeforeDays { get; set; }
         public int? Construction { get; set; }

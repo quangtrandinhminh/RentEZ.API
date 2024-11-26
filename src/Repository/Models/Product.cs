@@ -13,7 +13,7 @@ namespace Repository.Models
         public double? Price { get; set; }
         public string? RentPrice { get; set; }
         public int RentedCount { get; set; } = 0;
-        public int RatingCount { get; set; } = 0;
+        public int RatingCount => OrderDetails.Count(x => x.Rating != null);
         public int Quantity { get; set; } = 0;
         public int? AllowRentBeforeDays { get; set; }
         public int? Construction {  get; set; }
@@ -23,7 +23,27 @@ namespace Repository.Models
         public double? Long { get; set; }
         public double? Width { get; set; }
         public double? Height { get; set; }
-        public decimal Rating => (decimal)(OrderDetails.Count == 0 ? 0 : OrderDetails.Average(x => x.Rating));
+        public decimal Rating => RatingCalc();
+
+        private decimal RatingCalc()
+        {
+            var totalRating = 0m;
+            var total = OrderDetails.Count(x => x.Rating != null);
+            if (total == 0)
+            {
+                return 0m;
+            }
+
+            foreach (var orderDetail in OrderDetails)
+            {
+                if (orderDetail.Rating.HasValue)
+                {
+                    totalRating += orderDetail.Rating.Value;
+                }
+            }
+
+            return totalRating / total;
+        }
 
         [Range(0,1)]
         public double? DepositRate { get; set; }

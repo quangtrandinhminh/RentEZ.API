@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Repository.Models;
 using Repository.Models.Identity;
@@ -230,8 +229,6 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                     29800,
                     30000  // Max 30% của Price
                 }),
-                RentedCount = 0,
-                RatingCount = 0,
                 Quantity = 5,
                 AllowRentBeforeDays = 3,
                 Construction = 5,
@@ -262,8 +259,6 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                     28000,
                     29000  // 29% của Price
                 }),
-                RentedCount = 0,
-                RatingCount = 0,
                 Quantity = 3,
                 AllowRentBeforeDays = 4,
                 Construction = 5,
@@ -294,8 +289,6 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                     27000,
                     29000  // 29% của Price
                 }),
-                RentedCount = 0,
-                RatingCount = 0,
                 Quantity = 8,
                 AllowRentBeforeDays = 3,
                 Construction = 5,
@@ -326,8 +319,6 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
                     28000,
                     29500  // 29.5% của Price
                 }),
-                RentedCount = 0,
-                RatingCount = 0,
                 Quantity = 4,
                 AllowRentBeforeDays = 4,
                 Construction = 5,

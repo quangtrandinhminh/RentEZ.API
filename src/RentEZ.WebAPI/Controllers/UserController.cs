@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.ApiModels.User;
 using Service.ApiModels;
 using Service.Interfaces;
 using Utility.Constants;
-using Service.Services;
 using Utility.Enum;
 
 namespace RentEZ.WebAPI.Controllers

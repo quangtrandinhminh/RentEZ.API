@@ -1,6 +1,4 @@
-﻿using Service.ApiModels.Voucher;
-
-namespace Service.ApiModels.Order;
+﻿namespace Service.ApiModels.Order;
 
 public class CartCalcRequest
 {
