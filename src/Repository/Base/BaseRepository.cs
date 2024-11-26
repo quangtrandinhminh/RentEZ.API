@@ -68,7 +68,7 @@ namespace Repository.Base
 
             // Apply the predicate
             queryable = predicate != null ? queryable.Where(predicate) : queryable;
-            queryable = orderBy != null ? queryable.OrderBy(orderBy) : queryable.OrderByDescending(p => p.CreatedTime);
+            queryable = orderBy != null ? queryable.OrderByDescending(orderBy) : queryable.OrderByDescending(p => p.CreatedTime);
 
             // Create the paginated list with the projected query
             return await PaginatedList<T>.CreateAsync(queryable, pageNumber, pageSize);
