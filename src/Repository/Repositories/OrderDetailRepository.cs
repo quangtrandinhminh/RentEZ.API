@@ -12,7 +12,8 @@ public class OrderDetailRepository(IServiceProvider serviceProvider) : IOrderDet
 {
     private readonly AppDbContext _dbContext = serviceProvider.GetRequiredService<AppDbContext>();
 
-    public async Task<OrderDetail> GetSingleAsync(Expression<Func<OrderDetail, bool>> predicate,
+    public async Task<OrderDetail> GetSingleAsync(
+        Expression<Func<OrderDetail, bool>> predicate = null,
         bool isIncludeCustomer = false,
         params Expression<Func<OrderDetail, object>>[] includeProperties)
     {
@@ -29,6 +30,7 @@ public class OrderDetailRepository(IServiceProvider serviceProvider) : IOrderDet
 
             query = query.Include(includeProperty);
         }
+        query = query.AsSplitQuery();
 
         return await query.FirstOrDefaultAsync(predicate);
     }
@@ -77,6 +79,7 @@ public class OrderDetailRepository(IServiceProvider serviceProvider) : IOrderDet
 
             query = query.Include(includeProperty);
         }
+        query = query.AsSplitQuery();
 
         query = predicate != null ? query.Where(predicate) : query;
         query.OrderByDescending(x => x.FeedbackCreatedTime);
