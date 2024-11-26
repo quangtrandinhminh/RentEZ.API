@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Microsoft.IdentityModel.Tokens;
 using Repository.Infrastructure;
 using Repository.Interfaces;
 using Service.Interfaces;
@@ -55,13 +54,22 @@ namespace Service.Services
                 predicate = predicate.And(p => p.ShopId == request.shopId.Value);
             }
 
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var searchTerm = request.SearchTerm.Trim().ToLower();
+                predicate = predicate.And(s =>
+                    (s.ProductName != null && s.ProductName.ToLower().Contains(searchTerm)) ||
+                    (s.Description != null && s.Description.ToLower().Contains(searchTerm)));
+            }
+
             var products = await _productRepository.GetAllPaginatedQueryable(
                 request.PageNumber,
                 request.PageSize,
                 predicate,
                 p => p.Id,
                 p => p.Category,
-                p => p.Shop
+                p => p.Shop,
+                p => p.OrderDetails
             );
 
             if (products.Items == null || !products.Items.Any())
@@ -69,8 +77,9 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
             }
 
-            var productDtos = _mapper.ProductsToProductsResponseDto(products.Items.ToList());
-            foreach (var dto in productDtos)
+            //var productDtos = _mapper.ProductsToProductsResponseDto(products.Items.ToList());
+            var response = _mapper.MapToPaginatedListProductResponse(products);
+            foreach (var dto in response.Items)
             {
                 var product = products.Items.FirstOrDefault(p => p.Id == dto.Id);
                 if (product != null)
@@ -92,33 +101,35 @@ namespace Service.Services
                 }
             }
 
-            return new PaginatedListResponse<ProductListResponse>
-            {
-                Items = (IReadOnlyCollection<ProductListResponse>)productDtos,
-                PageNumber = products.PageNumber,
-                TotalPages = products.TotalPages,
-                TotalCount = products.TotalCount
-            };
+            return response;
         }
 
         // get product by Id
         public async Task<ProductResponse> GetProductById(int id)
         {
             _logger.Information($"Get product by Id");
-            var product = _productRepository.GetById(id);
+            var product = await _productRepository.GetSingleAsync(x => x.Id == id, false,
+                p => p.OrderDetails, p => p.Shop, p => p.Category);
             if (product == null)
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
             }
-            var category = await _categoryRepository.GetByIdAsync(product.CategoryId);
-            var shop = await _shopRepository.GetByIdAsync(product.ShopId);
+            /*var category = await _categoryRepository.GetByIdAsync(product.CategoryId);
+            var shop = await _shopRepository.GetByIdAsync(product.ShopId);*/
             var productDto = _mapper.ProductToProductResponseDto(product);
-            productDto.CategoryName = category?.CategoryName;
+            /*productDto.CategoryName = category?.CategoryName;
             productDto.ShopName = shop?.ShopName;
             productDto.ShopEmail = shop?.ShopEmail;
             productDto.ShopPhone = shop?.ShopPhone;
             productDto.ShopAddress = shop?.ShopAddress;
-            productDto.ShopAvatar = shop?.ShopAvatar;
+            productDto.ShopAvatar = shop?.ShopAvatar;*/
+            productDto.CategoryName = product.Category?.CategoryName;
+            productDto.ShopName = product.Shop?.ShopName;
+            productDto.ShopEmail = product.Shop?.ShopEmail;
+            productDto.ShopPhone = product.Shop?.ShopPhone;
+            productDto.ShopAddress = product.Shop?.ShopAddress;
+            productDto.ShopAvatar = product.Shop?.ShopAvatar;
+
             if (!string.IsNullOrEmpty(product.RentPrice))
             {
                 try
@@ -149,12 +160,17 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.SHOP_NOTFOUND, StatusCodes.Status404NotFound);
             }
+            if (existShop != null && existShop.Verified == null)
+            {
+                throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsProduct.SHOP_UNVERIFIED, StatusCodes.Status401Unauthorized);
+            }
             /*var existProductName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName);
+
+            var existProductName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName);
             if (existProductName != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_PRODUCTNAME, StatusCodes.Status400BadRequest);
             }*/
-
             var existCategory = await _categoryRepository.GetSingleAsync(x => x.Id == productRequest.CategoryId);
             if (existCategory == null)
             {
@@ -246,8 +262,8 @@ namespace Service.Services
             var productWithSameName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName && x.Id != id);
             if (productWithSameName != null)
             {
-                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_PRODUCTNAME, StatusCodes.Status400BadRequest);
-            }
+                    throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_PRODUCTNAME, StatusCodes.Status400BadRequest);
+                }
 
             var productWithSameImage = await _productRepository.GetSingleAsync(x => x.Image == productRequest.Image && x.Id != id);
             if (productWithSameImage != null)

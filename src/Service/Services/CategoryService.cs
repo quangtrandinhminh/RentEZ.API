@@ -8,7 +8,6 @@ using Utility.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Repository.Base;
 using Repository.Models;
 using Service.Mapper;
 using Service.ApiModels.Category;

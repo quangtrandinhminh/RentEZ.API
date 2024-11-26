@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Service.ApiModels.Order;
 using Service.ApiModels.OrderShop;
-using Service.ApiModels.VNPay;
 using Service.Interfaces;
-using Utility.Enum;
 using BaseResponse = Service.ApiModels.BaseResponse;
 
 namespace RentEZ.WebAPI.Controllers

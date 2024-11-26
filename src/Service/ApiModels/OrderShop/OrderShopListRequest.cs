@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Service.ApiModels.PaginatedList;
+﻿using Service.ApiModels.PaginatedList;
 using Utility.Enum;
 
 namespace Service.ApiModels.OrderShop;

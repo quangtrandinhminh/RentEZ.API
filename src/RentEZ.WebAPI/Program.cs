@@ -15,10 +15,7 @@ using AspNetCoreRateLimit;
 using Repository.Base;
 using MapperlyMapper = Service.Mapper.MapperlyMapper;
 using Repository.Models.Identity;
-using Utility.Helpers;
-using AngleSharp;
 using Microsoft.Extensions.Options;
-using CloudinaryDotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -195,6 +192,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderShopRepository, OrderShopRepository>();
 builder.Services.AddScoped<IStatisticRepository, StatisticRepository>();
+builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 
 // Service
 builder.Services.AddScoped<IAuthService, AuthService>();

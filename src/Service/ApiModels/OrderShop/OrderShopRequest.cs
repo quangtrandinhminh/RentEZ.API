@@ -1,5 +1,4 @@
 ﻿using Service.ApiModels.OrderDetail;
-using Service.ApiModels.Voucher;
 
 namespace Service.ApiModels.OrderShop;
 

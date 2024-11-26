@@ -1,8 +1,5 @@
-﻿using System.Collections.Immutable;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.OutputCaching;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Repository.Base;
 using Repository.Infrastructure;
 using Repository.Models;
@@ -11,17 +8,14 @@ using Service.ApiModels.Voucher;
 using Service.Interfaces;
 using Service.Mapper;
 using System.Linq.Expressions;
-using Repository.Extensions;
 using Repository.Interfaces;
 using Service.Helpers;
 using Utility.Constants;
 using Utility.Exceptions;
 using Utility.Helpers;
 using ILogger = Serilog.ILogger;
-using System.Security.Claims;
 using Service.Utils;
 using Utility.Enum;
-using System.Data;
 
 namespace Service.Services;
 

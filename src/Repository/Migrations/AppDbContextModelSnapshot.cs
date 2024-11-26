@@ -555,6 +555,12 @@ namespace Repository.Migrations
                     b.Property<decimal>("DepositRate")
                         .HasColumnType("numeric");
 
+                    b.Property<DateTimeOffset?>("FeedbackCreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("FeedbackLastUpdatedTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("OrderShopId")
                         .HasColumnType("integer");
 
@@ -792,9 +798,6 @@ namespace Repository.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RatingCount")
                         .HasColumnType("integer");
 
                     b.Property<string>("RentPrice")

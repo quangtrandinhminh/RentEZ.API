@@ -1,6 +1,4 @@
-﻿using Utility.Enum;
-
-namespace Service.ApiModels.Voucher;
+﻿namespace Service.ApiModels.Voucher;
 
 public class VoucherEnumResponse
 {

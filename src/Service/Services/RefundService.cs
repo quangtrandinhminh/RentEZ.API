@@ -1,30 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Net.payOS;
-using Net.payOS.Types;
 using Repository.Base;
 using Repository.Infrastructure;
 using Repository.Interfaces;
 using Repository.Models;
-using Repository.Models.Identity;
-using Serilog;
 using Service.ApiModels.Refund;
-using Service.ApiModels.VNPay;
 using Service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Utility.Config;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
 using Utility.Helpers;
-using Utility.Helpers.VnPay;
 
 namespace Service.Services
 {

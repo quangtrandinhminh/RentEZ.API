@@ -128,6 +128,7 @@
         public const string SHOP_NOTFOUND = "Cửa hàng chưa tồn tại.";
         public const string EXISTED_PRODUCTNAME = "Tên sản phẩm đã tồn tại.";
         public const string NOTFOUND = "Sản phẩm không tồn tại.";
+        public const string SHOP_UNVERIFIED = "Cửa hàng chưa được xác thực.";
         public const string EXISTED_IMAGE = "Hình ảnh của sản phẩm đã được sử dụng.";
         public const string NONEXISTENT_CATEGORY = "Loại sản phẩm không tồn tại.";
         public const string NOTHING_CHANGED = "Không có gì được thay đổi sau lần chỉnh sửa này.";
@@ -153,6 +154,10 @@
         public const string STATUS_CHANGE_NOTALLOWED = "Bạn chưa thể thay đổi trạng thái của đơn hàng này";
         public const string ALREADY_PAID = "Đơn hàng đã được thanh toán";
         public const string NOT_PAID = "Đơn hàng chưa được thanh toán";
+        public const string FEEDBACK_NOTALLOWED = "Bạn chưa thể đánh giá đơn hàng này. ";
+        public const string FEEDBACK_QUERY = "Bạn có 3 phương án: Lấy tất cả, Lấy theo shop hoặc Lấy theo sản phẩm";
+        public const string FEEDBACK_EXISTED = "Đã đánh giá đơn hàng này";
+        public const string FEEDBACK_NOTFOUND = "Không tìm thấy đánh giá";
     }
 
     public class ResponseMessageConstrantsVoucher
