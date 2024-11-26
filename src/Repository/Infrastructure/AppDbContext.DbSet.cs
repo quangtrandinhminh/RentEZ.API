@@ -15,4 +15,6 @@ public sealed partial class AppDbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderShop> OrderShops { get; set; }
     public DbSet<Voucher> Vouchers { get; set; }
+    public DbSet<OrderDetail> OrderDetails { get; set; }
+    public DbSet<SystemConfig> SystemConfigs { get; set; }
 }
