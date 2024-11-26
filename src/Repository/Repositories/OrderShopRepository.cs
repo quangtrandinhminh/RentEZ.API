@@ -79,7 +79,7 @@ public class OrderShopRepository : BaseRepository<OrderShop>, IOrderShopReposito
 
         // Apply the predicate
         query = predicate != null ? query.Where(predicate) : query;
-        query = orderBy != null ? query.OrderByDescending(orderBy) : query.OrderByDescending(p => p.CreatedTime);
+        query = orderBy != null ? query.OrderBy(orderBy) : query.OrderByDescending(p => p.CreatedTime);
 
         return await PaginatedList<OrderShop>.CreateAsync(query, pageIndex, pageSize);
     }
