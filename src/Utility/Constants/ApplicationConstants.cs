@@ -129,8 +129,6 @@
         public const string EXISTED_PRODUCTNAME = "Tên sản phẩm đã tồn tại.";
         public const string NOTFOUND = "Sản phẩm không tồn tại.";
         public const string SHOP_UNVERIFIED = "Cửa hàng chưa được xác thực.";
-        public const string EXISTED_PRODUCTNAME = "Ten san pham da ton tai.";
-        public const string NOTFOUND = "San pham khong ton tai.";
         public const string EXISTED_IMAGE = "Hình ảnh của sản phẩm đã được sử dụng.";
         public const string NONEXISTENT_CATEGORY = "Loại sản phẩm không tồn tại.";
         public const string NOTHING_CHANGED = "Không có gì được thay đổi sau lần chỉnh sửa này.";
