@@ -64,5 +64,13 @@ namespace RentEZ.WebAPI.Controllers
             await _shopService.ShopToApprove(id);
             return Ok(BaseResponse.OkResponseDto("Shop approved successfully"));
         }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "ShopOwner")]
+        public async Task<IActionResult> UpdateShop([FromBody] ShopCreateRequest request, [FromRoute] int id)
+        {
+            await _shopService.UpdateShopAsync(request, id);
+            return Ok(BaseResponse.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
+        }
     }
 }
