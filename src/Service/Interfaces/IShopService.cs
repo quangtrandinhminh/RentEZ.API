@@ -11,5 +11,6 @@ namespace Service.Interfaces
         Task<List<ShopResponse>> GetPendingShopList();
         Task<PaginatedListResponse<ShopResponse>> GetAllShops(ShopQueryParams queryParams);
         Task ShopToApprove(int id);
+        Task UpdateShopAsync(ShopCreateRequest shopRequest, int id);
     }
 }

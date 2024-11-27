@@ -109,6 +109,7 @@
         public const string EXISTED_AVATAR = "Avatar da ton tai.";
         public const string NO_INISACTIVE_SHOP_FOUND = "Tất cả cửa hàng đã được duyệt.";
         public const string ALREADY_APROVED = "Cửa hàng đã được duyệt.";
+        public const string NOTHING_CHANGED = "Không có gì được thay đổi sau lần chỉnh sửa này.";
         public const string EXISTED_PHONE = "Số điện thoại của cửa hàng đã tồn tại.";
         public const string ALREADY_OWNED_ANOTHER_SHOP = "Đã sở hữu một cửa hàng khác.";
         public const string PHONE_VALIDATED = "Số điện thoại này đã được xác thực.";

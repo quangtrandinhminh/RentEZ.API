@@ -19,6 +19,7 @@ using Service.Helpers;
 using Service.ApiModels.PaginatedList;
 using Microsoft.AspNetCore.Identity;
 using Repository.Models.Identity;
+using Repository.Repositories;
 
 namespace Service.Services
 {
@@ -44,6 +45,15 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstrantsShop.UNAUTHORIZED, StatusCodes.Status401Unauthorized);
             }
             var loggedInOwnerId = int.Parse(currentOwnerIdClaim.Value);
+            var existShopOwner = await _userRepository.GetSingleAsync(x => x.Id == shopRequest.OwnerId);
+            if (existShopOwner == null)
+            {
+                throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstrantsShop.OWNER_NOTFOUND, StatusCodes.Status400BadRequest);
+            }
+            if (existShopOwner.Verified == null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.IS_INACTIVE_OWNER, StatusCodes.Status400BadRequest);
+            }
             if (shopRequest.OwnerId != loggedInOwnerId)
             {
                 throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstrantsShop.INVALID_OWNER, StatusCodes.Status403Forbidden);
@@ -63,11 +73,11 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_NAME, StatusCodes.Status400BadRequest);
             }
-            /*var existShopAddress = await _shopRepository.GetSingleAsync(x => x.ShopAddress == shopRequest.ShopAddress);
+            var existShopAddress = await _shopRepository.GetSingleAsync(x => x.ShopAddress == shopRequest.ShopAddress);
             if (existShopAddress != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_ADDRESS, StatusCodes.Status400BadRequest);
-            }*/
+            }
             var existShopPhone = await _shopRepository.GetSingleAsync(x => x.ShopPhone == shopRequest.ShopPhone);
             if (existShopPhone != null)
             {
@@ -83,16 +93,6 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_Receiving_Account, StatusCodes.Status400BadRequest);
             }
-            var existShopOwner = await _userRepository.GetSingleAsync(x => x.Id == shopRequest.OwnerId);
-            if (existShopOwner == null)
-            {
-                throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstrantsShop.OWNER_NOTFOUND, StatusCodes.Status400BadRequest);
-            }
-            if (existShopOwner.Verified == null)
-            {
-                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.IS_INACTIVE_OWNER, StatusCodes.Status400BadRequest);
-            }
-
             try
             {
                 var newShop = _mapper.MapShopToCreateShop(shopRequest);
@@ -241,6 +241,96 @@ namespace Service.Services
                 await _unitOfWork.SaveChangeAsync();
             }
             catch(Exception ex)
+            {
+                throw new AppException(ResponseCodeConstants.FAILED, ex.Message, StatusCodes.Status400BadRequest);
+            }
+        }
+
+        // update shops
+        public async Task UpdateShopAsync(ShopCreateRequest shopRequest, int id)
+        {
+            _logger.Information("Update shop");
+            var currentOwnerIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid);
+            if (currentOwnerIdClaim == null)
+            {
+                throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsShop.UNAUTHORIZED, StatusCodes.Status401Unauthorized);
+            }
+            var loggedInOwnerId = int.Parse(currentOwnerIdClaim.Value);
+            var shop = await _shopRepository.GetSingleAsync(x => x.Id == id);
+            if(shop == null)
+            {
+                throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsShop.NOTFOUND, StatusCodes.Status401Unauthorized);
+            }
+            var existShop = await _shopRepository.GetSingleAsync(x => x.OwnerId == loggedInOwnerId);
+            //if (existShop == null)
+            //{
+            //    throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsShop.NOTFOUND, StatusCodes.Status401Unauthorized);
+            //}
+            var existShopOwner = await _userRepository.GetSingleAsync(x => x.Id == shopRequest.OwnerId);
+            if (existShopOwner == null)
+            {
+                throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstrantsShop.OWNER_NOTFOUND, StatusCodes.Status404NotFound);
+            }
+            if (existShopOwner.Verified == null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.IS_INACTIVE_OWNER, StatusCodes.Status400BadRequest);
+            }
+            if (existShop.OwnerId != loggedInOwnerId || existShop.Id != id || shopRequest.OwnerId != loggedInOwnerId)
+            {
+                throw new AppException(ResponseCodeConstants.UNAUTHORIZED, "Bạn không thể cập nhật thông tin cửa hàng của người khác", StatusCodes.Status403Forbidden);
+            }
+            var existedShopEmail = await _shopRepository.GetSingleAsync(x => x.ShopEmail == shopRequest.ShopEmail && x.Id != id);
+            if (existedShopEmail != null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
+            }
+            var existShopName = await _shopRepository.GetSingleAsync(x => x.ShopName == shopRequest.ShopName && x.Id != id);
+            if (existShopName != null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_NAME, StatusCodes.Status400BadRequest);
+            }
+            var existShopPhone = await _shopRepository.GetSingleAsync(x => x.ShopPhone == shopRequest.ShopPhone && x.Id != id);
+            if (existShopPhone != null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_PHONE, StatusCodes.Status400BadRequest);
+            }
+            var existShopAddress = await _shopRepository.GetSingleAsync(x => x.ShopAddress == shopRequest.ShopAddress && x.Id != id);
+            if (existShopAddress != null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_ADDRESS, StatusCodes.Status400BadRequest);
+            }
+            var existShopAvatar = await _shopRepository.GetSingleAsync(x => x.ShopAvatar == shopRequest.ShopAvatar && x.Id != id);
+            if (existShopAvatar != null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_AVATAR, StatusCodes.Status400BadRequest);
+            }
+            var existpReceivingAccount = await _shopRepository.GetSingleAsync(x => x.AccountNo == shopRequest.AccountNo && x.Id != id);
+            if (existpReceivingAccount != null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_Receiving_Account, StatusCodes.Status400BadRequest);
+            }
+            if(existShop.ShopEmail == shopRequest.ShopEmail &&
+               existShop.ShopName == shopRequest.ShopName &&
+               existShop.ShopPhone == shopRequest.ShopPhone &&
+               existShop.ShopAvatar == shopRequest.ShopAvatar && 
+               existShop.ShopAddress == shopRequest.ShopAddress &&
+               existShop.AccountNo == shopRequest.AccountNo &&
+               existShop.AccountName == shopRequest.AccountName &&
+               existShop.BankId == shopRequest.BankId &&
+               existShop.Id == id)
+            {
+                throw new AppException(ResponseCodeConstants.NOTHINGCHANGED, ResponseMessageConstrantsShop.NOTHING_CHANGED, StatusCodes.Status400BadRequest);
+            }
+            try
+            {
+                _mapper.ShopToCreateShop(shopRequest, existShop);
+                existShop.LastUpdatedTime = DateTimeOffset.UtcNow;
+
+                _shopRepository.Update(existShop);
+                await _unitOfWork.SaveChangeAsync();
+                _logger.Information("Updated shop successfully");
+            }
+            catch (Exception ex)
             {
                 throw new AppException(ResponseCodeConstants.FAILED, ex.Message, StatusCodes.Status400BadRequest);
             }
