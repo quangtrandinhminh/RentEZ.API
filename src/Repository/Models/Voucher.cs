@@ -29,7 +29,7 @@ public class Voucher : BaseEntity
 
     [Range(0, Int32.MaxValue)]
     public int? Limit { get; set; } 
-    public int Used { get; set; }
+    public int Used { get; set; } = 0;
     public string? Description { get; set; } 
     public VoucherStatusEnum Status
     {

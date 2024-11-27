@@ -170,6 +170,7 @@
         public const string VALUE_INVALID = "Giá trị voucher không hợp lệ";
         public const string MIN_RENTVALUE_INVALID = "Giá trị tối thiểu không hợp lệ";
         public const string MAX_DISVALUE_INVALID = "Giá trị tối đa không hợp lệ";
+        public const string LIMIT_INVALID = "Giới hạn không hợp lệ";
     }
 
     public class ResponseMessageImage

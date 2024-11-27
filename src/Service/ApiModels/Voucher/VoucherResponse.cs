@@ -14,4 +14,6 @@ public class VoucherResponse
     public DateTimeOffset? StartDate { get; set; }
     public DateTimeOffset? EndDate { get; set; }
     public string Status { get; set; }
+    public int? Limit { get; set; }
+    public int Used { get; set; }
 }

@@ -127,11 +127,11 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         }
 
         // orderId is the last part of the description
-        var orderId = int.Parse(data.description.Split(" ").Last());
+        var orderId = int.Parse(request.data.description.Split(" ").Last());
+        _logger.Information($"Get order {orderId} with orderCode {orderCode}");
 
         // valid data & change status of order
-        var order = await _orderRepository.GetSingleAsync(o => o.Id == orderId, 
-            false, o => o.OrderShops);
+        var order = await GetOrderById(orderId);
         if (order == null)
         {
             _logger.Information($"Order {orderId} not found");
@@ -199,6 +199,8 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
 
     private async Task UpdateOrderPayment(Order order, long orderCode)
     {
+        _logger.Information($"Update order payment for order {order.Id} with orderCode {orderCode}");
+
         // update order
         order.PaymentStatus = PaymentStatusEnum.Paid;
         order.PaymentTime = CoreHelper.SystemTimeNow;
@@ -219,6 +221,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
 
     private async Task<Order> GetOrderById(int orderId)
     {
+        _logger.Information($"Get order by id {orderId}");
         var order = await _orderRepository.GetSingleAsync(o => o.Id == orderId, 
                        false, o => o.OrderShops);
         if (order == null)
