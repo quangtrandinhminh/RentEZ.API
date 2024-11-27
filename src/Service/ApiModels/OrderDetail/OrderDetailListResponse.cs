@@ -17,4 +17,5 @@ public class OrderDetailListResponse
     public decimal RentPrice { get; set; }
     public decimal Deposit { get; set; }
     public decimal DepositRate { get; set; }
+    public bool IsRated { get; set; }
 }
