@@ -206,6 +206,13 @@ public class VoucherService(IServiceProvider serviceProvider) : IVoucherService
                                               StatusCodes.Status400BadRequest);
         }
 
+        // limit > 0
+        if (request.Limit != null && request.Limit < 0)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsVoucher.LIMIT_INVALID,
+                               StatusCodes.Status400BadRequest);
+        }
+
         // if min max value is not null, min, max > 0
         if (request.MinRentValue != null && request.MinRentValue < 0)
         {

@@ -44,7 +44,7 @@ public class CloudinaryService(IServiceProvider serviceProvider) : ICloudinarySe
     private void ImageValidate(IFormFile file)
     {
         // Danh sách định dạng ảnh hợp lệ
-        var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+        var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".jfif" };
 
         // Kiểm tra null hoặc rỗng
         if (file == null || file.Length == 0)

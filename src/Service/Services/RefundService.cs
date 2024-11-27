@@ -110,7 +110,7 @@ namespace Service.Services
         private decimal CalculateShopPayment(OrderShop orderShop)
         {
             // TotalRentPrice - Commission - Tax
-            decimal totalPayment = orderShop.TotalRentPrice - orderShop.Commission - orderShop.Tax;
+            decimal totalPayment = orderShop.TotalRentPrice - orderShop.Commission - orderShop.Tax - orderShop.ShopRentPriceDiscount / 2;
 
             // Nếu có damage, shop được giữ lại tiền deposit
             if (orderShop.Status == OrderShopStatusEnum.ReturnedWithDamage)
