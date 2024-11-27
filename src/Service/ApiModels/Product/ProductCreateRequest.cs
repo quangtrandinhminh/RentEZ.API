@@ -24,7 +24,6 @@ namespace Service.ApiModels.Product
         [Range(0.0001, Double.MaxValue, ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
         public double Price { get; set; }
         [Required]
-        [Range(0.0001, Double.MaxValue, ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
         public List<double> RentPrices { get; set; }
         [Required]
         [RegularExpression(@"^[+]?(0|[1-9]\d*)(\.\d+)?$", ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
