@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Repository.Base;
 using Repository.Infrastructure;
 using Repository.Interfaces;
-using Repository.Models;
 using Repository.Models.Identity;
 using Serilog;
 using Service.ApiModels;

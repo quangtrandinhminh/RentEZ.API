@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Service.ApiModels.OrderShop;
+﻿using Service.ApiModels.OrderShop;
 using Service.ApiModels.Voucher;
 using Utility.Enum;
 

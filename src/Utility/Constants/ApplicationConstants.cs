@@ -155,6 +155,10 @@
         public const string STATUS_CHANGE_NOTALLOWED = "Bạn chưa thể thay đổi trạng thái của đơn hàng này";
         public const string ALREADY_PAID = "Đơn hàng đã được thanh toán";
         public const string NOT_PAID = "Đơn hàng chưa được thanh toán";
+        public const string FEEDBACK_NOTALLOWED = "Bạn chưa thể đánh giá đơn hàng này. ";
+        public const string FEEDBACK_QUERY = "Bạn có 3 phương án: Lấy tất cả, Lấy theo shop hoặc Lấy theo sản phẩm";
+        public const string FEEDBACK_EXISTED = "Đã đánh giá đơn hàng này";
+        public const string FEEDBACK_NOTFOUND = "Không tìm thấy đánh giá";
     }
 
     public class ResponseMessageConstrantsVoucher

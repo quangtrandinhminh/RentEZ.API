@@ -21,6 +21,9 @@ public class OrderDetail
     public decimal SubTotalDeposit { get; set; }
     public byte? Rating { get; set; }
     public string? ReviewContent { get; set; }
+    public DateTimeOffset? FeedbackCreatedTime { get; set; }
+    public DateTimeOffset? FeedbackLastUpdatedTime { get; set; }
+    public bool IsRated => FeedbackCreatedTime != null;
 
     [ForeignKey("OrderShopId")]
     public virtual OrderShop OrderShop { get; set; }

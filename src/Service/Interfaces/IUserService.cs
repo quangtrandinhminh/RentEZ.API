@@ -1,5 +1,4 @@
-﻿using Repository.Extensions;
-using Service.ApiModels.PaginatedList;
+﻿using Service.ApiModels.PaginatedList;
 using Service.ApiModels.User;
 using Utility.Enum;
 

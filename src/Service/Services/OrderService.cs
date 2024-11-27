@@ -11,23 +11,16 @@ using Service.ApiModels.OrderDetail;
 using Service.BusinessModels;
 using Service.Interfaces;
 using Service.Mapper;
-using System.Linq;
-using Dasync.Collections;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
-using System.Security.Claims;
-using EnumsNET;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Repository.Extensions;
 using Service.ApiModels.OrderShop;
 using System.Linq.Expressions;
-using Flurl.Util;
 using Service.ApiModels;
 using Utility.Helpers;
 using Service.Helpers;
 using Service.ApiModels.PaginatedList;
-using Service.ApiModels.Voucher;
 using Service.Utils;
 
 namespace Service.Services;
@@ -44,10 +37,8 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         serviceProvider.GetRequiredService<IBaseRepository<Product>>();
     private readonly IBaseRepository<Shop> _shopRepository =
         serviceProvider.GetRequiredService<IBaseRepository<Shop>>();
-    private readonly IBaseRepository<Category> _categoryRepository =
-        serviceProvider.GetRequiredService<IBaseRepository<Category>>();
-    private readonly IUserRepository _userRepository =
-        serviceProvider.GetRequiredService<IUserRepository>();
+    private readonly IOrderDetailRepository _orderDetailRepository =
+        serviceProvider.GetRequiredService<IOrderDetailRepository>();
     private readonly MapperlyMapper _mapper =
         serviceProvider.GetRequiredService<MapperlyMapper>();
     private readonly ILogger _logger =
@@ -473,17 +464,21 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         var role = JwtClaimUltils.GetUserRole(loginedUser);
         var userId = JwtClaimUltils.GetUserId(loginedUser);
 
-        var orderShop = await _orderShopRepository.GetSingleAsync(x => x.Id == orderShopId
+        var orderShop = await _orderShopRepository.GetOrderShopByIdAsync(x => x.Id == orderShopId
             && (x.Status != OrderShopStatusEnum.Cancelled || x.Status != OrderShopStatusEnum.Rejected),
-            false,
+            false, true,
             x => x.Order,
-            x => x.Shop);
+            x => x.Shop,
+            x => x.OrderDetails
+            );
 
         if (orderShop == null)
         {
             throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsOrder.NOT_FOUND,
                                                                                                         StatusCodes.Status404NotFound);
         }
+
+        var products = orderShop.OrderDetails.Select(x => x.Product).ToList();
 
         if (isShop)
         {
@@ -496,8 +491,38 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
 
         var processor = new OrderShopProcessor(orderShop);
         var status = processor.ChangeNextStatus();
-        _orderShopRepository.Update(orderShop);
 
+        // update product quantity based on order status and rent quantity
+        OrderDetail orderDetail = null;
+        if (status == OrderShopStatusEnum.Approved.ToString())
+        {
+            foreach (var product in products)
+            {
+                orderDetail = orderShop.OrderDetails.FirstOrDefault(x => x.ProductId == product.Id);
+                product.RentedCount += orderDetail.RentQuantity;
+                _productRepository.Update(product);
+            }
+        }
+        else if (status == OrderShopStatusEnum.Shipping.ToString())
+        {
+            foreach (var product in products)
+            {
+                orderDetail = orderShop.OrderDetails.FirstOrDefault(x => x.ProductId == product.Id);
+                product.Quantity -= orderDetail.RentQuantity;
+                _productRepository.Update(product);
+            }
+        }
+        else if (status == OrderShopStatusEnum.Returned.ToString())
+        {
+            foreach (var product in products)
+            {
+                orderDetail = orderShop.OrderDetails.FirstOrDefault(x => x.ProductId == product.Id);
+                product.Quantity += orderDetail.RentQuantity;
+                _productRepository.Update(product);
+            }
+        }
+
+        _orderShopRepository.Update(orderShop);
         await _unitOfWork.SaveChangeAsync(_httpContextAccessor);
         return status;
     }
@@ -545,6 +570,111 @@ public class OrderService(IServiceProvider serviceProvider) : IOrderService
         _orderShopRepository.Update(orderShop);
 
         await _unitOfWork.SaveChangeAsync(_httpContextAccessor);
+    }
+
+    public async Task CreateFeedback(FeedbackRequest request)
+    {
+        _logger.Information($"Rate and feedback for order details {request.Id}");
+        var orderDetail = await _orderDetailRepository.GetSingleAsync(
+            x => x.Id == request.Id,
+            includeProperties: x => x.OrderShop);
+        if (orderDetail == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsOrder.NOT_FOUND,
+                               StatusCodes.Status404NotFound);
+        }
+
+        if (orderDetail.OrderShop.Status != OrderShopStatusEnum.Completed)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, 
+                ResponseMessageConstrantsOrder.FEEDBACK_NOTALLOWED + $"OrderShopStatus Required: {OrderShopStatusEnum.Completed.ToString()}",
+                                              StatusCodes.Status400BadRequest);
+        }
+
+        if (orderDetail.FeedbackCreatedTime != null)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsOrder.FEEDBACK_EXISTED,
+                               StatusCodes.Status400BadRequest);
+        }
+
+        _mapper.Map(request, orderDetail);
+        orderDetail.FeedbackCreatedTime = orderDetail.FeedbackLastUpdatedTime = CoreHelper.SystemTimeNow;
+        _orderDetailRepository.UpdateOrderDetail(orderDetail);
+    }
+
+    public async Task EditFeedback(FeedbackRequest request)
+    {
+        _logger.Information($"Edit rate and feedback for order details {request.Id}");
+        var user = JwtClaimUltils.GetLoginedUser(_httpContextAccessor);
+        var role = JwtClaimUltils.GetUserRole(user);
+        var userId = JwtClaimUltils.GetUserId(user);
+
+        var orderDetail = await _orderDetailRepository.GetSingleAsync(
+                       x => x.Id == request.Id && x.OrderShop.Order.Customer.Id == userId, true,
+                                  includeProperties: x => x.OrderShop);
+        if (orderDetail == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsOrder.NOT_FOUND,
+                                              StatusCodes.Status404NotFound);
+        }
+
+        if (orderDetail.FeedbackCreatedTime == null)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsOrder.FEEDBACK_NOTFOUND,
+                                              StatusCodes.Status400BadRequest);
+        }
+
+        _mapper.Map(request, orderDetail);
+        orderDetail.FeedbackLastUpdatedTime = CoreHelper.SystemTimeNow;
+        _orderDetailRepository.UpdateOrderDetail(orderDetail);
+    }
+
+    public async Task<PaginatedListResponse<FeedbackResponse>> GetFeedbackList(FeedbackListRequest request)
+    {
+        if (request is { ShopId: not null, ProductId: not null })
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsOrder.FEEDBACK_QUERY,
+                               StatusCodes.Status400BadRequest);
+        }
+
+        _logger.Information("Get feedback list for order detail {@request}", request);
+
+        PaginatedList<FeedbackResponse> feedbackList = null;
+        Expression<Func<OrderDetail, bool>> predicate = x => x.FeedbackCreatedTime != null;
+        if (request.ShopId.HasValue)
+        {
+            var shop = await _shopRepository.GetSingleAsync(x => x.Id == request.ShopId);
+            if (shop == null)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND,
+                                       StatusCodes.Status404NotFound);
+            }
+
+            predicate = predicate.And(x => x.Product.ShopId == shop.Id);
+            feedbackList = await _orderDetailRepository.GetFeedbackList(request.PageNumber, request.PageSize,
+                true, true,
+                predicate,
+                x => x.Product);
+        }
+        else if (request.ProductId.HasValue)
+        {
+            var product = await _productRepository.GetSingleAsync(x => x.Id == request.ProductId);
+            if (product == null)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND,
+                                                          StatusCodes.Status404NotFound);
+            }
+
+            predicate = predicate.And(x => x.ProductId == product.Id);
+            feedbackList = await _orderDetailRepository.GetFeedbackList(request.PageNumber, request.PageSize,
+                               false, true,
+                                              predicate,
+                                              x => x.Product);
+        }
+
+        feedbackList = await _orderDetailRepository.GetFeedbackList(request.PageNumber, request.PageSize, 
+            false, true, predicate);
+        return _mapper.MapToFeedbackListResponse(feedbackList);
     }
 
     private async Task<bool> IsOrderExist(int orderId)

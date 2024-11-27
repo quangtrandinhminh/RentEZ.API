@@ -11,17 +11,17 @@ namespace Service.ApiModels.Product
         [Required]
         public int CategoryId { get; set; }
         [Required]
-        [RegularExpression(@"^[1-9]\d*$", ErrorMessage = "Vui lòng nhập giá trị dương")]
+        [Range(0,Int32.MaxValue, ErrorMessage = "Vui lòng nhập giá trị dương")]
         public int Quantity { get; set; }
         [Required]
-        [RegularExpression(@"^[1-9]\d*$", ErrorMessage = "Vui lòng nhập giá trị dương")]
+        [Range(0, Int32.MaxValue, ErrorMessage = "Vui lòng nhập giá trị dương")]
         public int AllowRentBeforeDays { get; set; }
         public int Construction = 5;
         [Required]
-        [RegularExpression(@"^[+]?[0]*[1-9]\d*(\.\d+)?$", ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
+        [Range(0.0001, Double.MaxValue, ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
         public double Size { get; set; }
         [Required]
-        [RegularExpression(@"^[+]?[0]*[1-9]\d*(\.\d+)?$", ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
+        [Range(0.0001, Double.MaxValue, ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
         public double Price { get; set; }
         [Required]
         public List<double> RentPrices { get; set; }
@@ -33,17 +33,14 @@ namespace Service.ApiModels.Product
         [Required]
         //[DataType(DataType.ImageUrl)]
         public string Image { get; set; }
-        [Required]
-        [RegularExpression(@"^[+]?[0]*[1-9]\d*(\.\d+)?$", ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
-        public double Mass { get; set; }
-        [Required]
-        [RegularExpression(@"^[+]?[0]*[1-9]\d*(\.\d+)?$", ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
-        public double Long { get; set; }
-        [Required]
-        [RegularExpression(@"^[+]?[0]*[1-9]\d*(\.\d+)?$", ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
-        public double Width { get; set; }
-        [Required]
-        [RegularExpression(@"^[+]?[0]*[1-9]\d*(\.\d+)?$", ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
-        public double Height { get; set; }
+
+        [Range(0.0001, Double.MaxValue, ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
+        public double? Mass { get; set; } = null;
+        [Range(0.0001, Double.MaxValue, ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
+        public double? Long { get; set; } = null;
+        [Range(0.0001, Double.MaxValue, ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
+        public double? Width { get; set; } = null;
+        [Range(0.0001, Double.MaxValue, ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
+        public double? Height { get; set; } = null;
     }
 }

@@ -1,6 +1,4 @@
-﻿using Utility.Enum;
-
-namespace Service.ApiModels.Order;
+﻿namespace Service.ApiModels.Order;
 
 public class OrderListResponse
 {

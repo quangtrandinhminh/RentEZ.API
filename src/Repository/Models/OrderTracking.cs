@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Utility.Enum;
 using Utility.Helpers;
 
 namespace Repository.Models;

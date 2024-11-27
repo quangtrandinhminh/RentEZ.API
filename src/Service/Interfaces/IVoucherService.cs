@@ -1,7 +1,5 @@
-﻿using Repository.Models;
-using Service.ApiModels.PaginatedList;
+﻿using Service.ApiModels.PaginatedList;
 using Service.ApiModels.Voucher;
-using Utility.Enum;
 
 namespace Service.Interfaces;
 

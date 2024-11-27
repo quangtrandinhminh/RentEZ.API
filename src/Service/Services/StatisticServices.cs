@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Repository.Interfaces;
 using Repository.Models;
@@ -13,7 +12,6 @@ using Service.Utils;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
-using Utility.Helpers;
 
 namespace Service.Services;
 

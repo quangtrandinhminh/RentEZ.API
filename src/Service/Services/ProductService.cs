@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Microsoft.IdentityModel.Tokens;
 using Repository.Infrastructure;
 using Repository.Interfaces;
 using Service.Interfaces;
@@ -69,7 +68,8 @@ namespace Service.Services
                 predicate,
                 p => p.Id,
                 p => p.Category,
-                p => p.Shop
+                p => p.Shop,
+                p => p.OrderDetails
             );
 
             if (products.Items == null || !products.Items.Any())
@@ -77,8 +77,9 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
             }
 
-            var productDtos = _mapper.ProductsToProductsResponseDto(products.Items.ToList());
-            foreach (var dto in productDtos)
+            //var productDtos = _mapper.ProductsToProductsResponseDto(products.Items.ToList());
+            var response = _mapper.MapToPaginatedListProductResponse(products);
+            foreach (var dto in response.Items)
             {
                 var product = products.Items.FirstOrDefault(p => p.Id == dto.Id);
                 if (product != null)
@@ -100,33 +101,35 @@ namespace Service.Services
                 }
             }
 
-            return new PaginatedListResponse<ProductListResponse>
-            {
-                Items = (IReadOnlyCollection<ProductListResponse>)productDtos,
-                PageNumber = products.PageNumber,
-                TotalPages = products.TotalPages,
-                TotalCount = products.TotalCount
-            };
+            return response;
         }
 
         // get product by Id
         public async Task<ProductResponse> GetProductById(int id)
         {
             _logger.Information($"Get product by Id");
-            var product = _productRepository.GetById(id);
+            var product = await _productRepository.GetSingleAsync(x => x.Id == id, false,
+                p => p.OrderDetails, p => p.Shop, p => p.Category);
             if (product == null)
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
             }
-            var category = await _categoryRepository.GetByIdAsync(product.CategoryId);
-            var shop = await _shopRepository.GetByIdAsync(product.ShopId);
+            /*var category = await _categoryRepository.GetByIdAsync(product.CategoryId);
+            var shop = await _shopRepository.GetByIdAsync(product.ShopId);*/
             var productDto = _mapper.ProductToProductResponseDto(product);
-            productDto.CategoryName = category?.CategoryName;
+            /*productDto.CategoryName = category?.CategoryName;
             productDto.ShopName = shop?.ShopName;
             productDto.ShopEmail = shop?.ShopEmail;
             productDto.ShopPhone = shop?.ShopPhone;
             productDto.ShopAddress = shop?.ShopAddress;
-            productDto.ShopAvatar = shop?.ShopAvatar;
+            productDto.ShopAvatar = shop?.ShopAvatar;*/
+            productDto.CategoryName = product.Category?.CategoryName;
+            productDto.ShopName = product.Shop?.ShopName;
+            productDto.ShopEmail = product.Shop?.ShopEmail;
+            productDto.ShopPhone = product.Shop?.ShopPhone;
+            productDto.ShopAddress = product.Shop?.ShopAddress;
+            productDto.ShopAvatar = product.Shop?.ShopAvatar;
+
             if (!string.IsNullOrEmpty(product.RentPrice))
             {
                 try

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Service.ApiModels.User;
+﻿namespace Service.ApiModels.User;
 
 public class UserResponse : BankInfoRequest
 {

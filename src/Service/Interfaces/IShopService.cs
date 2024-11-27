@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Service.ApiModels.PaginatedList;
+﻿using Service.ApiModels.PaginatedList;
 using Service.ApiModels.Shop;
 
 namespace Service.Interfaces
