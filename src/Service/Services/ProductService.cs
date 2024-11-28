@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using System.Linq.Expressions;
 using Service.Helpers;
 using Service.ApiModels.PaginatedList;
+using Service.Utils;
 
 namespace Service.Services
 {
@@ -149,12 +150,12 @@ namespace Service.Services
         public async Task CreateProduct(ProductCreateRequest productRequest, CancellationToken cancellationToken = default)
         {
             _logger.Information("Creating new product");
-            var currentOwnerIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid);
+            var currentOwnerIdClaim = JwtClaimUltils.GetLoginedUser(_httpContextAccessor);
             /*if (currentOwnerIdClaim == null)
             {
                 throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsProduct.UNAUTHORIZED, StatusCodes.Status401Unauthorized);
             }*/
-            var loggedInOwnerId = int.Parse(currentOwnerIdClaim.Value);
+            var loggedInOwnerId = JwtClaimUltils.GetUserId(currentOwnerIdClaim);
             var existShop = await _shopRepository.GetSingleAsync(s => s.OwnerId == loggedInOwnerId);
             if (existShop == null)
             {
@@ -176,12 +177,12 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NONEXISTENT_CATEGORY, StatusCodes.Status404NotFound);
             }
-            
-            var validAllowRentBeforeDays = await _productRepository.GetSingleAsync(x => x.AllowRentBeforeDays == productRequest.AllowRentBeforeDays);
+
+            /*var validAllowRentBeforeDays = await _productRepository.GetSingleAsync(x => x.AllowRentBeforeDays == productRequest.AllowRentBeforeDays);
             if (validAllowRentBeforeDays != null && validAllowRentBeforeDays.AllowRentBeforeDays <= 2 && validAllowRentBeforeDays.AllowRentBeforeDays >= 5)
             {
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.INVALID_ALLOWRENTBEFOREDAYS, StatusCodes.Status400BadRequest);
-            }
+            }*/
             if (productRequest.RentPrices == null || !productRequest.RentPrices.Any())
             {
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST, "Phải có ít nhất 1 ngày thuê", StatusCodes.Status400BadRequest);
@@ -216,8 +217,8 @@ namespace Service.Services
             {
                 var newProduct = _mapper.MapProductToCreateProduct(productRequest);
 
-                newProduct.LastUpdatedTime = DateTimeOffset.UtcNow;
-                newProduct.LastUpdatedTime = DateTimeOffset.UtcNow;
+                // newProduct.LastUpdatedTime = DateTimeOffset.UtcNow;
+                // newProduct.LastUpdatedTime = DateTimeOffset.UtcNow;
                 newProduct.ShopId = existShop.Id;
                 newProduct.RentPrice = rentPricesJson;
                 newProduct.CreatedBy = loggedInOwnerId;
@@ -238,12 +239,12 @@ namespace Service.Services
         public async Task UpdateProductAsync(ProductCreateRequest productRequest, int id)
         {
             _logger.Information("Update product");
-            var currentOwnerIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid);
-            if (currentOwnerIdClaim == null)
+            var currentOwnerIdClaim = JwtClaimUltils.GetLoginedUser(_httpContextAccessor);
+            /*if (currentOwnerIdClaim == null)
             {
                 throw new AppException(ResponseCodeConstants.UNAUTHORIZED, ResponseMessageConstrantsProduct.UNAUTHORIZED, StatusCodes.Status401Unauthorized);
-            }
-            var loggedInOwnerId = int.Parse(currentOwnerIdClaim.Value);
+            }*/
+            var loggedInOwnerId = JwtClaimUltils.GetUserId(currentOwnerIdClaim);
             var existShop = await _shopRepository.GetSingleAsync(s => s.OwnerId == loggedInOwnerId);
             if (existShop == null)
             {
@@ -259,17 +260,17 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NOTFOUND, StatusCodes.Status404NotFound);
             }
 
-            var productWithSameName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName && x.Id != id);
+            /*var productWithSameName = await _productRepository.GetSingleAsync(x => x.ProductName == productRequest.ProductName && x.Id != id);
             if (productWithSameName != null)
             {
-                    throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_PRODUCTNAME, StatusCodes.Status400BadRequest);
-                }
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_PRODUCTNAME, StatusCodes.Status400BadRequest);
+            }*/
 
-            var productWithSameImage = await _productRepository.GetSingleAsync(x => x.Image == productRequest.Image && x.Id != id);
+            /*var productWithSameImage = await _productRepository.GetSingleAsync(x => x.Image == productRequest.Image && x.Id != id);
             if (productWithSameImage != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsProduct.EXISTED_IMAGE, StatusCodes.Status400BadRequest);
-            }
+            }*/
 
             var existingCategory = await _categoryRepository.GetSingleAsync(x => x.Id == productRequest.CategoryId);
             if (existingCategory == null)
@@ -277,11 +278,11 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsProduct.NONEXISTENT_CATEGORY, StatusCodes.Status400BadRequest);
             }
 
-            var validAllowRentBeforeDays = await _productRepository.GetSingleAsync(x => x.AllowRentBeforeDays == productRequest.AllowRentBeforeDays);
+            /*var validAllowRentBeforeDays = await _productRepository.GetSingleAsync(x => x.AllowRentBeforeDays == productRequest.AllowRentBeforeDays);
             if (validAllowRentBeforeDays != null && validAllowRentBeforeDays.AllowRentBeforeDays <= 2 && validAllowRentBeforeDays.AllowRentBeforeDays >= 5)
             {
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsProduct.INVALID_ALLOWRENTBEFOREDAYS, StatusCodes.Status400BadRequest);
-            }
+            }*/
 
             if (productRequest.RentPrices == null || !productRequest.RentPrices.Any())
             {
@@ -306,12 +307,12 @@ namespace Service.Services
                 }
             }
 
-            if (existingProduct.ProductName == productRequest.ProductName && 
-                existingProduct.Image == existingProduct.Image && 
-                existingProduct.RentPrice == rentPricesJson && 
-                existingProduct.CategoryId == productRequest.CategoryId && 
-                existingProduct.Quantity == productRequest.Quantity && 
-                existingProduct.AllowRentBeforeDays == productRequest.AllowRentBeforeDays && 
+            /*if (existingProduct.ProductName == productRequest.ProductName &&
+                existingProduct.Image == existingProduct.Image &&
+                existingProduct.RentPrice == rentPricesJson &&
+                existingProduct.CategoryId == productRequest.CategoryId &&
+                existingProduct.Quantity == productRequest.Quantity &&
+                existingProduct.AllowRentBeforeDays == productRequest.AllowRentBeforeDays &&
                 existingProduct.Size == productRequest.Size &&
                 existingProduct.Price == productRequest.Price &&
                 existingProduct.DepositRate == productRequest.DepositRate &&
@@ -324,7 +325,7 @@ namespace Service.Services
             {
 
                 throw new AppException(ResponseCodeConstants.NOTHINGCHANGED, ResponseMessageConstrantsProduct.NOTHING_CHANGED, StatusCodes.Status400BadRequest);
-            }
+            }*/
 
             for (int i = 1; i < rentPrices.Count; i++)
             {
@@ -337,7 +338,7 @@ namespace Service.Services
             try
             {
                 _mapper.ProductToCreateProduct(productRequest, existingProduct);
-                existingProduct.LastUpdatedTime = DateTimeOffset.UtcNow;
+                //xistingProduct.LastUpdatedTime = DateTimeOffset.UtcNow;
                 existingProduct.RentPrice = rentPricesJson;
 
                 _productRepository.Update(existingProduct);

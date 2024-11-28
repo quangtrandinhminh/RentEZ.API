@@ -56,7 +56,7 @@ public class Voucher : BaseEntity
     private bool IsPreparing => StartDate.HasValue && StartDate > CoreHelper.SystemTimeNow;
     private bool IsExpired => EndDate.HasValue && EndDate < CoreHelper.SystemTimeNow;
     private bool IsLimited => Limit.HasValue && Used >= Limit;
-    private bool IsUsed => Used > 0;
+    public bool IsUsed => Used > 0;
 
     [ForeignKey("ShopId")]
     public virtual Shop? Shop { get; set; }
