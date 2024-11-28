@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Utility.Constants;
 
 namespace Service.ApiModels.Product
 {
@@ -14,7 +15,7 @@ namespace Service.ApiModels.Product
         [Range(0,Int32.MaxValue, ErrorMessage = "Vui lòng nhập giá trị dương")]
         public int Quantity { get; set; }
         [Required]
-        [Range(0, Int32.MaxValue, ErrorMessage = "Vui lòng nhập giá trị dương")]
+        [Range(2, 5, ErrorMessage = ResponseMessageConstrantsProduct.INVALID_ALLOWRENTBEFOREDAYS)]
         public int AllowRentBeforeDays { get; set; }
         public int Construction = 5;
         [Required]
