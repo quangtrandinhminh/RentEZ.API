@@ -298,28 +298,28 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_ADDRESS, StatusCodes.Status400BadRequest);
             }
-            var existShopAvatar = await _shopRepository.GetSingleAsync(x => x.ShopAvatar == shopRequest.ShopAvatar && x.Id != id);
-            if (existShopAvatar != null)
-            {
-                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_AVATAR, StatusCodes.Status400BadRequest);
-            }
             var existpReceivingAccount = await _shopRepository.GetSingleAsync(x => x.AccountNo == shopRequest.AccountNo && x.Id != id);
             if (existpReceivingAccount != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_Receiving_Account, StatusCodes.Status400BadRequest);
             }
-            if(existShop.ShopEmail == shopRequest.ShopEmail &&
-               existShop.ShopName == shopRequest.ShopName &&
-               existShop.ShopPhone == shopRequest.ShopPhone &&
-               existShop.ShopAvatar == shopRequest.ShopAvatar && 
-               existShop.ShopAddress == shopRequest.ShopAddress &&
-               existShop.AccountNo == shopRequest.AccountNo &&
-               existShop.AccountName == shopRequest.AccountName &&
-               existShop.BankId == shopRequest.BankId &&
-               existShop.Id == id)
-            {
-                throw new AppException(ResponseCodeConstants.NOTHINGCHANGED, ResponseMessageConstrantsShop.NOTHING_CHANGED, StatusCodes.Status400BadRequest);
-            }
+            //var existShopAvatar = await _shopRepository.GetSingleAsync(x => x.ShopAvatar == shopRequest.ShopAvatar && x.Id != id);
+            //if (existShopAvatar != null)
+            //{
+            //    throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_AVATAR, StatusCodes.Status400BadRequest);
+            //}
+            //if(existShop.ShopEmail == shopRequest.ShopEmail &&
+            //   existShop.ShopName == shopRequest.ShopName &&
+            //   existShop.ShopPhone == shopRequest.ShopPhone &&
+            //   existShop.ShopAvatar == shopRequest.ShopAvatar && 
+            //   existShop.ShopAddress == shopRequest.ShopAddress &&
+            //   existShop.AccountNo == shopRequest.AccountNo &&
+            //   existShop.AccountName == shopRequest.AccountName &&
+            //   existShop.BankId == shopRequest.BankId &&
+            //   existShop.Id == id)
+            //{
+            //    throw new AppException(ResponseCodeConstants.NOTHINGCHANGED, ResponseMessageConstrantsShop.NOTHING_CHANGED, StatusCodes.Status400BadRequest);
+            //}
             try
             {
                 _mapper.ShopToCreateShop(shopRequest, existShop);
