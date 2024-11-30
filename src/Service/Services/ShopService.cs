@@ -82,12 +82,13 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_PHONE, StatusCodes.Status400BadRequest);
             }
-            var existShopAvatar = await _shopRepository.GetSingleAsync(x => x.ShopAvatar == shopRequest.ShopAvatar);
+            /*var existShopAvatar = await _shopRepository.GetSingleAsync(x => x.ShopAvatar == shopRequest.ShopAvatar);
             if (existShopAvatar != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_AVATAR, StatusCodes.Status400BadRequest);
-            }
-            var existpReceivingAccount = await _shopRepository.GetSingleAsync(x => x.AccountNo == shopRequest.AccountNo);
+            }*/
+            var existpReceivingAccount = await _shopRepository.GetSingleAsync(x => x.AccountNo == shopRequest.AccountNo 
+                && x.BankId == shopRequest.BankId);
             if (existpReceivingAccount != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_Receiving_Account, StatusCodes.Status400BadRequest);
@@ -298,7 +299,9 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_ADDRESS, StatusCodes.Status400BadRequest);
             }
-            var existpReceivingAccount = await _shopRepository.GetSingleAsync(x => x.AccountNo == shopRequest.AccountNo && x.Id != id);
+            var existpReceivingAccount = await _shopRepository.GetSingleAsync(x => x.AccountNo == shopRequest.AccountNo && 
+                x.BankId == shopRequest.BankId &&
+                x.Id != id);
             if (existpReceivingAccount != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageConstrantsShop.EXISTED_Receiving_Account, StatusCodes.Status400BadRequest);
