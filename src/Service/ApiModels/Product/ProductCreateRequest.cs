@@ -27,7 +27,7 @@ namespace Service.ApiModels.Product
         [Required]
         public List<double> RentPrices { get; set; }
         [Required]
-        [RegularExpression(@"^[+]?(0|[1-9]\d*)(\.\d+)?$", ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0")]
+        [RegularExpression(@"^(0\.[0-7]|0\.[1-6]\d*)$", ErrorMessage = "Vui lòng nhập giá trị lớn hơn 0 và nhỏ hơn hoặc bằng 0.7")]
         public double DepositRate { get; set; }
         [Required]
         public string Description { get; set; }
