@@ -233,6 +233,12 @@ public class VoucherService(IServiceProvider serviceProvider) : IVoucherService
                                StatusCodes.Status400BadRequest);
         }
 
+        if (request.ValueType == VoucherValueTypeEnum.Amount && request.MaxDiscountValue.HasValue)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsVoucher.MAX_DISCOUNT_INVALID,
+                                              StatusCodes.Status400BadRequest);
+        }
+
         if (request is { StartDate: not null, EndDate: not null } && request.StartDate > request.EndDate)
         {
             throw new AppException(ResponseCodeConstants.BAD_REQUEST, ResponseMessageConstrantsVoucher.EXPIRED_TIME_INVALID,

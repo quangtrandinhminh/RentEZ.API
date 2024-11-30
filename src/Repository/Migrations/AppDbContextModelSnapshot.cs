@@ -191,33 +191,33 @@ namespace Repository.Migrations
                         {
                             Id = 1,
                             CategoryName = "Handbag",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 26, 20, 20, 52, 287, DateTimeKind.Unspecified).AddTicks(2998), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5739), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Túi xách",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 26, 20, 20, 52, 287, DateTimeKind.Unspecified).AddTicks(2998), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5739), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2,
                             CategoryName = "SetOfClothes",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 26, 20, 20, 52, 287, DateTimeKind.Unspecified).AddTicks(3037), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5782), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Bộ quần áo",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 26, 20, 20, 52, 287, DateTimeKind.Unspecified).AddTicks(3037), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5782), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3,
                             CategoryName = "Dress",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 26, 20, 20, 52, 287, DateTimeKind.Unspecified).AddTicks(3039), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5785), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Váy",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 26, 20, 20, 52, 287, DateTimeKind.Unspecified).AddTicks(3039), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5785), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 4,
                             CategoryName = "Shoes",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 26, 20, 20, 52, 287, DateTimeKind.Unspecified).AddTicks(3041), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5790), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Giày dép",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 26, 20, 20, 52, 287, DateTimeKind.Unspecified).AddTicks(3041), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5790), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -443,19 +443,57 @@ namespace Repository.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Avatar = "https://via.placeholder.com/150",
-                            ConcurrencyStamp = "07824489-86b8-4067-835f-392dab33ad78",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 26, 20, 20, 52, 168, DateTimeKind.Unspecified).AddTicks(7488), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "d7f6bd09-de83-4968-8eef-5aac1e6901fa",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 18, 845, DateTimeKind.Unspecified).AddTicks(959), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin User",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 26, 20, 20, 52, 168, DateTimeKind.Unspecified).AddTicks(7488), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 18, 845, DateTimeKind.Unspecified).AddTicks(959), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$L.kXvqMeaBnC7r2UV/Hqc.GGkxMalwqA9jZO8C6UEM1d18z7O8NrC",
+                            PasswordHash = "$2a$11$jYmxez.fJV9s6h6xcvRHduT0cUrHe6j1mshagUgv/Sf0A7apOtRzG",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "admin",
-                            Verified = new DateTimeOffset(new DateTime(2024, 11, 26, 20, 20, 52, 287, DateTimeKind.Unspecified).AddTicks(2360), new TimeSpan(0, 0, 0, 0, 0))
+                            Verified = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 18, 993, DateTimeKind.Unspecified).AddTicks(5570), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccessFailedCount = 0,
+                            Avatar = "https://via.placeholder.com/150",
+                            ConcurrencyStamp = "c955289e-523a-4c8d-af85-3c54507d0262",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 18, 993, DateTimeKind.Unspecified).AddTicks(5601), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "shopowner@example.com",
+                            EmailConfirmed = false,
+                            FullName = "Shop Owner",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 18, 993, DateTimeKind.Unspecified).AddTicks(5601), new TimeSpan(0, 0, 0, 0, 0)),
+                            LockoutEnabled = false,
+                            NormalizedUserName = "SHOPOWNER",
+                            PasswordHash = "$2a$11$yqPAhKW8e/uJFEF9vKOv9.WiKDViyB2fN6h34lyH.AC7ceV4Ztd/q",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "shopowner",
+                            Verified = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 137, DateTimeKind.Unspecified).AddTicks(7459), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccessFailedCount = 0,
+                            Avatar = "https://via.placeholder.com/150",
+                            ConcurrencyStamp = "b24ecd7d-0e39-426e-9fd2-5982b28d748e",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 137, DateTimeKind.Unspecified).AddTicks(7480), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "customer1@example.com",
+                            EmailConfirmed = false,
+                            FullName = "Customer 1",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 137, DateTimeKind.Unspecified).AddTicks(7480), new TimeSpan(0, 0, 0, 0, 0)),
+                            LockoutEnabled = false,
+                            NormalizedUserName = "CUSTOMER1",
+                            PasswordHash = "$2a$11$cS4H/UP8M7J187YpnQSmJOFxSH1SBLD1dMCRXxTp3jwNMeBGslw46",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "customer1",
+                            Verified = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(4205), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -506,10 +544,19 @@ namespace Repository.Migrations
                     b.Property<DateTimeOffset?>("PaymentTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal?>("ShipFee")
+                    b.Property<decimal>("PlatformRentDiscount")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal?>("ShipSupportFee")
+                    b.Property<decimal>("ProvisionalTotal")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("ShipFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("ShipSupportFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("ShopRentDiscount")
                         .HasColumnType("numeric");
 
                     b.Property<decimal>("Tax")
@@ -649,9 +696,6 @@ namespace Repository.Migrations
 
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
-
-                    b.Property<decimal>("PlatformRentPriceDiscount")
-                        .HasColumnType("numeric");
 
                     b.Property<decimal>("ShipFee")
                         .HasColumnType("numeric");
@@ -826,6 +870,100 @@ namespace Repository.Migrations
                         .HasDatabaseName("Index_Id4");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AllowRentBeforeDays = 3,
+                            CategoryId = 1,
+                            Construction = 5,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(6802), new TimeSpan(0, 0, 0, 0, 0)),
+                            DepositRate = 0.5,
+                            Description = "Túi xách đẹp",
+                            Height = 15.0,
+                            Image = "https://via.placeholder.com/150",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(6804), new TimeSpan(0, 0, 0, 0, 0)),
+                            Long = 10.0,
+                            Mass = 1.0,
+                            Price = 100000.0,
+                            ProductName = "Túi xách 1",
+                            Quantity = 5,
+                            RentPrice = "[25000.0,27000.0,28000.0,29000.0,29500.0,29800.0,30000.0]",
+                            RentedCount = 0,
+                            ShopId = 1,
+                            Size = 10.0,
+                            Width = 5.0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AllowRentBeforeDays = 4,
+                            CategoryId = 1,
+                            Construction = 5,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(6992), new TimeSpan(0, 0, 0, 0, 0)),
+                            DepositRate = 0.5,
+                            Description = "Túi xách đẹp",
+                            Height = 15.0,
+                            Image = "https://via.placeholder.com/150",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(6992), new TimeSpan(0, 0, 0, 0, 0)),
+                            Long = 10.0,
+                            Mass = 1.0,
+                            Price = 100000.0,
+                            ProductName = "Túi xách 2",
+                            Quantity = 3,
+                            RentPrice = "[20000.0,22000.0,24000.0,26000.0,27000.0,28000.0,29000.0]",
+                            RentedCount = 0,
+                            ShopId = 1,
+                            Size = 10.0,
+                            Width = 5.0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AllowRentBeforeDays = 3,
+                            CategoryId = 2,
+                            Construction = 5,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7126), new TimeSpan(0, 0, 0, 0, 0)),
+                            DepositRate = 0.69999999999999996,
+                            Description = "Bộ quần áo đẹp",
+                            Height = 15.0,
+                            Image = "https://via.placeholder.com/150",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7127), new TimeSpan(0, 0, 0, 0, 0)),
+                            Long = 10.0,
+                            Mass = 1.0,
+                            Price = 100000.0,
+                            ProductName = "Bộ quần áo 1",
+                            Quantity = 8,
+                            RentPrice = "[15000.0,18000.0,21000.0,23000.0,25000.0,27000.0,29000.0]",
+                            RentedCount = 0,
+                            ShopId = 2,
+                            Size = 10.0,
+                            Width = 5.0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AllowRentBeforeDays = 4,
+                            CategoryId = 2,
+                            Construction = 5,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7344), new TimeSpan(0, 0, 0, 0, 0)),
+                            DepositRate = 0.69999999999999996,
+                            Description = "Bộ quần áo đẹp",
+                            Height = 15.0,
+                            Image = "https://via.placeholder.com/150",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7345), new TimeSpan(0, 0, 0, 0, 0)),
+                            Long = 10.0,
+                            Mass = 1.0,
+                            Price = 100000.0,
+                            ProductName = "Bộ quần áo 2",
+                            Quantity = 4,
+                            RentPrice = "[20000.0,22000.0,24000.0,25000.0,26000.0,28000.0,29500.0]",
+                            RentedCount = 0,
+                            ShopId = 1,
+                            Size = 10.0,
+                            Width = 5.0
+                        });
                 });
 
             modelBuilder.Entity("Repository.Models.Shop", b =>
@@ -897,6 +1035,34 @@ namespace Repository.Migrations
                         .HasDatabaseName("Index_Id5");
 
                     b.ToTable("Shops");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5622), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5622), new TimeSpan(0, 0, 0, 0, 0)),
+                            OwnerId = 2,
+                            ShopAddress = "123 Street",
+                            ShopAvatar = "https://via.placeholder.com/150",
+                            ShopEmail = "shopowner@example.com",
+                            ShopName = "Shop Owner",
+                            ShopPhone = "0123456789",
+                            Verified = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5635), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5639), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5639), new TimeSpan(0, 0, 0, 0, 0)),
+                            OwnerId = 3,
+                            ShopAddress = "123 Street",
+                            ShopAvatar = "https://via.placeholder.com/150",
+                            ShopEmail = "customershop1@example.com",
+                            ShopName = "Customer Shop",
+                            ShopPhone = "0123456789",
+                            Verified = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(5641), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("Repository.Models.SystemConfig", b =>
@@ -1023,6 +1189,103 @@ namespace Repository.Migrations
                         .HasDatabaseName("Index_Id7");
 
                     b.ToTable("Vouchers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "Voucher1",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7476), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 100.000đ phí thuê, RentEZ chào bạn mới",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7476), new TimeSpan(0, 0, 0, 0, 0)),
+                            Limit = 10,
+                            Name = "Voucher 100k",
+                            Type = 1,
+                            Used = 0,
+                            Value = 100000m,
+                            ValueType = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "Voucher2",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7492), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 10% phí thuê cho đơn hàng từ Shop 1 có tiền thuê từ 250.000đ tối đa 100.000",
+                            EndDate = new DateTimeOffset(new DateTime(2024, 12, 10, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7510), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7492), new TimeSpan(0, 0, 0, 0, 0)),
+                            Limit = 10,
+                            MaxDiscountValue = 100000m,
+                            MinRentValue = 250000m,
+                            Name = "Voucher 10% phí thuê",
+                            ShopId = 1,
+                            StartDate = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7508), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 1,
+                            Used = 0,
+                            Value = 0.10m,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "Voucher3",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7564), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 10% phí thuê cho mọi đơn hàng từ Shop 2",
+                            EndDate = new DateTimeOffset(new DateTime(2024, 12, 10, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7568), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7564), new TimeSpan(0, 0, 0, 0, 0)),
+                            Limit = 10,
+                            Name = "Voucher 10% phí thuê",
+                            ShopId = 2,
+                            StartDate = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7567), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 1,
+                            Used = 0,
+                            Value = 0.10m,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Code = "Voucher4",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7578), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 30% phí ship cho đơn hàng có phí thuê từ 100.000đ, tối đa 10.000đ",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7578), new TimeSpan(0, 0, 0, 0, 0)),
+                            MaxDiscountValue = 10000m,
+                            MinRentValue = 100000m,
+                            Name = "Voucher 30% phí ship",
+                            Type = 2,
+                            Used = 0,
+                            Value = 0.30m,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Code = "Voucher5",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7586), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 50% phí ship cho đơn hàng có phí thuê từ 300.000đ, tối đa 25.000đ",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7586), new TimeSpan(0, 0, 0, 0, 0)),
+                            MaxDiscountValue = 25000m,
+                            MinRentValue = 300000m,
+                            Name = "Voucher 15% phí ship",
+                            Type = 2,
+                            Used = 0,
+                            Value = 0.5m,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Code = "Voucher5",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7591), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Giảm 70% phí ship cho đơn hàng có phí thuê từ 500.000đ, tối đa 75.000đ",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 30, 16, 10, 19, 278, DateTimeKind.Unspecified).AddTicks(7591), new TimeSpan(0, 0, 0, 0, 0)),
+                            MaxDiscountValue = 75000m,
+                            MinRentValue = 150000m,
+                            Name = "Voucher 15% phí ship",
+                            Type = 2,
+                            Used = 0,
+                            Value = 0.7m,
+                            ValueType = 1
+                        });
                 });
 
             modelBuilder.Entity("UserEntityVoucher", b =>

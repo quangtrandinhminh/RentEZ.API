@@ -6,13 +6,14 @@ namespace Service.BusinessModels;
 
 public class Cart()
 {
+    public decimal ProvisionalTotal { get; private set; }
     public decimal TotalRentPrice { get; private set; }
     public decimal TotalDeposit { get; private set; }
     public decimal CommissionRate { get; private set; }
     public decimal TotalCommissionFee { get; private set; }
     public decimal TotalShipFee { get; set; }
     public decimal ShipSupportFee { get; private set; } = 0;
-    public decimal ShopRentDiscount { get; private set; }
+    public decimal ShopRentDiscount { get; private set; } = 0;
     public decimal PlatformRentDiscount { get; private set; } = 0;
     public decimal TaxRate { get; private set; }
     public decimal Tax { get; private set; }
@@ -29,6 +30,7 @@ public class Cart()
         TotalDeposit = OrderShops.Sum(x => x.TotalDeposit);
         ShopRentDiscount = OrderShops.Sum(x => x.TotalDiscount);
         TotalShipFee = OrderShops.Sum(x => x.ShipFee);
+        ProvisionalTotal = CalculateHelper.CalculateProvisionalTotal(TotalRentPrice, TotalDeposit, TotalShipFee);
 
         // Calculate tax, commission, and total values for the cart
         TaxRate = taxRate;
@@ -72,8 +74,8 @@ public class Cart()
 
         // Calculate the total value for the cart
         // ShopRentDiscount and PlatformRentDiscount are calculated in the CalculateShopTotalWithPlatform method
-        PlatformRentDiscount = OrderShops.Sum(x => x.PlatformRentPriceDiscount);
+        //PlatformRentDiscount = OrderShops.Sum(x => x.PlatformRentPriceDiscount);
         TotalDiscount = ShopRentDiscount + PlatformRentDiscount + ShipSupportFee;
-        Total = CalculateHelper.CalculateTotal(TotalRentPrice, TotalDeposit, TotalShipFee, TotalDiscount);
+        Total = CalculateHelper.CalculateTotal(ProvisionalTotal, TotalDiscount, Tax);
     }
 }

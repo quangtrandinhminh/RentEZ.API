@@ -7,10 +7,13 @@ namespace Service.ApiModels.Order;
 public class OrderRequest
 {
     public string OrderAddress { get; set; }
+    public decimal ProvisionalTotal { get; set; }
     public decimal TotalRentPrice { get; set; }
     public decimal TotalDeposit { get; set; }
     public decimal TotalShipFee { get; set; }
     public decimal ShipSupportFee { get; set; }
+    public decimal ShopRentDiscount { get; set; }
+    public decimal PlatformRentDiscount { get; set; } = 0;
     public decimal CommissionRate { get; set; }
     public decimal TotalCommissionFee { get; set; }
     public decimal Tax { get; set; }
