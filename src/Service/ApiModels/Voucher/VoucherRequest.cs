@@ -11,8 +11,8 @@ public class VoucherRequest
 
     [Required(ErrorMessage = "Vui lòng nhập tên voucher")]
     [StringLength(50, ErrorMessage = "Tên voucher không quá 50 ký tự")]
-    // chỉ không cho phép nhập kí tự đặc biệt
-    [RegularExpression(@"^[a-zA-Z0-9\s]*$", ErrorMessage = "Tên voucher không chứa ký tự đặc biệt")]
+    // chỉ không cho phép nhập kí tự đặc biệt, trừ % để nhập giá trị giảm giá, dấu cách để nhập tên voucher
+    [RegularExpression(@"^[%a-zA-Z0-9\s\u00C0-\u1EF9]*$", ErrorMessage = "Tên voucher không chứa ký tự đặc biệt")]
     public string? Name { get; set; }
 
     [Required(ErrorMessage = "Vui lòng nhập giá trị giảm giá")]

@@ -18,9 +18,22 @@ namespace Service.Helpers
             return tax;
         }
 
-        public static decimal CalculateTotal(decimal totalRentPrice, decimal totalDeposit, decimal totalShipFee, decimal totalDiscount)
+        public static decimal CalculateProvisionalTotal(decimal totalRentPrice, decimal totalDeposit, decimal totalShipFee)
         {
-            var total = totalRentPrice + totalDeposit + totalShipFee - totalDiscount;
+            var total = totalRentPrice + totalDeposit + totalShipFee;
+            return total;
+        }
+
+        public static decimal CalculateTotal(decimal provisionalTotal, decimal totalDeposit, decimal totalShipFee,
+            decimal totalDiscount)
+        {
+            var total = provisionalTotal - totalDiscount + totalDeposit + totalShipFee;
+            return total;
+        }
+
+        public static decimal CalculateTotal(decimal provisionalTotal, decimal totalDiscount, decimal tax)
+        {
+            var total = provisionalTotal - totalDiscount + tax;
             return total;
         }
 
@@ -44,11 +57,11 @@ namespace Service.Helpers
             return discount;
         }
 
-        public static void ApplyPlatformRentVoucherPercent(Voucher voucher, decimal totalRentPrice, CartShop shop)
+        /*public static void ApplyPlatformRentVoucherPercent(Voucher voucher, decimal totalRentPrice, CartShop shop)
         {
             if (voucher.MinRentValue.HasValue && totalRentPrice < voucher.MinRentValue.Value) return;
             shop.PlatformRentPriceDiscount = ApplyRentPercentDiscount(voucher, shop.TotalRentPrice);
-        }
+        }*/
 
         public static decimal ApplyShopRentVoucher(Voucher voucher, decimal totalRentPrice)
         {

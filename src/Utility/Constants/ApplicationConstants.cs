@@ -171,6 +171,7 @@
         public const string MIN_RENTVALUE_INVALID = "Giá trị tối thiểu không hợp lệ";
         public const string MAX_DISVALUE_INVALID = "Giá trị tối đa không hợp lệ";
         public const string LIMIT_INVALID = "Giới hạn không hợp lệ";
+        public const string MAX_DISCOUNT_INVALID = "Giá trị giảm tối đa chỉ áp dụng cho loại giảm giá phần trăm (%)";
     }
 
     public class ResponseMessageImage

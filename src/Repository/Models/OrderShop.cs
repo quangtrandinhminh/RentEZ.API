@@ -23,7 +23,7 @@ public class OrderShop : BaseEntity
     public decimal ShipFee { get; set; }
     public decimal ShipFeeSupport { get; set; }
     public decimal TotalRentPrice { get; set; }
-    public decimal PlatformRentPriceDiscount { get; set; }
+    //public decimal PlatformRentPriceDiscount { get; set; }
     public decimal ShopRentPriceDiscount { get; set; }
     public decimal TotalDeposit { get; set; }
     public decimal TotalDiscount { get; set; }

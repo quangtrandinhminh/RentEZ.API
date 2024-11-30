@@ -15,7 +15,7 @@ public class CartShop()
     public decimal ShipFee { get; set; }
     public decimal ShipFeeSupport { get; set; } = 0;
     public decimal TotalRentPrice { get; private set; }
-    public decimal PlatformRentPriceDiscount { get; set; } = 0;
+    //public decimal PlatformRentPriceDiscount { get; set; } = 0;
     public decimal ShopRentPriceDiscount { get; set; } = 0;
     public decimal TotalDeposit { get; private set; }
     public decimal TotalDiscount { get; private set; }
@@ -47,7 +47,7 @@ public class CartShop()
     public void CalculateShopTotalWithPlatform()
     {
         // platform rent price discount and ship fee support are applied by platform
-        TotalDiscount += PlatformRentPriceDiscount;
+        //TotalDiscount += PlatformRentPriceDiscount;
         TotalDiscount += ShipFeeSupport;
 
         // calculate total value for the shop
