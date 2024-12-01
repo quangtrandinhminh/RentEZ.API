@@ -70,6 +70,8 @@ public partial class MapperlyMapper
     // order
     public partial OrderResponse MapToOrderResponse(Order order);
     public partial PaginatedListResponse<OrderListResponse> MapToOrderListResponse(PaginatedList<Order> entity);
+
+    [MapProperty(nameof(OrderRequest.TotalShipFee), nameof(Order.ShipFee))]
     public partial Order MapToOrder(OrderRequest request);
     public partial CustomerResponse MapTCustomerResponse(UserEntity entity);
 
