@@ -61,7 +61,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
 
         // update order
-        order.Note = orderCode.ToString();
+        order.PaymentId = orderCode.ToString();
         order.PaymentMethod = PaymentMethodEnum.PayOS;
         order.PaymentStatus = PaymentStatusEnum.Pending;
         _orderRepository.Update(order);
