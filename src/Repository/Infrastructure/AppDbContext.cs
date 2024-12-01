@@ -88,7 +88,7 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
             }
         }
 
-        int roleIndex = 1;
+        /*int roleIndex = 1;
         var roles = Enum.GetValues<UserRoleEnum>().Select(role => new RoleEntity
         {
             Id = roleIndex++,
@@ -124,6 +124,6 @@ public sealed partial class AppDbContext : IdentityDbContext<UserEntity, RoleEnt
             new Category { Id = 2, CategoryName = CategoryEnum.SetOfClothes.ToString(), Description = "Bộ quần áo" },
             new Category { Id = 3, CategoryName = CategoryEnum.Dress.ToString(), Description = "Váy" },
             new Category { Id = 4, CategoryName = CategoryEnum.Shoes.ToString(), Description = "Giày dép" }
-            );
+            );*/
     }
 }
