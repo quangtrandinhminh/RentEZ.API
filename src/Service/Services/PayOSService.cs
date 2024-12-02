@@ -112,7 +112,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         return (int)dateTime.ToUnixTimeSeconds();
     }
 
-    // Wait for WebhookType response from server
+    // Wait for WebhookType response from payos server 
     public async Task GetWebhookTypeAsync(WebhookType request)
     {
         _logger.Information("Get webhook type {@request}", request.data);
@@ -141,7 +141,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         // if status == "00" change status of order to success
         if (request.code == "00")
         {
-            await UpdateOrderPayment(order, data.orderCode);
+            UpdateOrderPayment(order, data.orderCode);
         }
         else
         {
@@ -171,6 +171,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
         throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsOrder.NOT_FOUND, StatusCodes.Status404NotFound);
     }
 
+    // localhost only to confirm payment
     public async Task ConfirmPayment(int orderId, long orderCode)
     {
         _logger.Information($"Confirm payment for order {orderId} with orderCode {orderCode}");
@@ -194,10 +195,10 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
                                               ResponseMessageConstrantsOrder.NOT_PAID, StatusCodes.Status400BadRequest);
         }
 
-        await UpdateOrderPayment(order, orderCode);
+        UpdateOrderPayment(order, orderCode);
     }
 
-    private async Task UpdateOrderPayment(Order order, long orderCode)
+    private void UpdateOrderPayment(Order order, long orderCode)
     {
         _logger.Information($"Update order payment for order {order.Id} with orderCode {orderCode}");
 
@@ -216,7 +217,7 @@ public class PayOSService(IServiceProvider serviceProvider) : IPayOSService
             _orderShopRepository.Update(orderShop);
         }
 
-        await _unitOfWork.SaveChangeAsync();
+        _unitOfWork.SaveChange();
     }
 
     private async Task<Order> GetOrderById(int orderId)

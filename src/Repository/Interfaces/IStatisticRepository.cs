@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Repository.Extensions;
 using Repository.Models;
 using Repository.Models.Identity;
 
@@ -14,4 +15,12 @@ public interface IStatisticRepository
     Task<(decimal, int)> GetTotalRevenue(
         Expression<Func<OrderShop, bool>> predicate = null,
         bool isPlatform = false);
+
+    Task<ShopRevenueStatisticResponse> GetShopRevenueStatisticsAsync(int shopId);
+    Task<AdminRevenueStatisticResponse> GetAdminRevenueStatisticsAsync();
+
+    Task<IList<RevenueChartResponse>> GetOrderShopStatistic(
+        Expression<Func<OrderShop, bool>> predicate = null,
+        bool isPlatform = false
+    );
 }
