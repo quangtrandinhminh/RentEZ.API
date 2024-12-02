@@ -1,8 +1,11 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.DependencyInjection;
+using Repository.Extensions;
 using Repository.Interfaces;
 using Repository.Models;
+using Repository.Repositories;
 using Serilog;
 using Service.ApiModels.Statistic;
 using Service.Helpers;
@@ -12,6 +15,7 @@ using Service.Utils;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
+using Utility.Helpers;
 
 namespace Service.Services;
 
@@ -108,6 +112,77 @@ public class StatisticServices(IServiceProvider serviceProvider) : IStatisticSer
         (result.TotalRevenue, result.TotalOrderShop) = await _statisticRepository.GetTotalRevenue(
             predicate, true
             );
+        return result;
+    }
+
+    public async Task<AdminRevenueStatisticResponse> GetAdminRevenueStatisticsAsync()
+    {
+        _logger.Information($"GetAdminRevenueStatisticsAsync at {CoreHelper.SystemTimeNow}");
+        return await _statisticRepository.GetAdminRevenueStatisticsAsync();
+    }
+
+    public async Task<ShopRevenueStatisticResponse> GetShopRevenueStatisticsAsync()
+    {
+        var user = JwtClaimUltils.GetLoginedUser(_httpContextAccessor);
+        var userid = JwtClaimUltils.GetUserId(user);
+        var shop = await _shopRepository.GetSingleAsync(x => x.OwnerId == userid);
+        if (shop == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND,
+                               StatusCodes.Status400BadRequest);
+        }
+
+        _logger.Information($"GetShopRevenueStatisticsAsync at {CoreHelper.SystemTimeNow}");
+        return await _statisticRepository.GetShopRevenueStatisticsAsync(shop.Id);
+    }
+
+    public async Task<IList<RevenueChartResponse>> GetRevenueChart(RevenueChartRequest request)
+    {
+        var user = JwtClaimUltils.GetLoginedUser(_httpContextAccessor);
+        var role = JwtClaimUltils.GetUserRole(user);
+        var userId = JwtClaimUltils.GetUserId(user);
+        var year = request.Year;
+        int? month = request.Month;
+        _logger.Information($"Get Revenue Chart in year {year} and month {month}");
+        Expression<Func<OrderShop, bool>> predicate =
+            x => x.CreatedTime.Year == year && x.Status == OrderShopStatusEnum.Completed;
+
+        var isPlatform = true;
+
+        if (month.HasValue)
+        {
+            predicate = predicate.And(x => x.CreatedTime.Month == month.Value);
+        }
+
+        if (role.Contains(UserRoleEnum.ShopOwner.ToString()))
+        {
+            var shop = await _shopRepository.GetSingleAsync(x => x.OwnerId == userId);
+            if (shop == null)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstrantsShop.NOTFOUND,
+                                       StatusCodes.Status400BadRequest);
+            }
+
+            predicate = predicate.And(x => x.ShopId == shop.Id);
+            isPlatform = false;
+        }
+
+        var result = await _statisticRepository.GetOrderShopStatistic(predicate, isPlatform);
+
+        if (!month.HasValue)
+        {
+            // Add logic to ensure the result contains all 12 months
+            result = Enumerable.Range(1, 12)
+                .Select(month => new RevenueChartResponse
+                {
+                    Year = year,
+                    Month = month,
+                    TotalRevenue = result.FirstOrDefault(r => r.Month == month)?.TotalRevenue ?? 0,
+                    TotalOrder = result.FirstOrDefault(r => r.Month == month)?.TotalOrder ?? 0
+                })
+                .ToList();
+        }
+
         return result;
     }
 }
