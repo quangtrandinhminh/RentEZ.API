@@ -1,4 +1,5 @@
-﻿using Service.ApiModels.Statistic;
+﻿using Repository.Extensions;
+using Service.ApiModels.Statistic;
 
 namespace Service.Interfaces;
 
@@ -9,4 +10,7 @@ public interface IStatisticService
     Task<int> GetProductStatistic();
     Task<int> GetOrderStatistic();
     Task<RevenueStatisticResponse> GetTotalRevenue(StatisticRequest request);
+    Task<AdminRevenueStatisticResponse> GetAdminRevenueStatisticsAsync();
+    Task<ShopRevenueStatisticResponse> GetShopRevenueStatisticsAsync();
+    Task<IList<RevenueChartResponse>> GetRevenueChart(RevenueChartRequest request);
 }

@@ -52,5 +52,29 @@ namespace RentEZ.WebAPI.Controllers
             var result = await _statisticService.GetTotalRevenue(request);
             return Ok(BaseResponse.OkResponseDto(result, $"Last Updated: {CoreHelper.SystemTimeNow}"));
         }
+
+        [HttpGet("admin/general")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAdminRevenueStatisticsAsync()
+        {
+            var result = await _statisticService.GetAdminRevenueStatisticsAsync();
+            return Ok(BaseResponse.OkResponseDto(result, $"Last Updated: {CoreHelper.SystemTimeNow}"));
+        }
+
+        [HttpGet("shop/general")]
+        [Authorize(Roles = "ShopOwner")]
+        public async Task<IActionResult> GetShopRevenueStatisticsAsync()
+        {
+            var result = await _statisticService.GetShopRevenueStatisticsAsync();
+            return Ok(BaseResponse.OkResponseDto(result, $"Last Updated: {CoreHelper.SystemTimeNow}"));
+        }
+
+        [HttpGet("revenue/chart")]
+        [Authorize(Roles = "Admin, ShopOwner")]
+        public async Task<IActionResult> GetRevenueChart([FromQuery] RevenueChartRequest request)
+        {
+            var result = await _statisticService.GetRevenueChart(request);
+            return Ok(BaseResponse.OkResponseDto(result, $"Last Updated: {CoreHelper.SystemTimeNow}"));
+        }
     }
 }
