@@ -1,5 +1,3 @@
-# RentEZ Platform
-
 ## Getting Started
 
 To get started with this project, follow these steps:
@@ -21,61 +19,6 @@ To get started with this project, follow these steps:
     ```bash
     dotnet restore
     ```
-
-### Setting Up the Database
-
-1. Update the `appsettings.json` file with your database connection string:
-    ```json
-    {
-      "ConnectionStrings": {
-        "DefaultConnection": "YourConnectionStringHere"
-      }
-    }
-    ```
-
-    **Please do not commit any changes in `appsettings.json`**
-
-2. Create and update the database using Entity Framework:
-
-    - To create the initial migration:
-        ```bash
-        dotnet ef migrations add InitialCreate
-        ```
-
-    - To apply the migration and create the database:
-        ```bash
-        dotnet ef database update
-        ```
-
-    - To add a new migration after making changes to the models:
-        ```bash
-        dotnet ef migrations add YourMigrationName
-        ```
-
-    - To update the database with the new migration:
-        ```bash
-        dotnet ef database update
-        ```
-
-## Usage
-
-### Running the Application
-
-1. Run the application:
-    ```bash
-    dotnet run
-    ```
-
-2. Navigate to `https://localhost:5001` in your web browser to see the application in action.
-
-### Examples
-
-Here are some example usages of the application:
-
-- 
-- 
--
-
 
 ## Collaborate with Your Team
 

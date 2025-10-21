@@ -238,7 +238,7 @@ namespace Service.Services
                 var refreshToken = GenerateRefreshToken(account.Id, 48);
                 RemoveOldRefreshTokens(account.RefreshTokens);
                 await _refreshTokenRepository.AddAsync(refreshToken);
-                var count = await _unitOfWork.SaveChangeAsync();
+                await _unitOfWork.SaveChangeAsync();
 
                 var response = _mapper.Map(account);
                 response.Token = token;
